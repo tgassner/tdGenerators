@@ -3,10 +3,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <title>Vitrinen-Fixxer Generator</title>
 <script src="https://cdn.jsdelivr.net/npm/makerjs@0/target/js/browser.maker.js"></script>
-<!-- To work with Bezier Curves, you will also need a copy of Bezier.js by Pomax:
+<!-- To work with Bezier Curves, you will also need a copy of Bezier.js by Pomax: -->
 <script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
-To work with fonts, you will need both Bezier.js (above) and a copy of Opentype.js by Frederik De Bleser
-<script src="https://cdn.jsdelivr.net/npm/opentype.js@0/dist/opentype.js"></script> -->
+<!-- To work with fonts, you will need both Bezier.js (above) and a copy of Opentype.js by Frederik De Bleser -->
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@0/dist/opentype.js"></script>
 
 <script type="text/javascript">
 var makerjs = require('makerjs');
@@ -20,39 +20,45 @@ var makerjs = require('makerjs');
 <br><br>
 <div id="guiElements" style="width: fit-content;">
 	<div id="settings"  style="">
-		<div style="background-color: aliceblue; padding: 10px; width: 100%">
-			<div style='font-weight: bold;'>Vitrine LxBxH Außenmaß</div>
+		<div style="background-color: aliceblue; padding: 15px; width: 100%">
+			<div style='font-weight: bold; margin-bottom: 8px;'>Vitrine LxBxH Außenmaße [mm]</div>
 			<input type="number" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 50px;"> x 
 			<input type="number" id="cabinetWidth"  name="cabinetWidth"  onchange="cabinetWidthChanged()"  style="width: 50px;"> x 
 			<input type="number" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 50px;">
 		</div>
 
-		<div style="background-color: #C49976; padding: 10px; width: 100%;">
-			<div style='font-weight: bold;'>Karton Templates</div>
-			<input checked="checked" type="radio" id="box500x300x200" name="boxTemplate" value="500x300x200" onchange="boxTemplateChanged()" style="width: 10px;"> 500x300x200 <br>
-			<input type="radio" id="box630x430x400" name="boxTemplate" value="630x430x400" onchange="boxTemplateChanged()" style="width: 10px;"> 630x430x400 <br>
-			<input type="radio" id="box786x586x580" name="boxTemplate" value="786x586x580" onchange="boxTemplateChanged()" style="width: 10px;"> 786x586x580 <br>
-			<input type="radio" id="box1000x700x500" name="boxTemplate" value="1000x700x500" onchange="boxTemplateChanged()" style="width: 10px;"> 1000x700x500 <br>
+		<div style="background-color: #C49976; padding: 15px; width: 100%;">
+			<div style='font-weight: bold; margin-bottom: 8px;'>Karton Templates - (üblicherweise vorhandene Schachteln)</div>
+			<input type="radio" id="box500x300x200"  name="boxTemplate" value="500x300x200"  onchange="boxTemplateChanged()" style="width: 15px; margin-left:20px; font-family: monospace" checked="checked" > 500 * 300 * 200 mm<br>
+			<input type="radio" id="box630x430x400"  name="boxTemplate" value="630x430x400"  onchange="boxTemplateChanged()" style="width: 15px; margin-left:20px; font-family: monospace"> 630 * 430 * 400 mm<br>
+			<input type="radio" id="box786x586x580"  name="boxTemplate" value="786x586x580"  onchange="boxTemplateChanged()" style="width: 15px; margin-left:20px; font-family: monospace"> 786 * 586 * 580 mm<br>
+			<input type="radio" id="box1000x700x500" name="boxTemplate" value="1000x700x500" onchange="boxTemplateChanged()" style="width: 15px; margin-left:20px; font-family: monospace"> 1000 * 700 * 500 mm<br>
 			<br>
-			<div style='font-weight: bold;'>Karton LxBxH Innenmaß</div>
+			<div style='font-weight: bold; margin-bottom: 8px;'>Karton LxBxH Innenmaß</div>
 			<input type="number" id="boxLength" name="boxLength" onchange="boxLengthChanged()" style="width: 50px;"> x 
 			<input type="number" id="boxWidth"  name="boxWidth"  onchange="boxWidthChanged()"  style="width: 50px;"> x 
 			<input type="number" id="boxHeight" name="boxHeight" onchange="boxHeightChanged()" style="width: 50px;">
 		</div>
-		<div style="background-color: blanchedalmond; padding: 10px; width: 100%;">
+		<div style="background-color: blanchedalmond; padding: 15px; width: 100%;">
 			<div style='font-weight: bold;'>Inlay ohne Karton Vitrine + 40mm Schutze</div>
-			<button id="downloadDXF" onclick="defineInlayOhneKarton()"> Inlay ohne Karton</button>
+			<button id="downloadInlayOhneKarton" onclick="defineInlayOhneKarton()" title="definiert die maße des Kartons in einer größe, die 40 mm größer ist als die Vitrine,\nfür nur Kantenschutz z.B.: für Botendienst"> Inlay ohne Karton</button>
 		</div>
 	</div>
 	
-	<div id="exportButtons" style="background-color: burlywood; padding: 10px; width: 100%;">
-		<button id="downloadDXF" onclick="downloadDXF()"> DXF Download</button>
-		<button id="downloadSVG" onclick="downloadSVG()"> SVG Download</button>
+	<div style="background-color: blanchedalmond; padding: 15px; width: 100%; margin-bottom: 8px;">
+		<div style='font-weight: bold;'>Auftragsnummer</div>
+		<input type="text" id="auftragsNummer" name="auftragsNummer" onchange="auftragsnummerChanged()" maxlength="16" value="?">
+	</div>
+
+	<div id="exportButtons" style="background-color: cornsilk; padding: 15px; width: 100%; margin-top:10px">
+		<button id="downloadDXF" onclick="downloadDXF()" title="Generiere und download eine DXF Datei"> DXF Download</button>
+		<button id="downloadSVG" onclick="downloadSVG()" title="Generiere und download eine SVG Datei"> SVG Download</button>
 	</div>
 </div>
 <script type="text/javascript">
 var makerjs = require('makerjs');
-
+var font;
+var model;
 var metadata = {
 	// cabinet = Vitrine
 	cabinetWidth : 159,
@@ -68,22 +74,58 @@ var metadata = {
 	smallRadius : 0.99,
 };
 
+function breiteMittlererLappenLinksRechts() {
+	return (metadata.boxLength - metadata.cabinetLength - 16) / 2;
+}
 
-var model = createModel();
-drawPreview();
+function kartonbreiteMinusLappenLinksRechts() {
+	return metadata.cabinetWidth + 12;
+}
 
-document.getElementById('cabinetLength').focus();
+function obenUntenFetteLasche() {
+	return metadata.boxHeight * 0.18;
+}
+
+function innenLinksRechtsLaschenHoehe() {
+	return metadata.boxHeight * 0.34;
+}
+
+
+function determineTotalWidth() {
+	return Math.max(metadata.boxWidth, breiteMittlererLappenLinksRechts() * 2 + kartonbreiteMinusLappenLinksRechts());
+}
+
+function determineTotalHeight() {
+	return metadata.boxHeight;
+}
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+	let thisYear = new Date();
+	document.getElementById('auftragsNummer').value = "K" + (thisYear.getYear() % 100);
+	opentype.load("https://fonts.cdnfonts.com/s/18519/Lovelo-Black.woff", function(err, fontParam) {
+		if (err) {
+			alert("Error: " + err);
+		} else {
+			font = fontParam;
+
+			model = createModel();
+			drawPreview();
+			document.getElementById('cabinetLength').focus();
+		}
+	});
+});
+
+
 
 function createModel() {
 
-	let eini = (metadata.boxWidth - (metadata.cabinetWidth + 12)) / 2;
-	let zruck = (metadata.boxLength - metadata.cabinetLength - 16) / 2;
+	let eini = (metadata.boxWidth - kartonbreiteMinusLappenLinksRechts()) / 2;
 
 	let oba = ((metadata.boxHeight - (metadata.cabinetHeight + 8 )) / 2) + 30;
 
-	let obaLinkRechts = (metadata.boxHeight - 68) / 2;
+	let obaLinkRechts = (metadata.boxHeight - innenLinksRechtsLaschenHoehe()) / 2;
 
-	let perforationBorderLeftRight = (metadata.boxHeight - 68 - 36 - 36 - 2 - 2 - 5 - 5) / 4;
+	let perforationBorderLeftRight = (metadata.boxHeight - innenLinksRechtsLaschenHoehe() - obenUntenFetteLasche() - obenUntenFetteLasche() - 2 - 2 - 5 - 5) / 4;
 
 	var modelLocal = {
 	  paths: {
@@ -92,28 +134,28 @@ function createModel() {
 		lineBottom: new makerjs.paths.Line([0, 0], [metadata.boxWidth, 0]),
 		lineTop: new makerjs.paths.Line([0, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight]),
 
-		lineLeftUpper:  new makerjs.paths.Line([0, metadata.boxHeight], [0, metadata.boxHeight - 36]),
-		lineRightUpper:  new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight - 36]),
-		lineLeftLower:  new makerjs.paths.Line([0, 0], [0, 36]),
-		lineRightLower:  new makerjs.paths.Line([metadata.boxWidth, 0], [metadata.boxWidth, 36]),
+		lineLeftUpper:  new makerjs.paths.Line([0, metadata.boxHeight], [0, metadata.boxHeight - obenUntenFetteLasche()]),
+		lineRightUpper:  new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight - obenUntenFetteLasche()]),
+		lineLeftLower:  new makerjs.paths.Line([0, 0], [0, obenUntenFetteLasche()]),
+		lineRightLower:  new makerjs.paths.Line([metadata.boxWidth, 0], [metadata.boxWidth, obenUntenFetteLasche()]),
 
-		schnittEiniLinksOben : new makerjs.paths.Line([0, metadata.boxHeight - 36], [ eini , metadata.boxHeight - 36]),
-		schnittEiniLinksUnten : new makerjs.paths.Line([0, 36], [ eini , 36]),
-		schnittEiniRechtsOben : new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight - 36], [ metadata.boxWidth - eini, metadata.boxHeight - 36]),
-		schnittEiniRechtsUnten : new makerjs.paths.Line([metadata.boxWidth, 36], [ metadata.boxWidth - eini , 36]),
+		schnittEiniLinksOben : new makerjs.paths.Line([0, metadata.boxHeight - obenUntenFetteLasche()], [ eini , metadata.boxHeight - obenUntenFetteLasche()]),
+		schnittEiniLinksUnten : new makerjs.paths.Line([0, obenUntenFetteLasche()], [ eini , obenUntenFetteLasche()]),
+		schnittEiniRechtsOben : new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight - obenUntenFetteLasche()], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche()]),
+		schnittEiniRechtsUnten : new makerjs.paths.Line([metadata.boxWidth, obenUntenFetteLasche()], [ metadata.boxWidth - eini , obenUntenFetteLasche()]),
 
-		schnittEiniLinksObenToBack : new makerjs.paths.Line([eini, metadata.boxHeight - 36], [ eini , metadata.boxHeight - 38]),
-		schnittEiniLinksUntenToBack : new makerjs.paths.Line([eini, 36], [ eini , 38]),
-		schnittEiniRechtsObenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - 36], [ metadata.boxWidth - eini, metadata.boxHeight - 38]),
-		schnittEiniRechtsUntenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, 36], [ metadata.boxWidth - eini , 38]),
+		schnittEiniLinksObenToBack : new makerjs.paths.Line([eini, metadata.boxHeight - obenUntenFetteLasche()], [ eini , metadata.boxHeight - obenUntenFetteLasche() - 2]),
+		schnittEiniLinksUntenToBack : new makerjs.paths.Line([eini, obenUntenFetteLasche()], [ eini , obenUntenFetteLasche() + 2]),
+		schnittEiniRechtsObenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche()], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche() - 2]),
+		schnittEiniRechtsUntenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, obenUntenFetteLasche()], [ metadata.boxWidth - eini , obenUntenFetteLasche() + 2]),
 
-		schnittEiniLinksObenBack : new makerjs.paths.Line([eini - zruck, metadata.boxHeight - 38], [ eini , metadata.boxHeight - 38]),
-		schnittEiniLinksUntenBack : new makerjs.paths.Line([eini - zruck, 38], [ eini , 38]),
-		schnittEiniRechtsObenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), metadata.boxHeight - 38], [ metadata.boxWidth - eini, metadata.boxHeight - 38]),
-		schnittEiniRechtsUntenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), 38], [ metadata.boxWidth - eini , 38]),
+		schnittEiniLinksObenBack : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), metadata.boxHeight - obenUntenFetteLasche() - 2], [ eini , metadata.boxHeight - obenUntenFetteLasche() - 2]),
+		schnittEiniLinksUntenBack : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), obenUntenFetteLasche() + 2], [ eini , obenUntenFetteLasche() + 2]),
+		schnittEiniRechtsObenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), metadata.boxHeight - obenUntenFetteLasche() - 2], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche() - 2]),
+		schnittEiniRechtsUntenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), obenUntenFetteLasche() + 2], [ metadata.boxWidth - eini , obenUntenFetteLasche() + 2]),
 
-		lineLeftMiddle : new makerjs.paths.Line([eini - zruck, metadata.boxHeight - 38], [ eini - zruck , 38]),
-		lineRightMiddle : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), metadata.boxHeight - 38], [ metadata.boxWidth - (eini - zruck) , 38]),
+		lineLeftMiddle : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), metadata.boxHeight - obenUntenFetteLasche() - 2], [ eini - breiteMittlererLappenLinksRechts() , obenUntenFetteLasche() + 2]),
+		lineRightMiddle : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), metadata.boxHeight - obenUntenFetteLasche() - 2], [ metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()) , obenUntenFetteLasche() + 2]),
 
 
 		// Other Parts
@@ -139,17 +181,29 @@ function createModel() {
 		lowerMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, oba - 30], [ metadata.boxWidth - eini - 55 - metadata.largeRadius - 0.01, oba - 30]),
 
 		
-		perforationLeftUpper : new makerjs.paths.Line([eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight)], [ eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight + 5)]),
-		perforationLeftLower : new makerjs.paths.Line([eini, 36 + 2 + perforationBorderLeftRight], [ eini, 36 + 2 + perforationBorderLeftRight + 5]),
+		perforationLeftUpper : new makerjs.paths.Line([eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
+		perforationLeftLower : new makerjs.paths.Line([eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
 
-		perforationRightUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight)], [ metadata.boxWidth - eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight + 5)]),
-		perforationRightLower : new makerjs.paths.Line([metadata.boxWidth - eini, 36 + 2 + perforationBorderLeftRight], [ metadata.boxWidth - eini, 36 + 2 + perforationBorderLeftRight + 5]),
+		perforationRightUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ metadata.boxWidth - eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
+		perforationRightLower : new makerjs.paths.Line([metadata.boxWidth - eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ metadata.boxWidth - eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
 
 		perforationCenterUpper : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, metadata.boxHeight - oba + 30], [metadata.boxWidth / 2 - 6.3, metadata.boxHeight - oba + 30]),
 		perforationCenterLower : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, oba - 30], [metadata.boxWidth / 2 - 6.3, oba - 30]),
 
+		//auftragsnummer : new makerjs.path.text("graduate-regular","Hello",72,false,false),
+	  },
+	  models: {
+	  	auftragsnummer : new makerjs.models.Text(font, document.getElementById('auftragsNummer').value, 6),
 	  }
 	};
+
+	//makerjs.model.rotate(modelLocal.models.auftragsnummer, 145, [100, 100]);
+
+	//makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [200, 200]);
+
+	makerjs.model.center(modelLocal.models.auftragsnummer);
+
+	makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [determineTotalWidth() / 2, determineTotalHeight() / 2]);
 
 	modelLocal.units = makerjs.unitType.Millimeter;
 
@@ -206,8 +260,6 @@ function createRadius(modelLocal) {
 	modelLocal.paths.radiusLowerPartUpperRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperRight, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
 }
 
-
-
 function drawPreview() {
 
 	if (metadata.cabinetLength + 30 > metadata.boxLength ||
@@ -221,7 +273,10 @@ function drawPreview() {
 			return;
 	}
 
-	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : metadata.boxWidth + "px", "height" : metadata.boxHeight + "px", "id" : "preViewSvg" } });
+	let previewWidth = determineTotalWidth();
+	let previewHeight = determineTotalHeight();
+
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : previewWidth + "px", "height" : previewHeight + "px", "id" : "preViewSvg" } });
 		
 	document.getElementById('inleyPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>"
 	
@@ -230,7 +285,7 @@ function drawPreview() {
 	document.getElementById('contentDiv').innerHTML = svg;
 	document.getElementById('contentDiv').style.position = "relative";
 
-	let viewBoxAttrib = "-1 -1 " + (metadata.boxWidth + 2) + " " + (metadata.boxHeight + 2) ;
+	let viewBoxAttrib = "-1 -1 " + (previewWidth + 2) + " " + (previewHeight + 2) ;
 	document.getElementById('preViewSvg').setAttribute("viewBox", viewBoxAttrib);
 
 	let g = document.querySelector('#preViewSvg>g');
@@ -347,11 +402,16 @@ function boxTemplateChanged() {
 	}
 }
 
+function auftragsnummerChanged() {
+	model = createModel();
+	drawPreview();
+}
+
 function defineInlayOhneKarton() {
 	unCheckTemplate();
-	metadata.boxLength = metadata.cabinetLength + 40;
-	metadata.boxWidth =  metadata.cabinetWidth + 40;
-	metadata.boxHeight = metadata.cabinetHeight + 40;
+	metadata.boxLength = metadata.cabinetLength + 80;
+	metadata.boxWidth =  metadata.cabinetWidth + 80;
+	metadata.boxHeight = metadata.cabinetHeight + 80;
 	model = createModel();
 	drawPreview();
 }
