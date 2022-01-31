@@ -1,0 +1,445 @@
+<html>
+<head>
+
+<script src="https://cdn.jsdelivr.net/npm/makerjs@0/target/js/browser.maker.js"></script>
+<!-- To work with Bezier Curves, you will also need a copy of Bezier.js by Pomax:
+<script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
+To work with fonts, you will need both Bezier.js (above) and a copy of Opentype.js by Frederik De Bleser
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@0/dist/opentype.js"></script> -->
+
+<script type="text/javascript">
+var makerjs = require('makerjs');
+</script>
+</head>
+<body>
+<h1>Cough Protector Generator!</h1>
+
+<div id="coughPreview" name="coughPreview"></div>
+
+
+<br><br>
+Width: <input type="text" id="cougWidth" name="cougWidth" onchange="cougWidthChanged()"> <br>
+Height: <input type="text" id="cougHeight" name="cougHeight" onchange="cougHeightChanged()"> <br>
+Radius Left Upper:  <input type="text" id="radiusLeftUpper"  name="radiusLeftUpper"  onchange="radiusLeftUpperChanged()"> <br>
+Radius Right Upper: <input type="text" id="radiusRightUpper" name="radiusRightUpper" onchange="radiusRightUpperChanged()"> <br>
+Radius Right Lower: <input type="text" id="radiusRightLower" name="radiusRightLower" onchange="radiusRightLowerChanged()"> <br>
+Radius Left Lower:  <input type="text" id="radiusLeftLower"  name="radiusLeftLower"  onchange="radiusLeftLowerChanged()"> <br><br>
+Feet: <input type="checkbox" id="feetExists"  name="feetExists"  onchange="feetExistsChanged()"> <br>
+<div id="feetParameterDiv">
+&nbsp;&nbsp;&nbsp;&nbsp;Distance Left Foot:      <input type="text" id="distanceLeftFoot"      name="distanceLeftFoot"     onchange="distanceLeftFootChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Distance Right Foot:     <input type="text" id="distanceRightFoot"     name="distanceRightFoot"    onchange="distanceRightFootChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Foothole Hight:          <input type="text" id="footHoleHight"         name="footHoleHight"        onchange="footHoleHightChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Foothole Thickness:      <input type="text" id="footHoleThickness"     name="footHoleThickness"    onchange="footHoleThicknessChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Foothole BottomRadius:   <input type="text" id="footHoleBottomRadius"  name="footHoleBottomRadius" onchange="footHoleBottomRadiusChanged()"> <br>
+</div><br>
+Passthrough: <input type="checkbox" id="passthroughExists"  name="passthroughExists"  onchange="passthroughExistsChanged()"> <br>
+
+
+
+
+<div id="passThroughParameterDiv">
+&nbsp;&nbsp;&nbsp;&nbsp;Center:        <input type="checkbox" id="center"        name="center"       onchange="centerChanged()"><br>
+<div id="passThroughDistanceLeftDiv">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DistanceLeft:  <input type="text" id="distanceLeft"  name="distanceLeft" onchange="distanceLeftChanged()"><br>
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;RadiusTop:     <input type="text" id="radiusTop"     name="radiusTop"    onchange="radiusTopChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;RadiusBottom:  <input type="text" id="radiusBottom"  name="radiusBottom" onchange="radiusBottomChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Width:         <input type="text" id="width"         name="width"        onchange="widthChanged()"> <br>
+&nbsp;&nbsp;&nbsp;&nbsp;Height:        <input type="text" id="height"        name="height"       onchange="heightChanged()"> <br>
+<div>
+
+
+
+<br>
+<button onclick="downloadDXF()"> DXF Download</button>
+<button onclick="downloadSVG()"> SVG Download</button>
+
+<script type="text/javascript">
+var makerjs = require('makerjs');
+
+var metadata = {
+	coughWidth : 900,
+	cougHeight : 400,
+	radius : {
+		radiusLeftUpper : 40,
+		radiusRightUpper : 40,
+		radiusRightLower : 20,
+		radiusLeftLower : 20
+	},
+	footHoles : {
+		numberOfFootHoles : 2,
+		distanceLeftFoot : 200,
+		distanceRightFoot : 200,
+		footHoleHight : 60,
+		footHoleThickness : 8,
+		footHoleBottomRadius : 4
+	},
+	passThroughs : {
+		numberOfPassThroughts: 1,
+		center : true,
+		distanceLeft : 300,
+		radiusTop: 30,
+		radiusBottom: 15,
+		width: 150,
+		height: 150
+	}
+};
+
+
+var model = createModel();
+drawPreview();
+
+function calculateNrOfBottomLines() {
+	count = 1;
+	if (metadata) {
+	    if (metadata.footHoles && metadata.footHoles.numberOfFootHoles) {
+			count += metadata.footHoles.numberOfFootHoles;
+		}
+		if (metadata.passThroughs && metadata.passThroughs.numberOfPassThroughts) {
+			count += metadata.passThroughs.numberOfPassThroughts;
+		}
+	}
+	return count;
+}
+
+function createModel() {
+	var modelLocal = {
+	  paths: {
+		lineLeft: new makerjs.paths.Line([0, 0], [0, metadata.cougHeight]),
+		lineTop: new makerjs.paths.Line([0, metadata.cougHeight], [metadata.coughWidth, metadata.cougHeight]),
+		lineRight: new makerjs.paths.Line([metadata.coughWidth, metadata.cougHeight], [metadata.coughWidth, 0])
+	  }
+	};
+
+	let noOfBottomLines = calculateNrOfBottomLines();
+	for (i = 0; i < noOfBottomLines; i++) {
+		modelLocal.paths["lineBottom" + (i + 1)] = new makerjs.paths.Line([metadata.coughWidth, 0], [0, 0]);
+	}
+
+	modelLocal.units = makerjs.unitType.Millimeter;
+
+	createRadius(modelLocal);
+	createFeetHoles(modelLocal);
+	createPassThroughs(modelLocal);
+	
+	return modelLocal;
+}
+
+function createFeetHoles(modelLocal) {
+    if (existFootholes()) {
+		
+		var noOfBottomLines = calculateNrOfBottomLines();
+		
+		for (i = 0; i < metadata.footHoles.numberOfFootHoles; i++) {
+		
+			var y1a = 0;
+			var y1b = metadata.footHoles.footHoleHight;
+			var y2a = 0;
+			var y2b = metadata.footHoles.footHoleHight;
+		
+			var leftBottom = modelLocal.paths["lineBottom" + (i + 1)];
+			var rightBottom = modelLocal.paths["lineBottom" + (i + 2)];
+		
+			if (i == 0) {
+				var x1a = metadata.footHoles.distanceLeftFoot;
+				var x1b = metadata.footHoles.distanceLeftFoot;
+				var x2a = metadata.footHoles.distanceLeftFoot + metadata.footHoles.footHoleThickness;
+				var x2b = metadata.footHoles.distanceLeftFoot + metadata.footHoles.footHoleThickness;
+			} else if (i == (metadata.footHoles.numberOfFootHoles - 1)) {
+			    var x1a = metadata.coughWidth - metadata.footHoles.distanceRightFoot;
+				var x1b = metadata.coughWidth - metadata.footHoles.distanceRightFoot;
+				var x2a = metadata.coughWidth - metadata.footHoles.distanceRightFoot + metadata.footHoles.footHoleThickness;
+				var x2b = metadata.coughWidth - metadata.footHoles.distanceRightFoot + metadata.footHoles.footHoleThickness;
+				
+				leftBottom = modelLocal.paths["lineBottom" + (noOfBottomLines - 1)];
+				rightBottom = modelLocal.paths["lineBottom" + noOfBottomLines];
+			} else {
+				alert("More FeetHoles than 2 still not implemented! Sorry\n\n -> Gassi mach was!\nSchnell!");
+			}
+
+			let holeCutLeft = new makerjs.paths.Line([x1a, y1a], [x1a, y1b]);
+			let holeCutRight = new makerjs.paths.Line([x2a, y2a], [x2b, y2b]);
+
+			let arcTop = new makerjs.paths.Arc([x1a, y1b], [x2b, y2b], metadata.footHoles.footHoleThickness);
+
+			makerjs.path.converge(leftBottom, holeCutLeft, true, true);
+			feetHoleArcLeftBottom = makerjs.path.fillet(leftBottom, holeCutLeft, metadata.footHoles.footHoleBottomRadius);
+
+			makerjs.path.converge(rightBottom, holeCutRight, false, true);
+			feetHoleArcRightBottom = makerjs.path.fillet(rightBottom, holeCutRight, metadata.footHoles.footHoleBottomRadius);
+
+			modelLocal.paths["feetHole_" + (i + 1) + "left"] = holeCutLeft;
+			modelLocal.paths["feetHole_" + (i + 1) + "right"] = holeCutRight;
+			modelLocal.paths["feetHole_" + (i + 1) + "arcTop"] = arcTop;
+			modelLocal.paths["feetHole_" + (i + 1) + "arcBottomLeft"] = feetHoleArcLeftBottom;
+			modelLocal.paths["feetHole_" + (i + 1) + "arcBottomRight"] = feetHoleArcRightBottom;
+		}
+	}
+}
+
+function createPassThroughs(modelLocal) {
+    if (existPassThroughs()) {
+	     
+		var noOfBottomLines = calculateNrOfBottomLines();
+		 
+		for (i = 0; i < metadata.passThroughs.numberOfPassThroughts; i++) {
+		
+			var y1a = 0;
+			var y1b = metadata.passThroughs.height;
+			var y2a = 0;
+			var y2b = metadata.passThroughs.height;
+		
+			if (i == 0) {
+				var distanceLeft = metadata.passThroughs.distanceLeft;
+				if (metadata.passThroughs.center) {
+					distanceLeft = (metadata.coughWidth / 2) - (metadata.passThroughs.width / 2);
+				}
+				
+				var x1a = distanceLeft;
+				var x1b = distanceLeft;
+				var x2a = distanceLeft + metadata.passThroughs.width;
+				var x2b = distanceLeft + metadata.passThroughs.width;
+				
+				var leftBottom = modelLocal.paths["lineBottom" + (noOfBottomLines / 2)];
+				var rightBottom = modelLocal.paths["lineBottom" + ((noOfBottomLines / 2) + 1)];
+				
+			} else {
+				alert("More PassThroughs than 2 still not implemented! Sorry\n\n -> Gassi mach was!\nSchnell!");
+			}
+
+			let passThroughCutLeft = new makerjs.paths.Line([x1a, y1a], [x1a, y1b]);
+			let passThroughCutRight = new makerjs.paths.Line([x2a, y2a], [x2b, y2b]);
+			let passThroughCutTop = new makerjs.paths.Line([x1a, y1b], [x2b, y2b]);
+
+			makerjs.path.converge(leftBottom, passThroughCutLeft, true, true);
+			passThroughArcLeftBottom = makerjs.path.fillet(leftBottom, passThroughCutLeft, metadata.passThroughs.radiusBottom);
+
+			makerjs.path.converge(rightBottom, passThroughCutRight, false, true);
+			passThroughArcRightBottom = makerjs.path.fillet(rightBottom, passThroughCutRight, metadata.passThroughs.radiusBottom);
+			
+			passThroughArcLeftTop = makerjs.path.fillet(passThroughCutTop, passThroughCutLeft, metadata.passThroughs.radiusTop);
+			passThroughArcRightTop = makerjs.path.fillet(passThroughCutTop, passThroughCutRight, metadata.passThroughs.radiusTop);
+
+			modelLocal.paths["passThrough_" + (i + 1) + "left"] = passThroughCutLeft;
+			modelLocal.paths["passThrough_" + (i + 1) + "right"] = passThroughCutRight;
+			modelLocal.paths["passThrough_" + (i + 1) + "top"] = passThroughCutTop;
+			modelLocal.paths["passThrough_" + (i + 1) + "arcBottomLeft"] = passThroughArcLeftBottom;
+			modelLocal.paths["passThrough_" + (i + 1) + "arcBottomRight"] = passThroughArcRightBottom;
+			modelLocal.paths["passThrough_" + (i + 1) + "arcTopLeft"] = passThroughArcLeftTop;
+			modelLocal.paths["passThrough_" + (i + 1) + "arcTopRight"] = passThroughArcRightTop;
+		}
+	}
+}
+
+function existFootholes() {
+    return metadata.footHoles && metadata.footHoles.numberOfFootHoles && metadata.footHoles.numberOfFootHoles > 0;
+}
+
+function existPassThroughs() {
+    return metadata.passThroughs && metadata.passThroughs.numberOfPassThroughts && metadata.passThroughs.numberOfPassThroughts > 0;
+}
+
+function createRadius(modelLocal) {
+    let noOfBottomLines = calculateNrOfBottomLines();
+	modelLocal.paths.radiusLeftUpper = makerjs.path.fillet(modelLocal.paths.lineLeft, modelLocal.paths.lineTop, metadata.radius.radiusLeftUpper);
+	modelLocal.paths.radiusRightUpper = makerjs.path.fillet(modelLocal.paths.lineTop, modelLocal.paths.lineRight, metadata.radius.radiusRightUpper);
+	modelLocal.paths.radiusRightLower = makerjs.path.fillet(modelLocal.paths.lineRight, modelLocal.paths["lineBottom" + noOfBottomLines], metadata.radius.radiusRightLower);
+	modelLocal.paths.radiusLeftLower = makerjs.path.fillet(modelLocal.paths["lineBottom1"], modelLocal.paths.lineLeft, metadata.radius.radiusLeftLower);
+}
+
+function drawPreview() {
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : metadata.coughWidth + "px", "height" : metadata.cougHeight + "px" } });
+	document.getElementById('coughPreview').innerHTML = svg;
+	document.getElementById("cougWidth").value = metadata.coughWidth;
+	document.getElementById("cougHeight").value = metadata.cougHeight;
+	document.getElementById("radiusLeftUpper").value = metadata.radius.radiusLeftUpper;
+	document.getElementById("radiusRightUpper").value = metadata.radius.radiusRightUpper;
+    document.getElementById("radiusRightLower").value = metadata.radius.radiusRightLower;
+    document.getElementById("radiusLeftLower").value = metadata.radius.radiusLeftLower;
+	
+	document.getElementById("feetExists").checked = metadata.footHoles.numberOfFootHoles > 0;
+	
+	document.getElementById("distanceLeftFoot").value = metadata.footHoles.distanceLeftFoot;
+	document.getElementById("distanceRightFoot").value = metadata.footHoles.distanceRightFoot;
+    document.getElementById("footHoleHight").value = metadata.footHoles.footHoleHight;
+    document.getElementById("footHoleThickness").value = metadata.footHoles.footHoleThickness;
+	document.getElementById("footHoleBottomRadius").value = metadata.footHoles.footHoleBottomRadius;
+	
+	var feetDisplay = metadata.footHoles.numberOfFootHoles > 0 ? "block" : "none";
+	document.getElementById("feetParameterDiv").style.display = feetDisplay;
+	
+	
+	document.getElementById("passthroughExists").checked = metadata.passThroughs.numberOfPassThroughts > 0;
+	
+	var passThroughDisplay = metadata.passThroughs.numberOfPassThroughts > 0 ? "block" : "none";
+	document.getElementById("passThroughParameterDiv").style.display = passThroughDisplay;
+	
+	var centerDisplay = metadata.passThroughs.center ? "none" : "block";
+	document.getElementById("passThroughDistanceLeftDiv").style.display = centerDisplay;
+	
+	
+	document.getElementById("center").checked = metadata.passThroughs.center;       
+	document.getElementById("distanceLeft").value = metadata.passThroughs.distanceLeft;
+	document.getElementById("radiusTop").value = metadata.passThroughs.radiusTop; 
+	document.getElementById("radiusBottom").value = metadata.passThroughs.radiusBottom;
+	document.getElementById("width").value = metadata.passThroughs.width;
+	document.getElementById("height").value = metadata.passThroughs.height;
+
+	
+	
+	
+}
+	
+function download(data, filename, type) {
+        var file = new Blob([data], {type: type});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        else { // Others
+            var a = document.createElement("a"),
+                    url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
+        }
+    }
+
+function downloadDXF() {
+   var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
+	download(dxfExp, "Hustenschutz.dxf", "dxf")
+}
+
+function downloadSVG() {
+   var svgExp = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+		makerjs.exporter.toSVG(model, { 
+											units: makerjs.unitType.Millimeter, 
+											svgAttrs : {
+															"width" : (metadata.coughWidth + "mm"), 
+															"height" : (metadata.cougHeight + "mm"), 
+															"xmlns" : "http://www.w3.org/2000/svg",
+															"xmlns:xlink" : "http://www.w3.org/1999/xlink",
+															"version" : "1.1",
+															"baseProfile" : "full"
+														}
+									  });
+	download(svgExp, "Hustenschutz.svg", "svg")
+}
+
+function genericChanged(elementId, metaDataFieldName1, metaDataFieldName2, metaDataFieldName3) {
+	var widthInt = parseInt(document.getElementById(elementId).value);
+	if (!isNaN(widthInt)) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		if (metaDataFieldName3) {
+		    metadata[metaDataFieldName1][metaDataFieldName2][metaDataFieldName3] = parseInt(widthInt);
+		} else if (metaDataFieldName2) {
+			metadata[metaDataFieldName1][metaDataFieldName2] = parseInt(widthInt);
+		} else {
+			metadata[metaDataFieldName1] = parseInt(widthInt);
+		}
+		model = createModel();
+		drawPreview();
+	} else {
+	    document.getElementById(elementId).style.backgroundColor = "#d87979";
+	}
+}
+
+function cougWidthChanged() {
+    genericChanged("cougWidth", "coughWidth");
+}
+
+function cougHeightChanged() {
+	genericChanged("cougHeight", "cougHeight");
+}
+
+function radiusLeftUpperChanged() {
+	genericChanged("radiusLeftUpper", "radius", "radiusLeftUpper");
+}
+
+function radiusRightUpperChanged() {
+	genericChanged("radiusRightUpper", "radius", "radiusRightUpper");
+}
+
+function radiusRightLowerChanged() {
+	genericChanged("radiusRightLower", "radius", "radiusRightLower");
+}
+
+function radiusLeftLowerChanged() {
+	genericChanged("radiusLeftLower", "radius", "radiusLeftLower");
+}
+
+function feetExistsChanged() {
+	if (document.getElementById("feetExists").checked) {
+		metadata.footHoles.numberOfFootHoles = 2;
+	} else {
+		metadata.footHoles.numberOfFootHoles = 0;
+	}
+	model = createModel();
+	drawPreview();
+}
+
+function distanceLeftFootChanged() {
+	genericChanged("distanceLeftFoot", "footHoles", "distanceLeftFoot");
+}
+
+function distanceRightFootChanged() {
+	genericChanged("distanceRightFoot", "footHoles", "distanceRightFoot");
+}
+
+function footHoleHightChanged() {
+	genericChanged("footHoleHight", "footHoles", "footHoleHight");
+}
+
+function footHoleThicknessChanged() {
+	genericChanged("footHoleThickness", "footHoles", "footHoleThickness");
+}
+
+function footHoleBottomRadiusChanged() {
+	genericChanged("footHoleBottomRadius", "footHoles", "footHoleBottomRadius");
+}
+
+
+
+
+
+function passthroughExistsChanged() {
+	if (document.getElementById("passthroughExists").checked) {
+		metadata.passThroughs.numberOfPassThroughts = 1;
+	} else {
+		metadata.passThroughs.numberOfPassThroughts = 0;
+	}
+	model = createModel();
+	drawPreview();
+}
+
+function centerChanged() {
+	metadata.passThroughs.center = document.getElementById("center").checked;
+	model = createModel();
+	drawPreview();
+}
+
+function distanceLeftChanged() {
+	genericChanged("distanceLeft", "passThroughs", "distanceLeft");
+}
+
+function radiusTopChanged() {
+	genericChanged("radiusTop", "passThroughs", "radiusTop");
+}
+
+function radiusBottomChanged() {
+	genericChanged("radiusBottom", "passThroughs", "radiusBottom");
+}
+
+function widthChanged() {
+	genericChanged("width", "passThroughs", "width");
+}
+
+function heightChanged() {
+	genericChanged("height", "passThroughs", "height");
+}
+</script>
+</body>
+</html>

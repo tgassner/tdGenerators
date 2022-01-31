@@ -1,0 +1,367 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Vitrinen-Fixxer Generator</title>
+<script src="https://cdn.jsdelivr.net/npm/makerjs@0/target/js/browser.maker.js"></script>
+<!-- To work with Bezier Curves, you will also need a copy of Bezier.js by Pomax:
+<script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script>
+To work with fonts, you will need both Bezier.js (above) and a copy of Opentype.js by Frederik De Bleser
+<script src="https://cdn.jsdelivr.net/npm/opentype.js@0/dist/opentype.js"></script> -->
+
+<script type="text/javascript">
+var makerjs = require('makerjs');
+</script>
+</head>
+<body>
+<h1>Karton Inlay Generator</h1>
+
+<div id="inleyPreviewDiv" name="inleyPreviewDiv"></div>
+
+<br><br>
+<div id="guiElements" style="width: fit-content;">
+	<div id="settings"  style="">
+		<div style="background-color: aliceblue; padding: 10px; width: 100%">
+			<div style='font-weight: bold;'>Vitrine LxBxH Außenmaß</div>
+			<input type="number" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 50px;"> x 
+			<input type="number" id="cabinetWidth"  name="cabinetWidth"  onchange="cabinetWidthChanged()"  style="width: 50px;"> x 
+			<input type="number" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 50px;">
+		</div>
+
+		<div style="background-color: #C49976; padding: 10px; width: 100%;">
+			<div style='font-weight: bold;'>Karton Templates</div>
+			<input checked="checked" type="radio" id="box500x300x200" name="boxTemplate" value="500x300x200" onchange="boxTemplateChanged()" style="width: 10px;"> 500x300x200 <br>
+			<input type="radio" id="box630x430x400" name="boxTemplate" value="630x430x400" onchange="boxTemplateChanged()" style="width: 10px;"> 630x430x400 <br>
+			<input type="radio" id="box786x586x580" name="boxTemplate" value="786x586x580" onchange="boxTemplateChanged()" style="width: 10px;"> 786x586x580 <br>
+			<input type="radio" id="box1000x700x500" name="boxTemplate" value="1000x700x500" onchange="boxTemplateChanged()" style="width: 10px;"> 1000x700x500 <br>
+			<br>
+			<div style='font-weight: bold;'>Karton LxBxH Innenmaß</div>
+			<input type="number" id="boxLength" name="boxLength" onchange="boxLengthChanged()" style="width: 50px;"> x 
+			<input type="number" id="boxWidth"  name="boxWidth"  onchange="boxWidthChanged()"  style="width: 50px;"> x 
+			<input type="number" id="boxHeight" name="boxHeight" onchange="boxHeightChanged()" style="width: 50px;">
+		</div>
+		<div style="background-color: blanchedalmond; padding: 10px; width: 100%;">
+			<div style='font-weight: bold;'>Inlay ohne Karton Vitrine + 40mm Schutze</div>
+			<button id="downloadDXF" onclick="defineInlayOhneKarton()"> Inlay ohne Karton</button>
+		</div>
+	</div>
+	
+	<div id="exportButtons" style="background-color: burlywood; padding: 10px; width: 100%;">
+		<button id="downloadDXF" onclick="downloadDXF()"> DXF Download</button>
+		<button id="downloadSVG" onclick="downloadSVG()"> SVG Download</button>
+	</div>
+</div>
+<script type="text/javascript">
+var makerjs = require('makerjs');
+
+var metadata = {
+	// cabinet = Vitrine
+	cabinetWidth : 159,
+	cabinetHeight : 124,
+	cabinetLength : 359,
+
+	// Box = Karton
+	boxWidth : 300,
+	boxHeight : 200,
+	boxLength : 500,
+
+	largeRadius : 5,
+	smallRadius : 0.99,
+};
+
+
+var model = createModel();
+drawPreview();
+
+document.getElementById('cabinetLength').focus();
+
+function createModel() {
+
+	let eini = (metadata.boxWidth - (metadata.cabinetWidth + 12)) / 2;
+	let zruck = (metadata.boxLength - metadata.cabinetLength - 16) / 2;
+
+	let oba = ((metadata.boxHeight - (metadata.cabinetHeight + 8 )) / 2) + 30;
+
+	let obaLinkRechts = (metadata.boxHeight - 68) / 2;
+
+	let perforationBorderLeftRight = (metadata.boxHeight - 68 - 36 - 36 - 2 - 2 - 5 - 5) / 4;
+
+	var modelLocal = {
+	  paths: {
+
+		// Main Border
+		lineBottom: new makerjs.paths.Line([0, 0], [metadata.boxWidth, 0]),
+		lineTop: new makerjs.paths.Line([0, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight]),
+
+		lineLeftUpper:  new makerjs.paths.Line([0, metadata.boxHeight], [0, metadata.boxHeight - 36]),
+		lineRightUpper:  new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight - 36]),
+		lineLeftLower:  new makerjs.paths.Line([0, 0], [0, 36]),
+		lineRightLower:  new makerjs.paths.Line([metadata.boxWidth, 0], [metadata.boxWidth, 36]),
+
+		schnittEiniLinksOben : new makerjs.paths.Line([0, metadata.boxHeight - 36], [ eini , metadata.boxHeight - 36]),
+		schnittEiniLinksUnten : new makerjs.paths.Line([0, 36], [ eini , 36]),
+		schnittEiniRechtsOben : new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight - 36], [ metadata.boxWidth - eini, metadata.boxHeight - 36]),
+		schnittEiniRechtsUnten : new makerjs.paths.Line([metadata.boxWidth, 36], [ metadata.boxWidth - eini , 36]),
+
+		schnittEiniLinksObenToBack : new makerjs.paths.Line([eini, metadata.boxHeight - 36], [ eini , metadata.boxHeight - 38]),
+		schnittEiniLinksUntenToBack : new makerjs.paths.Line([eini, 36], [ eini , 38]),
+		schnittEiniRechtsObenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - 36], [ metadata.boxWidth - eini, metadata.boxHeight - 38]),
+		schnittEiniRechtsUntenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, 36], [ metadata.boxWidth - eini , 38]),
+
+		schnittEiniLinksObenBack : new makerjs.paths.Line([eini - zruck, metadata.boxHeight - 38], [ eini , metadata.boxHeight - 38]),
+		schnittEiniLinksUntenBack : new makerjs.paths.Line([eini - zruck, 38], [ eini , 38]),
+		schnittEiniRechtsObenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), metadata.boxHeight - 38], [ metadata.boxWidth - eini, metadata.boxHeight - 38]),
+		schnittEiniRechtsUntenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), 38], [ metadata.boxWidth - eini , 38]),
+
+		lineLeftMiddle : new makerjs.paths.Line([eini - zruck, metadata.boxHeight - 38], [ eini - zruck , 38]),
+		lineRightMiddle : new makerjs.paths.Line([metadata.boxWidth - (eini - zruck), metadata.boxHeight - 38], [ metadata.boxWidth - (eini - zruck) , 38]),
+
+
+		// Other Parts
+		leftMiddlePartUpper : new makerjs.paths.Line([eini, metadata.boxHeight - obaLinkRechts], [ eini + 40 , metadata.boxHeight - obaLinkRechts]),
+		leftMiddlePartLower : new makerjs.paths.Line([eini, obaLinkRechts], [ eini + 40 , obaLinkRechts]),
+		leftMiddlePartMiddle : new makerjs.paths.Line([eini + 40, metadata.boxHeight - obaLinkRechts], [ eini + 40 , obaLinkRechts]),
+
+		rightMiddlePartUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - obaLinkRechts], [ metadata.boxWidth - eini - 40 , metadata.boxHeight - obaLinkRechts]),
+		rightMiddlePartLower : new makerjs.paths.Line([metadata.boxWidth - eini, obaLinkRechts], [ metadata.boxWidth - eini - 40 , obaLinkRechts]),
+		rightMiddlePartMiddle : new makerjs.paths.Line([metadata.boxWidth - eini - 40, metadata.boxHeight - obaLinkRechts], [ metadata.boxWidth - eini - 40 , obaLinkRechts]),
+
+		upperMiddlePartLower : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba], [ metadata.boxWidth - eini - 55 , metadata.boxHeight - oba]),
+		upperMiddlePartLeft : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba], [ eini + 55 , metadata.boxHeight - oba + 30]),
+		upperMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, metadata.boxHeight - oba], [ metadata.boxWidth - eini - 55 , metadata.boxHeight - oba + 30]),
+		upperMiddlePartUpperLeft : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba + 30], [ eini + 55 + metadata.largeRadius + 0.01, metadata.boxHeight - oba + 30]),
+		upperMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, metadata.boxHeight - oba + 30], [ metadata.boxWidth - eini - 55 - metadata.largeRadius - 0.01, metadata.boxHeight - oba + 30]),
+
+
+		lowerMiddlePartLower : new makerjs.paths.Line([eini + 55, oba], [ metadata.boxWidth - eini - 55 , oba]),
+		lowerMiddlePartLeft : new makerjs.paths.Line([eini + 55, oba - 30], [ eini + 55 , oba]),
+		lowerMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, oba - 30], [ metadata.boxWidth - eini - 55 , oba]),
+		lowerMiddlePartUpperLeft : new makerjs.paths.Line([eini + 55, oba - 30], [ eini + 55 + metadata.largeRadius + 0.01, oba - 30]),
+		lowerMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, oba - 30], [ metadata.boxWidth - eini - 55 - metadata.largeRadius - 0.01, oba - 30]),
+
+		
+		perforationLeftUpper : new makerjs.paths.Line([eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight)], [ eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight + 5)]),
+		perforationLeftLower : new makerjs.paths.Line([eini, 36 + 2 + perforationBorderLeftRight], [ eini, 36 + 2 + perforationBorderLeftRight + 5]),
+
+		perforationRightUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight)], [ metadata.boxWidth - eini, metadata.boxHeight - (36 + 2 + perforationBorderLeftRight + 5)]),
+		perforationRightLower : new makerjs.paths.Line([metadata.boxWidth - eini, 36 + 2 + perforationBorderLeftRight], [ metadata.boxWidth - eini, 36 + 2 + perforationBorderLeftRight + 5]),
+
+		perforationCenterUpper : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, metadata.boxHeight - oba + 30], [metadata.boxWidth / 2 - 6.3, metadata.boxHeight - oba + 30]),
+		perforationCenterLower : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, oba - 30], [metadata.boxWidth / 2 - 6.3, oba - 30]),
+
+	  }
+	};
+
+	modelLocal.units = makerjs.unitType.Millimeter;
+
+	createRadius(modelLocal);
+
+	return modelLocal;
+}
+
+function createRadius(modelLocal) {
+
+	// Main Border
+	modelLocal.paths.radiusLeftUpper = makerjs.path.fillet(modelLocal.paths.lineLeftUpper, modelLocal.paths.lineTop, metadata.largeRadius);
+	modelLocal.paths.radiusRightUpper = makerjs.path.fillet(modelLocal.paths.lineTop, modelLocal.paths.lineRightUpper, metadata.largeRadius);
+	modelLocal.paths.radiusRightLower = makerjs.path.fillet(modelLocal.paths.lineRightLower, modelLocal.paths.lineBottom, metadata.largeRadius);
+	modelLocal.paths.radiusLeftLower = makerjs.path.fillet(modelLocal.paths.lineBottom, modelLocal.paths.lineLeftLower, metadata.largeRadius);
+
+	modelLocal.paths.radiusLeftUpperEinschnitt = makerjs.path.fillet(modelLocal.paths.lineLeftUpper, modelLocal.paths.schnittEiniLinksOben, metadata.largeRadius);
+	modelLocal.paths.radiusLeftLowerEinschnitt = makerjs.path.fillet(modelLocal.paths.lineLeftLower, modelLocal.paths.schnittEiniLinksUnten, metadata.largeRadius);
+	modelLocal.paths.radiusRightUpperEinschnitt = makerjs.path.fillet(modelLocal.paths.lineRightUpper, modelLocal.paths.schnittEiniRechtsOben, metadata.largeRadius);
+	modelLocal.paths.radiusRightLowerEinschnitt = makerjs.path.fillet(modelLocal.paths.lineRightLower, modelLocal.paths.schnittEiniRechtsUnten, metadata.largeRadius);
+
+	modelLocal.paths.radiusLeftUpperEinschnittBackOben = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksOben, modelLocal.paths.schnittEiniLinksObenToBack, metadata.smallRadius);
+	modelLocal.paths.radiusLeftUpperEinschnittBackUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksObenToBack, modelLocal.paths.schnittEiniLinksObenBack, metadata.smallRadius);
+	modelLocal.paths.radiusLeftLowerEinschnittBackOben = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksUnten, modelLocal.paths.schnittEiniLinksUntenToBack, metadata.smallRadius);
+	modelLocal.paths.radiusLeftLowerEinschnittBackUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksUntenToBack, modelLocal.paths.schnittEiniLinksUntenBack, metadata.smallRadius);
+	modelLocal.paths.radiusRightUpperEinschnittBackOben = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsOben, modelLocal.paths.schnittEiniRechtsObenToBack, metadata.smallRadius);
+	modelLocal.paths.radiusRightUpperEinschnittBackUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsObenToBack, modelLocal.paths.schnittEiniRechtsObenBack, metadata.smallRadius);
+	modelLocal.paths.radiusRightLowerEinschnittBackOben = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsUnten, modelLocal.paths.schnittEiniRechtsUntenToBack, metadata.smallRadius);
+	modelLocal.paths.radiusRightLowerEinschnittBackUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsUntenToBack, modelLocal.paths.schnittEiniRechtsUntenBack, metadata.smallRadius);
+
+	modelLocal.paths.radiusRightMiddleEinschnittLeftOben = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksObenBack, modelLocal.paths.lineLeftMiddle, metadata.largeRadius);
+	modelLocal.paths.radiusRightMiddleEinschnittLeftUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniLinksUntenBack, modelLocal.paths.lineLeftMiddle, metadata.largeRadius);
+	modelLocal.paths.radiusLeftMiddleEinschnittRightOben = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsObenBack, modelLocal.paths.lineRightMiddle, metadata.largeRadius);
+	modelLocal.paths.radiusLeftMiddleEinschnittRightUnten = makerjs.path.fillet(modelLocal.paths.schnittEiniRechtsUntenBack, modelLocal.paths.lineRightMiddle, metadata.largeRadius);
+
+	// Other Parts
+
+	modelLocal.paths.radiusLeftMiddlePartUpper = makerjs.path.fillet(modelLocal.paths.leftMiddlePartMiddle, modelLocal.paths.leftMiddlePartUpper, metadata.largeRadius);
+	modelLocal.paths.radiusLeftMiddlePartLower = makerjs.path.fillet(modelLocal.paths.leftMiddlePartMiddle, modelLocal.paths.leftMiddlePartLower, metadata.largeRadius);
+
+	modelLocal.paths.radiusRightMiddlePartUpper = makerjs.path.fillet(modelLocal.paths.rightMiddlePartMiddle, modelLocal.paths.rightMiddlePartUpper, metadata.largeRadius);
+	modelLocal.paths.radiusRightMiddlePartLower = makerjs.path.fillet(modelLocal.paths.rightMiddlePartMiddle, modelLocal.paths.rightMiddlePartLower, metadata.largeRadius);
+
+
+	modelLocal.paths.radiusUpperPartLowerLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartLowerRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartUpperLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperLeft, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartUpperRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperRight, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
+
+
+	modelLocal.paths.radiusLowerPartLowerLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartLowerRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartUpperLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperLeft, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartUpperRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperRight, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
+}
+
+
+
+function drawPreview() {
+
+	if (metadata.cabinetLength + 30 > metadata.boxLength ||
+		metadata.cabinetWidth + 30 > metadata.boxWidth ||
+		metadata.cabinetHeight + 30 > metadata.boxHeight) {
+
+			document.getElementById('inleyPreviewDiv').innerHTML = "<div style='width:250px;'><div style='justify-content: center; display:flex'><?xml version='1.0' encoding='iso-8859-1'?> <svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='200px'  viewBox='0 0 295.996 295.996' style='enable-background:new 0 0 295.996 295.996;' xml:space='preserve'> <g>  <path style='fill:#FFCE00;' d='M270.996,123.998c0-11.334-1.363-22.348-3.907-32.9c-7.269-15.152-17.35-28.708-29.558-39.996   c-22.391-13.376-48.766-20.666-76.771-19.644C83.492,34.274,23.139,99.196,25.955,176.463c0.413,11.304,2.17,22.239,5.087,32.673   c6.303,12.01,14.397,22.938,23.934,32.42c21.892,14.189,47.99,22.44,76.023,22.44C208.316,263.996,270.996,201.316,270.996,123.998   z M197.666,98.998c8.836,0,16,7.164,16,16s-7.164,16-16,16s-16-7.164-16-16S188.83,98.998,197.666,98.998z M98.666,98.998   c8.836,0,16,7.164,16,16s-7.164,16-16,16s-16-7.164-16-16S89.83,98.998,98.666,98.998z M87.959,215.396l-12.633-9.82   c21.441-27.579,57.392-40.777,91.587-33.631c21.262,4.447,40.353,16.391,53.756,33.631l-12.631,9.82   c-11.078-14.249-26.847-24.118-44.4-27.789C135.382,181.697,105.675,192.607,87.959,215.396z'/>  <path style='fill:#FFB100;' d='M267.089,91.098c2.544,10.553,3.907,21.566,3.907,32.9c0,77.318-62.68,139.998-139.998,139.998   c-28.032,0-54.131-8.251-76.023-22.44c23.88,23.744,56.766,38.44,93.023,38.44c72.784,0,131.998-59.214,131.998-131.998   C279.996,127.636,275.358,108.337,267.089,91.098z'/>  <path style='fill:#FFE454;' d='M160.76,31.457c28.006-1.021,54.381,6.268,76.771,19.644C213.985,29.328,182.521,16,147.998,16   C75.214,16,16,75.214,16,147.998c0,22.049,5.442,42.849,15.042,61.138c-2.917-10.434-4.674-21.369-5.087-32.673   C23.139,99.196,83.492,34.274,160.76,31.457z'/>  <path d='M147.998,0C66.392,0,0,66.392,0,147.998s66.392,147.998,147.998,147.998s147.998-66.392,147.998-147.998   S229.604,0,147.998,0z M147.998,279.996c-36.257,0-69.143-14.696-93.023-38.44c-9.536-9.482-17.631-20.41-23.934-32.42   C21.442,190.847,16,170.047,16,147.998C16,75.214,75.214,16,147.998,16c34.523,0,65.987,13.328,89.533,35.102   c12.208,11.288,22.289,24.844,29.558,39.996c8.27,17.239,12.907,36.538,12.907,56.9   C279.996,220.782,220.782,279.996,147.998,279.996z'/>  <path d='M163.638,187.607c17.554,3.671,33.322,13.54,44.4,27.789l12.631-9.82c-13.402-17.24-32.494-29.184-53.756-33.631   c-34.195-7.146-70.146,6.052-91.587,33.631l12.633,9.82C105.675,192.607,135.382,181.697,163.638,187.607z'/>  <circle cx='98.666' cy='114.998' r='16'/>  <circle cx='197.666' cy='114.998' r='16'/> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg></div> "
+				+ " <div style='color:#aa2222;text-align:center'> Der Karton ist zu klein :-( </div></div> ";
+			document.getElementById('downloadDXF').style.visibility = "hidden";
+			document.getElementById('downloadSVG').style.visibility = "hidden";
+			return;
+	}
+
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : metadata.boxWidth + "px", "height" : metadata.boxHeight + "px", "id" : "preViewSvg" } });
+		
+	document.getElementById('inleyPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>"
+	
+	document.getElementById('backgroundDiv').innerHTML = "<div id='contentDiv'></div>"
+	
+	document.getElementById('contentDiv').innerHTML = svg;
+	document.getElementById('contentDiv').style.position = "relative";
+
+	let viewBoxAttrib = "-1 -1 " + (metadata.boxWidth + 2) + " " + (metadata.boxHeight + 2) ;
+	document.getElementById('preViewSvg').setAttribute("viewBox", viewBoxAttrib);
+
+	let g = document.querySelector('#preViewSvg>g');
+	g.style="stroke-width:0.35mm";
+
+	document.getElementById('downloadDXF').style.visibility = "";
+	document.getElementById('downloadSVG').style.visibility = "";
+	
+	document.getElementById("cabinetWidth").value = metadata.cabinetWidth;
+	document.getElementById("cabinetHeight").value = metadata.cabinetHeight;
+	document.getElementById("cabinetLength").value = metadata.cabinetLength;
+	document.getElementById("boxWidth").value = metadata.boxWidth;
+    document.getElementById("boxHeight").value = metadata.boxHeight;
+    document.getElementById("boxLength").value = metadata.boxLength;
+}
+	
+function download(data, filename, type) {
+        var file = new Blob([data], {type: type});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        else { // Others
+            var a = document.createElement("a"),
+                    url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
+        }
+    }
+
+function downloadDXF() {
+   var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
+	download(dxfExp, "KartonInlay.dxf", "dxf")
+}
+
+function downloadSVG() {
+   var svgExp = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+		makerjs.exporter.toSVG(model, { 
+			units: makerjs.unitType.Millimeter, 
+			svgAttrs : {
+				"width" : (metadata.coughWidth + "mm"), 
+				"height" : (metadata.cougHeight + "mm"), 
+				"xmlns" : "http://www.w3.org/2000/svg",
+				"xmlns:xlink" : "http://www.w3.org/1999/xlink",
+				"version" : "1.1",
+				"baseProfile" : "full"
+						}
+		});
+	download(svgExp, "KartonInlay.svg", "svg")
+}
+
+function genericChanged(elementId, metaDataFieldName1, metaDataFieldName2, metaDataFieldName3) {
+	var widthInt = parseInt(document.getElementById(elementId).value);
+	if (!isNaN(widthInt)) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		if (metaDataFieldName3) {
+		    metadata[metaDataFieldName1][metaDataFieldName2][metaDataFieldName3] = parseInt(widthInt);
+		} else if (metaDataFieldName2) {
+			metadata[metaDataFieldName1][metaDataFieldName2] = parseInt(widthInt);
+		} else {
+			metadata[metaDataFieldName1] = parseInt(widthInt);
+		}
+		model = createModel();
+		drawPreview();
+	} else {
+	    document.getElementById(elementId).style.backgroundColor = "#d87979";
+	}
+}
+
+function boxLengthChanged() {
+    genericChanged("boxLength", "boxLength");
+	unCheckTemplate();
+}
+
+function boxWidthChanged() {
+	genericChanged("boxWidth", "boxWidth");
+	unCheckTemplate()
+}
+
+function boxHeightChanged() {
+	genericChanged("boxHeight", "boxHeight");
+	unCheckTemplate()
+}
+
+function cabinetLengthChanged() {
+	genericChanged("cabinetLength", "cabinetLength");
+}
+
+function cabinetWidthChanged() {
+	genericChanged("cabinetWidth", "cabinetWidth");
+}
+
+function cabinetHeightChanged() {
+	genericChanged("cabinetHeight", "cabinetHeight");
+}
+
+function boxTemplateChanged() {
+	var selected = document.querySelector('input[name="boxTemplate"]:checked'); 
+	if (selected  != null) {
+		values = selected.value.split("x");
+		metadata.boxLength = parseInt(values[0]);
+		metadata.boxWidth = parseInt(values[1]);
+		metadata.boxHeight = parseInt(values[2]);
+
+		document.getElementById("boxLength").value = values[0];
+		document.getElementById("boxWidth").value = values[1];
+		document.getElementById("boxHeight").value = values[2];
+		model = createModel();
+		drawPreview();
+	}
+}
+
+function defineInlayOhneKarton() {
+	unCheckTemplate();
+	metadata.boxLength = metadata.cabinetLength + 40;
+	metadata.boxWidth =  metadata.cabinetWidth + 40;
+	metadata.boxHeight = metadata.cabinetHeight + 40;
+	model = createModel();
+	drawPreview();
+}
+
+function unCheckTemplate() {
+	Array.from(document.getElementsByName('boxTemplate')).forEach(function(option_element) {
+		option_element.checked = false;
+	});
+}
+
+</script>
+</body>
+</html>
