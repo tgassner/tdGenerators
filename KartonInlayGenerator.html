@@ -72,6 +72,8 @@ var metadata = {
 
 	largeRadius : 5,
 	smallRadius : 0.99,
+
+	minDeltaBoxCabinet : 30,
 };
 
 function breiteMittlererLappenLinksRechts() {
@@ -99,6 +101,14 @@ function determineTotalHeight() {
 	return metadata.boxHeight;
 }
 
+function determineEini() {
+	return (metadata.boxWidth - kartonbreiteMinusLappenLinksRechts()) / 2;
+}
+
+function determineOba() {
+	return ((metadata.boxHeight - (metadata.cabinetHeight + 8 )) / 2) + 30;
+}
+
 document.addEventListener("DOMContentLoaded", function(event) { 
 	let thisYear = new Date();
 	document.getElementById('auftragsNummer').value = "K" + (thisYear.getYear() % 100);
@@ -115,14 +125,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 });
 
-
-
 function createModel() {
-
-	let eini = (metadata.boxWidth - kartonbreiteMinusLappenLinksRechts()) / 2;
-
-	let oba = ((metadata.boxHeight - (metadata.cabinetHeight + 8 )) / 2) + 30;
-
 	let obaLinkRechts = (metadata.boxHeight - innenLinksRechtsLaschenHoehe()) / 2;
 
 	let perforationBorderLeftRight = (metadata.boxHeight - innenLinksRechtsLaschenHoehe() - obenUntenFetteLasche() - obenUntenFetteLasche() - 2 - 2 - 5 - 5) / 4;
@@ -132,84 +135,157 @@ function createModel() {
 
 		// Main Border
 		lineBottom: new makerjs.paths.Line([0, 0], [metadata.boxWidth, 0]),
-		lineTop: new makerjs.paths.Line([0, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight]),
+		lineTop: new makerjs.paths.Line([0, determineTotalHeight()], [metadata.boxWidth, determineTotalHeight()]),
 
-		lineLeftUpper:  new makerjs.paths.Line([0, metadata.boxHeight], [0, metadata.boxHeight - obenUntenFetteLasche()]),
-		lineRightUpper:  new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight], [metadata.boxWidth, metadata.boxHeight - obenUntenFetteLasche()]),
+		lineLeftUpper:  new makerjs.paths.Line([0, determineTotalHeight()], [0, determineTotalHeight() - obenUntenFetteLasche()]),
+		lineRightUpper:  new makerjs.paths.Line([metadata.boxWidth, determineTotalHeight()], [metadata.boxWidth, determineTotalHeight() - obenUntenFetteLasche()]),
 		lineLeftLower:  new makerjs.paths.Line([0, 0], [0, obenUntenFetteLasche()]),
 		lineRightLower:  new makerjs.paths.Line([metadata.boxWidth, 0], [metadata.boxWidth, obenUntenFetteLasche()]),
 
-		schnittEiniLinksOben : new makerjs.paths.Line([0, metadata.boxHeight - obenUntenFetteLasche()], [ eini , metadata.boxHeight - obenUntenFetteLasche()]),
-		schnittEiniLinksUnten : new makerjs.paths.Line([0, obenUntenFetteLasche()], [ eini , obenUntenFetteLasche()]),
-		schnittEiniRechtsOben : new makerjs.paths.Line([metadata.boxWidth, metadata.boxHeight - obenUntenFetteLasche()], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche()]),
-		schnittEiniRechtsUnten : new makerjs.paths.Line([metadata.boxWidth, obenUntenFetteLasche()], [ metadata.boxWidth - eini , obenUntenFetteLasche()]),
+		schnittEiniLinksOben : new makerjs.paths.Line([0, determineTotalHeight() - obenUntenFetteLasche()], [ determineEini() , determineTotalHeight() - obenUntenFetteLasche()]),
+		schnittEiniLinksUnten : new makerjs.paths.Line([0, obenUntenFetteLasche()], [ determineEini() , obenUntenFetteLasche()]),
+		schnittEiniRechtsOben : new makerjs.paths.Line([metadata.boxWidth, determineTotalHeight() - obenUntenFetteLasche()], [ metadata.boxWidth - determineEini(), determineTotalHeight() - obenUntenFetteLasche()]),
+		schnittEiniRechtsUnten : new makerjs.paths.Line([metadata.boxWidth, obenUntenFetteLasche()], [ metadata.boxWidth - determineEini() , obenUntenFetteLasche()]),
 
-		schnittEiniLinksObenToBack : new makerjs.paths.Line([eini, metadata.boxHeight - obenUntenFetteLasche()], [ eini , metadata.boxHeight - obenUntenFetteLasche() - 2]),
-		schnittEiniLinksUntenToBack : new makerjs.paths.Line([eini, obenUntenFetteLasche()], [ eini , obenUntenFetteLasche() + 2]),
-		schnittEiniRechtsObenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche()], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche() - 2]),
-		schnittEiniRechtsUntenToBack : new makerjs.paths.Line([metadata.boxWidth - eini, obenUntenFetteLasche()], [ metadata.boxWidth - eini , obenUntenFetteLasche() + 2]),
+		schnittEiniLinksObenToBack : new makerjs.paths.Line([determineEini(), determineTotalHeight() - obenUntenFetteLasche()], [ determineEini() , determineTotalHeight() - obenUntenFetteLasche() - 2]),
+		schnittEiniLinksUntenToBack : new makerjs.paths.Line([determineEini(), obenUntenFetteLasche()], [ determineEini() , obenUntenFetteLasche() + 2]),
+		schnittEiniRechtsObenToBack : new makerjs.paths.Line([metadata.boxWidth - determineEini(), determineTotalHeight() - obenUntenFetteLasche()], [ metadata.boxWidth - determineEini(), determineTotalHeight() - obenUntenFetteLasche() - 2]),
+		schnittEiniRechtsUntenToBack : new makerjs.paths.Line([metadata.boxWidth - determineEini(), obenUntenFetteLasche()], [ metadata.boxWidth - determineEini() , obenUntenFetteLasche() + 2]),
 
-		schnittEiniLinksObenBack : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), metadata.boxHeight - obenUntenFetteLasche() - 2], [ eini , metadata.boxHeight - obenUntenFetteLasche() - 2]),
-		schnittEiniLinksUntenBack : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), obenUntenFetteLasche() + 2], [ eini , obenUntenFetteLasche() + 2]),
-		schnittEiniRechtsObenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), metadata.boxHeight - obenUntenFetteLasche() - 2], [ metadata.boxWidth - eini, metadata.boxHeight - obenUntenFetteLasche() - 2]),
-		schnittEiniRechtsUntenBack : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), obenUntenFetteLasche() + 2], [ metadata.boxWidth - eini , obenUntenFetteLasche() + 2]),
+		schnittEiniLinksObenBack : new makerjs.paths.Line([determineEini() - breiteMittlererLappenLinksRechts(), determineTotalHeight() - obenUntenFetteLasche() - 2], [ determineEini() , determineTotalHeight() - obenUntenFetteLasche() - 2]),
+		schnittEiniLinksUntenBack : new makerjs.paths.Line([determineEini() - breiteMittlererLappenLinksRechts(), obenUntenFetteLasche() + 2], [ determineEini() , obenUntenFetteLasche() + 2]),
+		schnittEiniRechtsObenBack : new makerjs.paths.Line([metadata.boxWidth - (determineEini() - breiteMittlererLappenLinksRechts()), determineTotalHeight() - obenUntenFetteLasche() - 2], [ metadata.boxWidth - determineEini(), determineTotalHeight() - obenUntenFetteLasche() - 2]),
+		schnittEiniRechtsUntenBack : new makerjs.paths.Line([metadata.boxWidth - (determineEini() - breiteMittlererLappenLinksRechts()), obenUntenFetteLasche() + 2], [ metadata.boxWidth - determineEini() , obenUntenFetteLasche() + 2]),
 
-		lineLeftMiddle : new makerjs.paths.Line([eini - breiteMittlererLappenLinksRechts(), metadata.boxHeight - obenUntenFetteLasche() - 2], [ eini - breiteMittlererLappenLinksRechts() , obenUntenFetteLasche() + 2]),
-		lineRightMiddle : new makerjs.paths.Line([metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()), metadata.boxHeight - obenUntenFetteLasche() - 2], [ metadata.boxWidth - (eini - breiteMittlererLappenLinksRechts()) , obenUntenFetteLasche() + 2]),
+		lineLeftMiddle : new makerjs.paths.Line([determineEini() - breiteMittlererLappenLinksRechts(), determineTotalHeight() - obenUntenFetteLasche() - 2], [ determineEini() - breiteMittlererLappenLinksRechts() , obenUntenFetteLasche() + 2]),
+		lineRightMiddle : new makerjs.paths.Line([metadata.boxWidth - (determineEini() - breiteMittlererLappenLinksRechts()), determineTotalHeight() - obenUntenFetteLasche() - 2], [ metadata.boxWidth - (determineEini() - breiteMittlererLappenLinksRechts()) , obenUntenFetteLasche() + 2]),
 
 
 		// Other Parts
-		leftMiddlePartUpper : new makerjs.paths.Line([eini, metadata.boxHeight - obaLinkRechts], [ eini + 40 , metadata.boxHeight - obaLinkRechts]),
-		leftMiddlePartLower : new makerjs.paths.Line([eini, obaLinkRechts], [ eini + 40 , obaLinkRechts]),
-		leftMiddlePartMiddle : new makerjs.paths.Line([eini + 40, metadata.boxHeight - obaLinkRechts], [ eini + 40 , obaLinkRechts]),
+		leftMiddlePartUpper : new makerjs.paths.Line([determineEini(), determineTotalHeight() - obaLinkRechts], [ determineEini() + 40 , determineTotalHeight() - obaLinkRechts]),
+		leftMiddlePartLower : new makerjs.paths.Line([determineEini(), obaLinkRechts], [ determineEini() + 40 , obaLinkRechts]),
+		leftMiddlePartMiddle : new makerjs.paths.Line([determineEini() + 40, determineTotalHeight() - obaLinkRechts], [ determineEini() + 40 , obaLinkRechts]),
 
-		rightMiddlePartUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - obaLinkRechts], [ metadata.boxWidth - eini - 40 , metadata.boxHeight - obaLinkRechts]),
-		rightMiddlePartLower : new makerjs.paths.Line([metadata.boxWidth - eini, obaLinkRechts], [ metadata.boxWidth - eini - 40 , obaLinkRechts]),
-		rightMiddlePartMiddle : new makerjs.paths.Line([metadata.boxWidth - eini - 40, metadata.boxHeight - obaLinkRechts], [ metadata.boxWidth - eini - 40 , obaLinkRechts]),
+		rightMiddlePartUpper : new makerjs.paths.Line([metadata.boxWidth - determineEini(), determineTotalHeight() - obaLinkRechts], [ metadata.boxWidth - determineEini() - 40 , determineTotalHeight() - obaLinkRechts]),
+		rightMiddlePartLower : new makerjs.paths.Line([metadata.boxWidth - determineEini(), obaLinkRechts], [ metadata.boxWidth - determineEini() - 40 , obaLinkRechts]),
+		rightMiddlePartMiddle : new makerjs.paths.Line([metadata.boxWidth - determineEini() - 40, determineTotalHeight() - obaLinkRechts], [ metadata.boxWidth - determineEini() - 40 , obaLinkRechts]),
 
-		upperMiddlePartLower : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba], [ metadata.boxWidth - eini - 55 , metadata.boxHeight - oba]),
-		upperMiddlePartLeft : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba], [ eini + 55 , metadata.boxHeight - oba + 30]),
-		upperMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, metadata.boxHeight - oba], [ metadata.boxWidth - eini - 55 , metadata.boxHeight - oba + 30]),
-		upperMiddlePartUpperLeft : new makerjs.paths.Line([eini + 55, metadata.boxHeight - oba + 30], [ eini + 55 + metadata.largeRadius + 0.01, metadata.boxHeight - oba + 30]),
-		upperMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, metadata.boxHeight - oba + 30], [ metadata.boxWidth - eini - 55 - metadata.largeRadius - 0.01, metadata.boxHeight - oba + 30]),
+		upperMiddlePartLower : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba()], [ metadata.boxWidth - determineEini() - 55 , determineTotalHeight() - determineOba()]),
+		upperMiddlePartLeft : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba()], [ determineEini() + 55 , determineTotalHeight() - determineOba() + 30]),
+		upperMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - determineEini() - 55, determineTotalHeight() - determineOba()], [ metadata.boxWidth - determineEini() - 55 , determineTotalHeight() - determineOba() + 30]),
+		upperMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba() + 30], [ determineEini() + 55 + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + 30]),
+		upperMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - determineEini() - 55, determineTotalHeight() - determineOba() + 30], [ metadata.boxWidth - determineEini() - 55 - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + 30]),
 
 
-		lowerMiddlePartLower : new makerjs.paths.Line([eini + 55, oba], [ metadata.boxWidth - eini - 55 , oba]),
-		lowerMiddlePartLeft : new makerjs.paths.Line([eini + 55, oba - 30], [ eini + 55 , oba]),
-		lowerMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, oba - 30], [ metadata.boxWidth - eini - 55 , oba]),
-		lowerMiddlePartUpperLeft : new makerjs.paths.Line([eini + 55, oba - 30], [ eini + 55 + metadata.largeRadius + 0.01, oba - 30]),
-		lowerMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - eini - 55, oba - 30], [ metadata.boxWidth - eini - 55 - metadata.largeRadius - 0.01, oba - 30]),
+		lowerMiddlePartLower : new makerjs.paths.Line([determineEini() + 55, determineOba()], [ metadata.boxWidth - determineEini() - 55 , determineOba()]),
+		lowerMiddlePartLeft : new makerjs.paths.Line([determineEini() + 55, determineOba() - 30], [ determineEini() + 55 , determineOba()]),
+		lowerMiddlePartRight : new makerjs.paths.Line([metadata.boxWidth - determineEini() - 55, determineOba() - 30], [ metadata.boxWidth - determineEini() - 55 , determineOba()]),
+		lowerMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + 55, determineOba() - 30], [ determineEini() + 55 + metadata.largeRadius + 0.01, determineOba() - 30]),
+		lowerMiddlePartUpperRight : new makerjs.paths.Line([metadata.boxWidth - determineEini() - 55, determineOba() - 30], [ metadata.boxWidth - determineEini() - 55 - metadata.largeRadius - 0.01, determineOba() - 30]),
 
 		
-		perforationLeftUpper : new makerjs.paths.Line([eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
-		perforationLeftLower : new makerjs.paths.Line([eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
+		perforationLeftUpper : new makerjs.paths.Line([determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
+		perforationLeftLower : new makerjs.paths.Line([determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
 
-		perforationRightUpper : new makerjs.paths.Line([metadata.boxWidth - eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ metadata.boxWidth - eini, metadata.boxHeight - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
-		perforationRightLower : new makerjs.paths.Line([metadata.boxWidth - eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ metadata.boxWidth - eini, obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
-
-		perforationCenterUpper : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, metadata.boxHeight - oba + 30], [metadata.boxWidth / 2 - 6.3, metadata.boxHeight - oba + 30]),
-		perforationCenterLower : new makerjs.paths.Line([metadata.boxWidth / 2 + 6.3, oba - 30], [metadata.boxWidth / 2 - 6.3, oba - 30]),
-
-		//auftragsnummer : new makerjs.path.text("graduate-regular","Hello",72,false,false),
+		perforationRightUpper : new makerjs.paths.Line([metadata.boxWidth - determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ metadata.boxWidth - determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
+		perforationRightLower : new makerjs.paths.Line([metadata.boxWidth - determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ metadata.boxWidth - determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
 	  },
 	  models: {
 	  	auftragsnummer : new makerjs.models.Text(font, document.getElementById('auftragsNummer').value, 6),
 	  }
 	};
-
-	//makerjs.model.rotate(modelLocal.models.auftragsnummer, 145, [100, 100]);
-
-	//makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [200, 200]);
-
 	makerjs.model.center(modelLocal.models.auftragsnummer);
 
 	makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [determineTotalWidth() / 2, determineTotalHeight() / 2]);
 
 	modelLocal.units = makerjs.unitType.Millimeter;
 
+	
+
+	if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 260) {
+		//if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 560) {
+			// 3 Spalten
+			// TODO
+		//} else {
+			// 2 Spalten
+			modelLocal.paths["splitterUpper1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba() + 30]);
+			modelLocal.paths["splitterUpper2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + 30, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + 30, determineTotalHeight() - determineOba() + 30]);
+
+			modelLocal.paths["splitterLower1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - 30, determineOba()], [(determineTotalWidth() / 2) - 30, determineOba() - 30]);
+			modelLocal.paths["splitterLower2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + 30, determineOba()], [(determineTotalWidth() / 2) + 30, determineOba() - 30]);
+
+			makerjs.path.converge(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.splitterUpper2, true, true);
+			makerjs.path.converge(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.splitterLower2, true, true);
+			
+			modelLocal.paths["upperMiddlePartLower2"] = new makerjs.paths.Line(
+				[determineEini() + 55, determineTotalHeight() - determineOba()], 
+				[(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba()]);
+
+			modelLocal.paths["lowerMiddlePartLower2"] = new makerjs.paths.Line(
+				[determineEini() + 55, determineOba()], 
+				[(determineTotalWidth() / 2) - 30, determineOba()]);
+
+			modelLocal.paths["upperMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba() + 30], [ (determineTotalWidth() / 2) - 30 - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + 30]),
+			modelLocal.paths["upperMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + 30, determineTotalHeight() - determineOba() + 30], [ (determineTotalWidth() / 2) + 30 + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + 30]),
+
+			modelLocal.paths["lowerMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - 30, determineOba() - 30], [ (determineTotalWidth() / 2) - 30 - metadata.largeRadius - 0.01, determineOba() - 30]),
+			modelLocal.paths["lowerMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + 30, determineOba() - 30], [ (determineTotalWidth() / 2) + 30 + metadata.largeRadius + 0.01, determineOba() - 30]),
+
+			modelLocal.paths.radiusLeftUpperxxx = makerjs.path.fillet(modelLocal.paths.splitterUpper2, modelLocal.paths.upperMiddlePartLower, metadata.largeRadius);
+			modelLocal.paths.radiusLeftUppervvv = makerjs.path.fillet(modelLocal.paths.splitterUpper1, modelLocal.paths.upperMiddlePartLower2, metadata.largeRadius);
+			modelLocal.paths.radiusLeftUpperwww = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLeft, modelLocal.paths.upperMiddlePartLower2, metadata.largeRadius);
+
+			modelLocal.paths.radiusLeftUpperyyy = makerjs.path.fillet(modelLocal.paths.splitterUpper1, modelLocal.paths.upperMiddlePartUpperLeft2, metadata.largeRadius);
+			modelLocal.paths.radiusLeftUpperzzz = makerjs.path.fillet(modelLocal.paths.splitterUpper2, modelLocal.paths.upperMiddlePartUpperRight2, metadata.largeRadius);
+
+			modelLocal.paths.radiusLeftLowerxxx = makerjs.path.fillet(modelLocal.paths.splitterLower2, modelLocal.paths.lowerMiddlePartLower, metadata.largeRadius);
+			modelLocal.paths.radiusLeftLowervvv = makerjs.path.fillet(modelLocal.paths.splitterLower1, modelLocal.paths.lowerMiddlePartLower2, metadata.largeRadius);
+			modelLocal.paths.radiusLeftLowerwww = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLeft, modelLocal.paths.lowerMiddlePartLower2, metadata.largeRadius);
+
+			modelLocal.paths.radiusLeftLoweryyy = makerjs.path.fillet(modelLocal.paths.splitterLower1, modelLocal.paths.lowerMiddlePartUpperLeft2, metadata.largeRadius);
+			modelLocal.paths.radiusLeftLowerzzz = makerjs.path.fillet(modelLocal.paths.splitterLower2, modelLocal.paths.lowerMiddlePartUpperRight2, metadata.largeRadius);
+
+
+
+			let perforatorUpperX1 = determineEini() + 55 + metadata.largeRadius + 0.01;
+			let perforatorUpperX2 = (determineTotalWidth() / 2) - 30 - metadata.largeRadius - 0.01;
+
+			let delta = perforatorUpperX2 - perforatorUpperX1;
+			let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* min 1 cm Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
+			let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
+
+			for (let i = 0; i < numberOfBzzzz; i++) {
+				let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
+				modelLocal.paths["perforationCenterUpperLeft" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + 30], [xLoop + 10, determineTotalHeight() - determineOba() + 30]);	
+				modelLocal.paths["perforationCenterLowerLeft" + i] = new makerjs.paths.Line([xLoop, determineOba() - 30], [xLoop + 10, determineOba() - 30]);
+				let delta = ((determineTotalWidth() / 2) + 30) - (determineEini() + 55);
+				modelLocal.paths["perforationCenterUpperRight" + i] = new makerjs.paths.Line([xLoop + delta, determineTotalHeight() - determineOba() + 30], [xLoop + delta + 10, determineTotalHeight() - determineOba() + 30]);	
+				modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop + delta, determineOba() - 30], [xLoop + delta + 10, determineOba() - 30]);
+			}
+		//}
+	} else {
+		// 1 Spalte
+		createPerforation1Column(modelLocal);
+	}
+
 	createRadius(modelLocal);
 
 	return modelLocal;
+}
+
+function createPerforation1Column(modelLocal) {
+	let perforatorUpperX1 = determineEini() + 55 + metadata.largeRadius + 0.01;
+	let perforatorUpperX2 = metadata.boxWidth - determineEini() - 55 - metadata.largeRadius - 0.01;
+
+	let delta = perforatorUpperX2 - perforatorUpperX1;
+	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* min 1 cm Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
+	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
+
+	for (let i = 0; i < numberOfBzzzz; i++) {
+		let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
+		modelLocal.paths["perforationCenterUpper" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + 30], [xLoop + 10, determineTotalHeight() - determineOba() + 30]);	
+		modelLocal.paths["perforationCenterLower" + i] = new makerjs.paths.Line([xLoop, determineOba() - 30], [xLoop + 10, determineOba() - 30]);
+	}
 }
 
 function createRadius(modelLocal) {
@@ -260,12 +336,14 @@ function createRadius(modelLocal) {
 	modelLocal.paths.radiusLowerPartUpperRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperRight, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
 }
 
+function boxSizeCheck() {
+	return metadata.cabinetLength + metadata.minDeltaBoxCabinet > metadata.boxLength ||
+		metadata.cabinetWidth + metadata.minDeltaBoxCabinet > metadata.boxWidth ||
+		metadata.cabinetHeight + metadata.minDeltaBoxCabinet > metadata.boxHeight
+}
+
 function drawPreview() {
-
-	if (metadata.cabinetLength + 30 > metadata.boxLength ||
-		metadata.cabinetWidth + 30 > metadata.boxWidth ||
-		metadata.cabinetHeight + 30 > metadata.boxHeight) {
-
+	if (boxSizeCheck()) {
 			document.getElementById('inleyPreviewDiv').innerHTML = "<div style='width:250px;'><div style='justify-content: center; display:flex'><?xml version='1.0' encoding='iso-8859-1'?> <svg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='200px'  viewBox='0 0 295.996 295.996' style='enable-background:new 0 0 295.996 295.996;' xml:space='preserve'> <g>  <path style='fill:#FFCE00;' d='M270.996,123.998c0-11.334-1.363-22.348-3.907-32.9c-7.269-15.152-17.35-28.708-29.558-39.996   c-22.391-13.376-48.766-20.666-76.771-19.644C83.492,34.274,23.139,99.196,25.955,176.463c0.413,11.304,2.17,22.239,5.087,32.673   c6.303,12.01,14.397,22.938,23.934,32.42c21.892,14.189,47.99,22.44,76.023,22.44C208.316,263.996,270.996,201.316,270.996,123.998   z M197.666,98.998c8.836,0,16,7.164,16,16s-7.164,16-16,16s-16-7.164-16-16S188.83,98.998,197.666,98.998z M98.666,98.998   c8.836,0,16,7.164,16,16s-7.164,16-16,16s-16-7.164-16-16S89.83,98.998,98.666,98.998z M87.959,215.396l-12.633-9.82   c21.441-27.579,57.392-40.777,91.587-33.631c21.262,4.447,40.353,16.391,53.756,33.631l-12.631,9.82   c-11.078-14.249-26.847-24.118-44.4-27.789C135.382,181.697,105.675,192.607,87.959,215.396z'/>  <path style='fill:#FFB100;' d='M267.089,91.098c2.544,10.553,3.907,21.566,3.907,32.9c0,77.318-62.68,139.998-139.998,139.998   c-28.032,0-54.131-8.251-76.023-22.44c23.88,23.744,56.766,38.44,93.023,38.44c72.784,0,131.998-59.214,131.998-131.998   C279.996,127.636,275.358,108.337,267.089,91.098z'/>  <path style='fill:#FFE454;' d='M160.76,31.457c28.006-1.021,54.381,6.268,76.771,19.644C213.985,29.328,182.521,16,147.998,16   C75.214,16,16,75.214,16,147.998c0,22.049,5.442,42.849,15.042,61.138c-2.917-10.434-4.674-21.369-5.087-32.673   C23.139,99.196,83.492,34.274,160.76,31.457z'/>  <path d='M147.998,0C66.392,0,0,66.392,0,147.998s66.392,147.998,147.998,147.998s147.998-66.392,147.998-147.998   S229.604,0,147.998,0z M147.998,279.996c-36.257,0-69.143-14.696-93.023-38.44c-9.536-9.482-17.631-20.41-23.934-32.42   C21.442,190.847,16,170.047,16,147.998C16,75.214,75.214,16,147.998,16c34.523,0,65.987,13.328,89.533,35.102   c12.208,11.288,22.289,24.844,29.558,39.996c8.27,17.239,12.907,36.538,12.907,56.9   C279.996,220.782,220.782,279.996,147.998,279.996z'/>  <path d='M163.638,187.607c17.554,3.671,33.322,13.54,44.4,27.789l12.631-9.82c-13.402-17.24-32.494-29.184-53.756-33.631   c-34.195-7.146-70.146,6.052-91.587,33.631l12.633,9.82C105.675,192.607,135.382,181.697,163.638,187.607z'/>  <circle cx='98.666' cy='114.998' r='16'/>  <circle cx='197.666' cy='114.998' r='16'/> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg></div> "
 				+ " <div style='color:#aa2222;text-align:center'> Der Karton ist zu klein :-( </div></div> ";
 			document.getElementById('downloadDXF').style.visibility = "hidden";
@@ -376,19 +454,22 @@ function boxHeightChanged() {
 
 function cabinetLengthChanged() {
 	genericChanged("cabinetLength", "cabinetLength");
+	checkBoxTemplate();
 }
 
 function cabinetWidthChanged() {
 	genericChanged("cabinetWidth", "cabinetWidth");
+	checkBoxTemplate();
 }
 
 function cabinetHeightChanged() {
 	genericChanged("cabinetHeight", "cabinetHeight");
+	checkBoxTemplate();
 }
 
 function boxTemplateChanged() {
 	var selected = document.querySelector('input[name="boxTemplate"]:checked'); 
-	if (selected  != null) {
+	if (selected != null) {
 		values = selected.value.split("x");
 		metadata.boxLength = parseInt(values[0]);
 		metadata.boxWidth = parseInt(values[1]);
@@ -399,6 +480,28 @@ function boxTemplateChanged() {
 		document.getElementById("boxHeight").value = values[2];
 		model = createModel();
 		drawPreview();
+	}
+}
+
+function checkBoxTemplate() {
+	var radios = document.getElementsByName("boxTemplate");
+    for( i = 0; i < radios.length; i++ ) {
+		values = radios[i].value.split("x");
+        let boxLength = parseInt(values[0]);
+		let boxWidth = parseInt(values[1]);
+		let boxHeight = parseInt(values[2]);
+
+
+		if (metadata.cabinetLength + metadata.minDeltaBoxCabinet <= boxLength &&
+			metadata.cabinetWidth + metadata.minDeltaBoxCabinet <= boxWidth &&
+			metadata.cabinetHeight + metadata.minDeltaBoxCabinet <= boxHeight) {
+				radios[i].checked = true;
+				return;
+		}
+    }
+	var selected = document.querySelector('input[name="boxTemplate"]:checked'); 
+	if (selected != null) {
+		selected.checked = false;
 	}
 }
 
