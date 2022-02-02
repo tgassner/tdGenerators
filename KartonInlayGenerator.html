@@ -107,7 +107,6 @@ function determineTotalHeight() {
 }
 
 function determineEini() {
-	//console.log("determineEini " + (isCartonWidtherThanBox() ? "true" : "false") + " breiteMittlererLappenLinksRechts()= " + breiteMittlererLappenLinksRechts());
 	return isCartonWidtherThanBox() ? ((metadata.boxWidth - kartonbreiteMinusLappenLinksRechts()) / 2) : breiteMittlererLappenLinksRechts();
 }
 
@@ -138,8 +137,6 @@ function createModel() {
 	let perforationBorderLeftRight = (metadata.boxHeight - innenLinksRechtsLaschenHoehe() - obenUntenFetteLasche() - obenUntenFetteLasche() - 2 - 2 - 5 - 5) / 4;
 
 	let lineLeftUpperX = (determineTotalWidth() - metadata.boxWidth ) / 2;
-
-	console.log("determineEini()" + determineEini());
 
 	let leftXOfFettenSeitlichenMittlerenLappen = isCartonWidtherThanBox() ? determineEini() - breiteMittlererLappenLinksRechts() : 0;
 
@@ -234,12 +231,6 @@ function createModel() {
 }
 
 function createColumnSpitAndPerforation2Columns(modelLocal) {
-	console.log("----");
-	console.log(determineTotalWidth());
-	console.log(metadata.boxWidth);
-	console.log(breiteMittlererLappenLinksRechts() * 2 + kartonbreiteMinusLappenLinksRechts());
-	console.log(determineTotalWidth() / 2);
-
 	modelLocal.paths["splitterUpper1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - 30, determineTotalHeight() - determineOba() + 30]);
 	modelLocal.paths["splitterUpper2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + 30, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + 30, determineTotalHeight() - determineOba() + 30]);
 
@@ -303,11 +294,6 @@ function createPerforation1Column(modelLocal) {
 	let delta = perforatorUpperX2 - perforatorUpperX1;
 	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* min 1 cm Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
 	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
-
-	console.log("XXXXXXXXXXXXX");
-	console.log("determineTotalHeight()= " + determineTotalHeight());
-	console.log("determineOba()= " + determineOba());
-	console.log(determineTotalHeight() - determineOba() + 30);
 
 	for (let i = 0; i < numberOfBzzzz; i++) {
 		let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
