@@ -42,7 +42,7 @@
 			<input type="number" id="boxHeight" name="boxHeight" onchange="boxHeightChanged()" style="width: 60px;">
 		</div>
 		<div style="background-color: blanchedalmond; padding: 15px; width: 100%;">
-			<div style='font-weight: bold;'>Inlay ohne Karton Vitrine + 40mm Schutze</div>
+			<div style='font-weight: bold;'>Inlay ohne Karton Vitrine + 40mm Schutz pro Seite</div>
 			<button id="downloadInlayOhneKarton" onclick="defineInlayOhneKarton()" title="definiert die maße des Kartons in einer größe, die 40 mm größer ist als die Vitrine,\nfür nur Kantenschutz z.B.: für Botendienst"> Inlay ohne Karton</button>
 		</div>
 	</div>
@@ -63,9 +63,16 @@ var font;
 var model;
 var metadata = {
 	// cabinet = Vitrine
+
+	/*
 	cabinetLength : 800, //359,
 	cabinetWidth : 700, //159,
 	cabinetHeight : 600, //124,
+*/
+
+	cabinetLength : 359,
+	cabinetWidth : 159,
+	cabinetHeight : 124,
 
 	// Box = Karton
 	boxLength : 1000, //500,
@@ -78,19 +85,19 @@ var metadata = {
 	minDeltaBoxCabinet : 60,
 };
 
-function breiteMittlererLappenLinksRechts() { // x
+function breiteMittlererLappenLinksRechts() {
 	return (metadata.boxLength - metadata.cabinetLength - 16) / 2;
 }
 
-function kartonbreiteMinusLappenLinksRechts() { // x
+function kartonbreiteMinusLappenLinksRechts() {
 	return metadata.cabinetWidth + 12;
 }
 
-function obenUntenFetteLasche() { // x
+function obenUntenFetteLasche() {
 	return determineTotalHeight() * 0.18;
 }
 
-function innenLinksRechtsLaschenHoehe() {  // x
+function innenLinksRechtsLaschenHoehe() {
 	return determineTotalHeight() * 0.34;
 }
 
@@ -98,15 +105,15 @@ function isCartonWidtherThanBox() {
 	return metadata.boxWidth > (breiteMittlererLappenLinksRechts() * 2 + kartonbreiteMinusLappenLinksRechts());
 }
 
-function determineTotalWidth() { // x
+function determineTotalWidth() {
 	return Math.max(metadata.boxWidth, breiteMittlererLappenLinksRechts() * 2 + kartonbreiteMinusLappenLinksRechts());
 }
 
-function determineTotalHeight() { // x
+function determineTotalHeight() {
 	return metadata.boxHeight;
 }
 
-function determineObenUntenLaschenHeight() { // x
+function determineObenUntenLaschenHeight() {
 	return metadata.boxWidth * 0.1;
 }
 
@@ -114,7 +121,7 @@ function determineLinksRechtsLascheBreite() {
 	return metadata.boxLength * 0.1
 }
 
-function determineEini() { // x
+function determineEini() {
 	return isCartonWidtherThanBox() ? ((metadata.boxWidth - kartonbreiteMinusLappenLinksRechts()) / 2) : breiteMittlererLappenLinksRechts();
 }
 
@@ -180,25 +187,25 @@ function createModel() {
 
 
 		// Other Parts
-		leftMiddlePartUpper : new makerjs.paths.Line([determineEini(), determineTotalHeight() - obaLinkRechts], [ determineEini() + 40 , determineTotalHeight() - obaLinkRechts]),
-		leftMiddlePartLower : new makerjs.paths.Line([determineEini(), obaLinkRechts], [ determineEini() + 40 , obaLinkRechts]),
-		leftMiddlePartMiddle : new makerjs.paths.Line([determineEini() + 40, determineTotalHeight() - obaLinkRechts], [ determineEini() + 40 , obaLinkRechts]),
+		leftMiddlePartUpper : new makerjs.paths.Line([determineEini(), determineTotalHeight() - obaLinkRechts], [ determineEini() + determineLinksRechtsLascheBreite() , determineTotalHeight() - obaLinkRechts]),
+		leftMiddlePartLower : new makerjs.paths.Line([determineEini(), obaLinkRechts], [ determineEini() + determineLinksRechtsLascheBreite() , obaLinkRechts]),
+		leftMiddlePartMiddle : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite(), determineTotalHeight() - obaLinkRechts], [ determineEini() + determineLinksRechtsLascheBreite() , obaLinkRechts]),
 
-		rightMiddlePartUpper : new makerjs.paths.Line([determineTotalWidth() - determineEini(), determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - 40 , determineTotalHeight() - obaLinkRechts]),
-		rightMiddlePartLower : new makerjs.paths.Line([determineTotalWidth() - determineEini(), obaLinkRechts], [ determineTotalWidth() - determineEini() - 40 , obaLinkRechts]),
-		rightMiddlePartMiddle : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 40, determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - 40 , obaLinkRechts]),
+		rightMiddlePartUpper : new makerjs.paths.Line([determineTotalWidth() - determineEini(), determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , determineTotalHeight() - obaLinkRechts]),
+		rightMiddlePartLower : new makerjs.paths.Line([determineTotalWidth() - determineEini(), obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , obaLinkRechts]),
+		rightMiddlePartMiddle : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite(), determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , obaLinkRechts]),
 
-		upperMiddlePartLower : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - 55 , determineTotalHeight() - determineOba()]),
-		upperMiddlePartLeft : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba()], [ determineEini() + 55 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - 55 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + 55, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineEini() + 55 + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - 55 - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+		upperMiddlePartLower : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineTotalHeight() - determineOba()]),
+		upperMiddlePartLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+		upperMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+		upperMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+		upperMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
 
-		lowerMiddlePartLower : new makerjs.paths.Line([determineEini() + 55, determineOba()], [ determineTotalWidth() - determineEini() - 55 , determineOba()]),
-		lowerMiddlePartLeft : new makerjs.paths.Line([determineEini() + 55, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + 55 , determineOba()]),
-		lowerMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - 55 , determineOba()]),
-		lowerMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + 55, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + 55 + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
-		lowerMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - 55 - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
+		lowerMiddlePartLower : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineOba()]),
+		lowerMiddlePartLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 , determineOba()]),
+		lowerMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineOba()]),
+		lowerMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
+		lowerMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
 	  },
 	  models: {
 	  	//auftragsnummer : new makerjs.models.Text(font, document.getElementById('auftragsNummer').value, 6),
@@ -213,8 +220,8 @@ function createModel() {
 
 	modelLocal.units = makerjs.unitType.Millimeter;
 
-	if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 260) {
-		//if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 560) {
+	if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (determineEini() + determineLinksRechtsLascheBreite() + 15)) >= 260) {
+		//if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (determineEini() + determineLinksRechtsLascheBreite() + 15)) >= 560) {
 			// 3 Spalten
 			// TODO
 		//} else {
@@ -351,8 +358,8 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 }
 
 function createPerforation1Column(modelLocal) {
-	let perforatorUpperX1 = determineEini() + 55 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = metadata.boxWidth - determineEini() - 55 - metadata.largeRadius - 0.01;
+	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
+	let perforatorUpperX2 = metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
 
 	let delta = perforatorUpperX2 - perforatorUpperX1;
 	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
