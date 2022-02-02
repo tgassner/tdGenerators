@@ -64,16 +64,16 @@ var model;
 var metadata = {
 	// cabinet = Vitrine
 
-	/*
+
 	cabinetLength : 800, //359,
 	cabinetWidth : 700, //159,
 	cabinetHeight : 600, //124,
-*/
 
+/*
 	cabinetLength : 359,
 	cabinetWidth : 159,
 	cabinetHeight : 124,
-
+*/
 	// Box = Karton
 	boxLength : 1000, //500,
 	boxWidth : 780, //300,
@@ -311,11 +311,11 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 	makerjs.path.converge(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.splitterLower2, true, true);
 	
 	modelLocal.paths["upperMiddlePartLower2"] = new makerjs.paths.Line(
-		[determineEini() + 55, determineTotalHeight() - determineOba()], 
+		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], 
 		[(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba()]);
 
 	modelLocal.paths["lowerMiddlePartLower2"] = new makerjs.paths.Line(
-		[determineEini() + 55, determineOba()], 
+		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba()], 
 		[(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineOba()]);
 
 	modelLocal.paths["upperMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - determineObenUntenLaschenHeight() - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
@@ -340,7 +340,7 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 
 
 
-	let perforatorUpperX1 = determineEini() + 55 + metadata.largeRadius + 0.01;
+	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
 	let perforatorUpperX2 = (determineTotalWidth() / 2) - determineObenUntenLaschenHeight() - metadata.largeRadius - 0.01;
 
 	let delta = perforatorUpperX2 - perforatorUpperX1;
@@ -351,7 +351,7 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 		let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
 		modelLocal.paths["perforationCenterUpperLeft" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + 10, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
 		modelLocal.paths["perforationCenterLowerLeft" + i] = new makerjs.paths.Line([xLoop, determineOba() - determineObenUntenLaschenHeight()], [xLoop + 10, determineOba() - determineObenUntenLaschenHeight()]);
-		let delta = ((determineTotalWidth() / 2) + determineObenUntenLaschenHeight()) - (determineEini() + 55);
+		let delta = ((determineTotalWidth() / 2) + determineObenUntenLaschenHeight()) - (determineEini() + determineLinksRechtsLascheBreite() + 15);
 		modelLocal.paths["perforationCenterUpperRight" + i] = new makerjs.paths.Line([xLoop + delta, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + delta + 10, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
 		modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop + delta, determineOba() - determineObenUntenLaschenHeight()], [xLoop + delta + 10, determineOba() - determineObenUntenLaschenHeight()]);
 	}
