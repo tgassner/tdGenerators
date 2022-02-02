@@ -192,13 +192,6 @@ function createModel() {
 		lowerMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineOba() - 30], [ determineTotalWidth() - determineEini() - 55 , determineOba()]),
 		lowerMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + 55, determineOba() - 30], [ determineEini() + 55 + metadata.largeRadius + 0.01, determineOba() - 30]),
 		lowerMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - 55, determineOba() - 30], [ determineTotalWidth() - determineEini() - 55 - metadata.largeRadius - 0.01, determineOba() - 30]),
-
-		
-		perforationLeftUpper : new makerjs.paths.Line([determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
-		perforationLeftLower : new makerjs.paths.Line([determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
-
-		perforationRightUpper : new makerjs.paths.Line([determineTotalWidth() - determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight)], [ determineTotalWidth() - determineEini(), determineTotalHeight() - (obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5)]),
-		perforationRightLower : new makerjs.paths.Line([determineTotalWidth() - determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight], [ determineTotalWidth() - determineEini(), obenUntenFetteLasche() + 2 + perforationBorderLeftRight + 5]),
 	  },
 	  models: {
 	  	auftragsnummer : new makerjs.models.Text(font, document.getElementById('auftragsNummer').value, 6),
@@ -209,8 +202,6 @@ function createModel() {
 	makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [determineTotalWidth() / 2, determineTotalHeight() / 2]);
 
 	modelLocal.units = makerjs.unitType.Millimeter;
-
-	
 
 	if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 260) {
 		//if (((metadata.boxWidth - determineEini() - 55) - (determineEini() + 55)) >= 560) {
@@ -227,7 +218,29 @@ function createModel() {
 
 	createRadius(modelLocal);
 
+	createVErticalPerforation(modelLocal);
+
 	return modelLocal;
+}
+
+function createVErticalPerforation(modelLocal) {
+	let verticalPerforatorTotalUpperY = determineTotalHeight() - obenUntenFetteLasche() - 2;
+	let verticalPerforatorLowerY = obenUntenFetteLasche() + 2;
+	let totalDelta = verticalPerforatorTotalUpperY - verticalPerforatorLowerY;
+
+
+	let delta = (totalDelta - innenLinksRechtsLaschenHoehe()) / 2;
+	let numberOfBzzzz = Math.floor((((delta) / 5 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 3 /* Teile in perforiert und nicht perforiert */ );
+	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 5)) / (numberOfBzzzz + 1);
+
+	for (let i = 0; i < numberOfBzzzz; i++) {
+		let yLoop = verticalPerforatorLowerY + (i * (notPerforierterGapWidth + 5)) + notPerforierterGapWidth;
+		modelLocal.paths["verticalPerforatorLeftLower" + i] = new makerjs.paths.Line([determineEini(), yLoop], [determineEini(), yLoop + 5]);	
+		modelLocal.paths["verticalPerforatorRightLower" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop], [determineTotalWidth() -  determineEini(), yLoop + 5]);
+
+		modelLocal.paths["verticalPerforatorLeftUpper" + i] = new makerjs.paths.Line([determineEini(), yLoop + delta + innenLinksRechtsLaschenHoehe()], [determineEini(), yLoop + 5 + delta + innenLinksRechtsLaschenHoehe()]);	
+		modelLocal.paths["verticalPerforatorRightUpper" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop + delta + innenLinksRechtsLaschenHoehe()], [determineTotalWidth() -  determineEini(), yLoop + 5 + delta + innenLinksRechtsLaschenHoehe()]);
+	}
 }
 
 function createColumnSpitAndPerforation2Columns(modelLocal) {
@@ -274,7 +287,7 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 	let perforatorUpperX2 = (determineTotalWidth() / 2) - 30 - metadata.largeRadius - 0.01;
 
 	let delta = perforatorUpperX2 - perforatorUpperX1;
-	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* min 1 cm Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
+	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
 	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
 
 	for (let i = 0; i < numberOfBzzzz; i++) {
@@ -292,7 +305,7 @@ function createPerforation1Column(modelLocal) {
 	let perforatorUpperX2 = metadata.boxWidth - determineEini() - 55 - metadata.largeRadius - 0.01;
 
 	let delta = perforatorUpperX2 - perforatorUpperX1;
-	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* min 1 cm Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
+	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
 	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
 
 	for (let i = 0; i < numberOfBzzzz; i++) {
