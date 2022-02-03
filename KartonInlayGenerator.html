@@ -25,13 +25,13 @@
 		<div style="background-color: aliceblue;height: fit-content;clear: both; width: 100%;display: table;">
 			<div style="float: left; padding-top: 15px; padding-bottom: 5px; display:table-cell; width:55%">
 				<div style='font-weight: bold; margin-left: 15px; margin-bottom: 8px;'>Vitrine LxBxH Außenmaße</div>
-				<div style="float: left; width:10px; margin:7px; margin-left: 35px; ">L: </div>              <input type="number" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 60px;margin:5px">mm<br>
+				<div style="float: left; width:10px; margin:7px; margin-left: 35px; ">L: </div>            <input type="number" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 60px;margin:5px">mm<br>
 				<div style="float: left; width:10px; margin:6px; margin-left: 35px; clear:left;">B: </div> <input type="number" id="cabinetWidth"  name="cabinetWidth"  onchange="cabinetWidthChanged()"  style="width: 60px;margin:5px">mm<br>
 				<div style="float: left; width:10px; margin:7px; margin-left: 35px; clear:left;">H: </div> <input type="number" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 60px;margin:5px">mm
 			</div>
 			
 			<div style="width:45%;float: left;display:table-cell">
-				<div style="margin:10px;">Döner</div>
+				<div id="infoMessage" style="padding:10px;"></div>
 			</div>
 		</div>
 		
@@ -603,6 +603,9 @@ function genericChanged(elementId, metaDataFieldName1, metaDataFieldName2, metaD
 }
 
 function boxLengthChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
     if (genericChanged("boxLength", "boxLength")) {
 		model = createModel();
 		drawPreview();
@@ -611,6 +614,10 @@ function boxLengthChanged() {
 }
 
 function boxWidthChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+
 	if (genericChanged("boxWidth", "boxWidth")) {
 		model = createModel();
 		drawPreview();
@@ -619,6 +626,9 @@ function boxWidthChanged() {
 }
 
 function boxHeightChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
 	if (genericChanged("boxHeight", "boxHeight")) {
 		model = createModel();
 		drawPreview();
@@ -627,6 +637,9 @@ function boxHeightChanged() {
 }
 
 function cabinetLengthChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
 	if (genericChanged("cabinetLength", "cabinetLength")) {
 		checkBoxTemplate();
 		model = createModel();
@@ -635,6 +648,9 @@ function cabinetLengthChanged() {
 }
 
 function cabinetWidthChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
 	if (genericChanged("cabinetWidth", "cabinetWidth")) {
 		checkBoxTemplate();
 		model = createModel();
@@ -643,6 +659,34 @@ function cabinetWidthChanged() {
 }
 
 function cabinetHeightChanged() {
+	let length = parseInt(document.getElementById("cabinetLength").value);
+	let width = parseInt(document.getElementById("cabinetWidth").value);
+	let height = parseInt(document.getElementById("cabinetHeight").value);
+	
+	let lbh = [length, width, height];
+	console.log("Muhaha");
+	console.log(lbh);
+	lbh = lbh.sort();
+	lbh = lbh.reverse();
+	console.log(lbh);
+
+	if ((length != lbh[0]) || (width != lbh[1]) || (height != lbh[2])){
+		document.getElementById("infoMessage").innerHTML = "Achtung Länge, Breite und Höhe wurden absteigent sortiert!";
+		document.getElementById("infoMessage").style.backgroundColor = "yellow";
+
+		document.getElementById("cabinetLength").value = lbh[0];
+		document.getElementById("cabinetWidth").value = lbh[1];
+		document.getElementById("cabinetHeight").value = lbh[2];
+
+		metadata.cabinetLength = lbh[0];
+		metadata.cabinetWidth = lbh[1];
+		metadata.cabinetHeight = lbh[2];
+
+	} else {
+		document.getElementById("infoMessage").innerHTML = "";
+		document.getElementById("infoMessage").style.backgroundColor = "";
+	}
+
 	if (genericChanged("cabinetHeight", "cabinetHeight")) {
 		checkBoxTemplate();
 		model = createModel();
@@ -651,6 +695,8 @@ function cabinetHeightChanged() {
 }
 
 function boxTemplateChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
 	var selected = document.querySelector('input[name="boxTemplate"]:checked'); 
 	if (selected != null) {
 		values = selected.value.split("x");
