@@ -389,7 +389,6 @@ function calculateGenericPerforation(start, bruttoPerforatorLength) {
 }
 
 function createVerticalPerforation(modelLocal) {
-	console.log(obenUntenFetteLasche());
 	let verticalPerforatorLowerY = obenUntenFetteLasche() + 2;
 	let singleDelta = (determineTotalHeight() - innenLinksRechtsLaschenHoehe() - ( 2 * verticalPerforatorLowerY)) / 2;
 
@@ -402,6 +401,21 @@ function createVerticalPerforation(modelLocal) {
 		modelLocal.paths["verticalPerforatorRightLower" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop1], [determineTotalWidth() -  determineEini(), yLoop1 + perfInfo.bzzzLength]);	
 		modelLocal.paths["verticalPerforatorLeftUpper" + i] = new makerjs.paths.Line([determineEini(), yLoop2], [determineEini(), yLoop2 + perfInfo.bzzzLength]);	
 		modelLocal.paths["verticalPerforatorRightUpper" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop2], [determineTotalWidth() -  determineEini(), yLoop2 + perfInfo.bzzzLength]);	
+	}
+}
+
+function createPerforation1Column(modelLocal) {
+	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
+	let perforatorUpperX2 = metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
+
+	let delta = perforatorUpperX2 - perforatorUpperX1;
+
+	let perfInfo = calculateGenericPerforation(perforatorUpperX1, delta);
+
+	for (let i = 0; i < perfInfo.numberOfBzzzz; i++) {
+		let xLoop = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength));
+		modelLocal.paths["perforationCenterUpper" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + perfInfo.bzzzLength, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
+		modelLocal.paths["perforationCenterLower" + i] = new makerjs.paths.Line([xLoop, determineOba() - determineObenUntenLaschenHeight()], [xLoop + perfInfo.bzzzLength, determineOba() - determineObenUntenLaschenHeight()]);
 	}
 }
 
@@ -462,21 +476,6 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 	}
 }
 
-function createPerforation1Column(modelLocal) {
-	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
-
-	let delta = perforatorUpperX2 - perforatorUpperX1;
-	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
-	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
-
-	for (let i = 0; i < numberOfBzzzz; i++) {
-		let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
-		modelLocal.paths["perforationCenterUpper" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + 10, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
-		modelLocal.paths["perforationCenterLower" + i] = new makerjs.paths.Line([xLoop, determineOba() - determineObenUntenLaschenHeight()], [xLoop + 10, determineOba() - determineObenUntenLaschenHeight()]);
-	}
-}
-
 function createRadius(modelLocal) {
 
 	// Main Border
@@ -528,7 +527,7 @@ function createRadius(modelLocal) {
 function boxSizeCheck() {
 	return metadata.cabinetLength + metadata.minDeltaBoxCabinet > metadata.boxLength ||
 		metadata.cabinetWidth + metadata.minDeltaBoxCabinet > metadata.boxWidth ||
-		metadata.cabinetHeight + metadata.minDeltaBoxCabinet > metadata.boxHeight
+		metadata.cabinetHeight + metadata.minDeltaBoxCabinet > metadata.boxHeight;
 }
 
 function drawPreview() {
@@ -545,9 +544,9 @@ function drawPreview() {
 
 	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : previewWidth + "px", "height" : previewHeight + "px", "id" : "preViewSvg" } });
 		
-	document.getElementById('inleyPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>"
+	document.getElementById('inleyPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>";
 	
-	document.getElementById('backgroundDiv').innerHTML = "<div id='contentDiv'></div>"
+	document.getElementById('backgroundDiv').innerHTML = "<div id='contentDiv'></div>";
 	
 	document.getElementById('contentDiv').innerHTML = svg;
 	document.getElementById('contentDiv').style.position = "relative";
