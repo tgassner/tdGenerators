@@ -136,11 +136,10 @@ var model;
 var metadata = {
 	// cabinet = Vitrine
 
-	/*
-	cabinetLength : 800, //359,
-	cabinetWidth : 700, //159,
-	cabinetHeight : 600, //124,
-*/
+	//cabinetLength : 800, //359,
+	//cabinetWidth : 700, //159,
+	//cabinetHeight : 600, //124,
+
 
 	cabinetLength : 359,
 	cabinetWidth : 159,
@@ -361,23 +360,48 @@ function createLogo(modelLocal) {
 	makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [determineTotalWidth() / 2 - (25 * scalefactor), determineTotalHeight() / 2 - (45 * scalefactor)]);
 }
 
+function calculateGenericPerforation(start, bruttoPerforatorLength) {
+	const bzzzNoOfmm = 5;
+	const gapNoOfBzzzz = 3
+
+	
+	if (bruttoPerforatorLength >= (((gapNoOfBzzzz * 2) + 1) * bzzzNoOfmm)) { // normal calculation of bzzz
+		var numberOfBzzzzLocal = Math.floor((((bruttoPerforatorLength / bzzzNoOfmm /* mm ist die berechnungseinheit */) - gapNoOfBzzzz /* rechten Rand bestehend aus 3 mal 5 mm abziehen */) / (1 + gapNoOfBzzzz) /* (bzz und zwischenraum) bestehen aus 4 berechnungseinheiten */ ));
+		let perforatorEinheiten = (numberOfBzzzzLocal * (1 + gapNoOfBzzzz)) + gapNoOfBzzzz;
+		let nettoPerforatorLength = perforatorEinheiten * bzzzNoOfmm;
+		let halfTara = (bruttoPerforatorLength - nettoPerforatorLength) / 2;
+		var firstBzzzzLocal = start + halfTara + (gapNoOfBzzzz * bzzzNoOfmm);
+	} else if (bruttoPerforatorLength >= (((gapNoOfBzzzz - 1) * 2) + 1) * bzzzNoOfmm) { // special logic for small bruttoPerforatorLength values
+		var numberOfBzzzzLocal = 1;
+		var firstBzzzzLocal = (bruttoPerforatorLength - bzzzNoOfmm) / 2 + start;
+	} else {
+		var numberOfBzzzzLocal = 0;
+	}
+
+	let ret = {
+		numberOfBzzzz : numberOfBzzzzLocal,
+		firstBzzzz : firstBzzzzLocal,
+		bzzzLength : bzzzNoOfmm,
+		gapLength : gapNoOfBzzzz * bzzzNoOfmm,
+	}
+
+	return ret;
+}
+
 function createVerticalPerforation(modelLocal) {
-	let verticalPerforatorTotalUpperY = determineTotalHeight() - obenUntenFetteLasche() - 2;
+	console.log(obenUntenFetteLasche());
 	let verticalPerforatorLowerY = obenUntenFetteLasche() + 2;
-	let totalDelta = verticalPerforatorTotalUpperY - verticalPerforatorLowerY;
+	let singleDelta = (determineTotalHeight() - innenLinksRechtsLaschenHoehe() - ( 2 * verticalPerforatorLowerY)) / 2;
 
-
-	let delta = (totalDelta - innenLinksRechtsLaschenHoehe()) / 2;
-	let numberOfBzzzz = Math.floor((((delta) / 5 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 3 /* Teile in perforiert und nicht perforiert */ );
-	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 5)) / (numberOfBzzzz + 1);
-
-	for (let i = 0; i < numberOfBzzzz; i++) {
-		let yLoop = verticalPerforatorLowerY + (i * (notPerforierterGapWidth + 5)) + notPerforierterGapWidth;
-		modelLocal.paths["verticalPerforatorLeftLower" + i] = new makerjs.paths.Line([determineEini(), yLoop], [determineEini(), yLoop + 5]);	
-		modelLocal.paths["verticalPerforatorRightLower" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop], [determineTotalWidth() -  determineEini(), yLoop + 5]);
-
-		modelLocal.paths["verticalPerforatorLeftUpper" + i] = new makerjs.paths.Line([determineEini(), yLoop + delta + innenLinksRechtsLaschenHoehe()], [determineEini(), yLoop + 5 + delta + innenLinksRechtsLaschenHoehe()]);	
-		modelLocal.paths["verticalPerforatorRightUpper" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop + delta + innenLinksRechtsLaschenHoehe()], [determineTotalWidth() -  determineEini(), yLoop + 5 + delta + innenLinksRechtsLaschenHoehe()]);
+	let perfInfo = calculateGenericPerforation(verticalPerforatorLowerY, singleDelta);
+	
+	for (let i = 0; i < perfInfo.numberOfBzzzz; i++) {
+		let yLoop1 = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength));
+		let yLoop2 = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength)) + singleDelta + innenLinksRechtsLaschenHoehe();
+		modelLocal.paths["verticalPerforatorLeftLower" + i] = new makerjs.paths.Line([determineEini(), yLoop1], [determineEini(), yLoop1 + perfInfo.bzzzLength]);	
+		modelLocal.paths["verticalPerforatorRightLower" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop1], [determineTotalWidth() -  determineEini(), yLoop1 + perfInfo.bzzzLength]);	
+		modelLocal.paths["verticalPerforatorLeftUpper" + i] = new makerjs.paths.Line([determineEini(), yLoop2], [determineEini(), yLoop2 + perfInfo.bzzzLength]);	
+		modelLocal.paths["verticalPerforatorRightUpper" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop2], [determineTotalWidth() -  determineEini(), yLoop2 + perfInfo.bzzzLength]);	
 	}
 }
 
@@ -666,8 +690,8 @@ function cabinetHeightChanged() {
 	let lbh = [length, width, height];
 	console.log("Muhaha");
 	console.log(lbh);
-	lbh = lbh.sort();
-	lbh = lbh.reverse();
+	lbh.sort(function(a, b){return a-b});
+	lbh.reverse();
 	console.log(lbh);
 
 	if ((length != lbh[0]) || (width != lbh[1]) || (height != lbh[2])){
