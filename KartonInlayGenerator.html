@@ -136,14 +136,14 @@ var model;
 var metadata = {
 	// cabinet = Vitrine
 
-	//cabinetLength : 800, //359,
-	//cabinetWidth : 700, //159,
-	//cabinetHeight : 600, //124,
+	cabinetLength : 800, //359,
+	cabinetWidth : 700, //159,
+	cabinetHeight : 600, //124,
 
 
-	cabinetLength : 359,
-	cabinetWidth : 159,
-	cabinetHeight : 124,
+	//cabinetLength : 359,
+	//cabinetWidth : 159,
+	//cabinetHeight : 124,
 
 	// Box = Karton
 	boxLength : 1000, //500,
@@ -396,7 +396,7 @@ function createVerticalPerforation(modelLocal) {
 	
 	for (let i = 0; i < perfInfo.numberOfBzzzz; i++) {
 		let yLoop1 = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength));
-		let yLoop2 = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength)) + singleDelta + innenLinksRechtsLaschenHoehe();
+		let yLoop2 = yLoop1 + singleDelta + innenLinksRechtsLaschenHoehe();
 		modelLocal.paths["verticalPerforatorLeftLower" + i] = new makerjs.paths.Line([determineEini(), yLoop1], [determineEini(), yLoop1 + perfInfo.bzzzLength]);	
 		modelLocal.paths["verticalPerforatorRightLower" + i] = new makerjs.paths.Line([determineTotalWidth() -  determineEini(), yLoop1], [determineTotalWidth() -  determineEini(), yLoop1 + perfInfo.bzzzLength]);	
 		modelLocal.paths["verticalPerforatorLeftUpper" + i] = new makerjs.paths.Line([determineEini(), yLoop2], [determineEini(), yLoop2 + perfInfo.bzzzLength]);	
@@ -406,7 +406,7 @@ function createVerticalPerforation(modelLocal) {
 
 function createPerforation1Column(modelLocal) {
 	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
+	let perforatorUpperX2 = determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
 
 	let delta = perforatorUpperX2 - perforatorUpperX1;
 
@@ -420,28 +420,30 @@ function createPerforation1Column(modelLocal) {
 }
 
 function createColumnSpitAndPerforation2Columns(modelLocal) {
-	modelLocal.paths["splitterUpper1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
-	modelLocal.paths["splitterUpper2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	const halfGapBetween2SplittedLaschen = 30;
 
-	modelLocal.paths["splitterLower1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineOba()], [(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineOba() - determineObenUntenLaschenHeight()]);
-	modelLocal.paths["splitterLower2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineOba()], [(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths["splitterUpper1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths["splitterUpper2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+
+	modelLocal.paths["splitterLower1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths["splitterLower2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
 
 	makerjs.path.converge(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.splitterUpper2, true, true);
 	makerjs.path.converge(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.splitterLower2, true, true);
 	
 	modelLocal.paths["upperMiddlePartLower2"] = new makerjs.paths.Line(
 		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], 
-		[(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba()]);
+		[(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()]);
 
 	modelLocal.paths["lowerMiddlePartLower2"] = new makerjs.paths.Line(
 		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba()], 
-		[(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineOba()]);
+		[(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()]);
 
-	modelLocal.paths["upperMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - determineObenUntenLaschenHeight() - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-	modelLocal.paths["upperMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + determineObenUntenLaschenHeight() + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+	modelLocal.paths["upperMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+	modelLocal.paths["upperMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
 
-	modelLocal.paths["lowerMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - determineObenUntenLaschenHeight(), determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - determineObenUntenLaschenHeight() - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
-	modelLocal.paths["lowerMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + determineObenUntenLaschenHeight(), determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + determineObenUntenLaschenHeight() + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
+	modelLocal.paths["lowerMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
+	modelLocal.paths["lowerMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
 
 	modelLocal.paths.radiusLeftUpperxxx = makerjs.path.fillet(modelLocal.paths.splitterUpper2, modelLocal.paths.upperMiddlePartLower, metadata.largeRadius);
 	modelLocal.paths.radiusLeftUppervvv = makerjs.path.fillet(modelLocal.paths.splitterUpper1, modelLocal.paths.upperMiddlePartLower2, metadata.largeRadius);
@@ -458,21 +460,22 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 	modelLocal.paths.radiusLeftLowerzzz = makerjs.path.fillet(modelLocal.paths.splitterLower2, modelLocal.paths.lowerMiddlePartUpperRight2, metadata.largeRadius);
 
 
-
 	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = (determineTotalWidth() / 2) - determineObenUntenLaschenHeight() - metadata.largeRadius - 0.01;
+	let perforatorUpperX2 = determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
 
-	let delta = perforatorUpperX2 - perforatorUpperX1;
-	let numberOfBzzzz = Math.floor((((delta) / 10 /* to cm */) - 1 /* 1 Rand auf der 2. Seite */ ) / 2 /* Teile in perforiert und nicht perforiert */ );
-	let notPerforierterGapWidth = (delta - (numberOfBzzzz * 10)) / (numberOfBzzzz + 1);
+	let totalDelta = perforatorUpperX2 - perforatorUpperX1;
+	let singleDelta = (totalDelta - (halfGapBetween2SplittedLaschen * 2)) / 2;
 
-	for (let i = 0; i < numberOfBzzzz; i++) {
-		let xLoop = perforatorUpperX1 + (i * (notPerforierterGapWidth + 10)) + notPerforierterGapWidth;
-		modelLocal.paths["perforationCenterUpperLeft" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + 10, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
-		modelLocal.paths["perforationCenterLowerLeft" + i] = new makerjs.paths.Line([xLoop, determineOba() - determineObenUntenLaschenHeight()], [xLoop + 10, determineOba() - determineObenUntenLaschenHeight()]);
-		let delta = ((determineTotalWidth() / 2) + determineObenUntenLaschenHeight()) - (determineEini() + determineLinksRechtsLascheBreite() + 15);
-		modelLocal.paths["perforationCenterUpperRight" + i] = new makerjs.paths.Line([xLoop + delta, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + delta + 10, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
-		modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop + delta, determineOba() - determineObenUntenLaschenHeight()], [xLoop + delta + 10, determineOba() - determineObenUntenLaschenHeight()]);
+	let perfInfo = calculateGenericPerforation(perforatorUpperX1, singleDelta);
+
+	for (let i = 0; i < perfInfo.numberOfBzzzz; i++) {
+		let xLoop1 = perfInfo.firstBzzzz +  + (i * (perfInfo.bzzzLength + perfInfo.gapLength));
+		let xLoop2 = xLoop1 + singleDelta + (halfGapBetween2SplittedLaschen * 2);
+		modelLocal.paths["perforationCenterUpperLeft" + i] = new makerjs.paths.Line([xLoop1, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop1 + perfInfo.bzzzLength, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
+		modelLocal.paths["perforationCenterLowerLeft" + i] = new makerjs.paths.Line([xLoop1, determineOba() - determineObenUntenLaschenHeight()], [xLoop1 + perfInfo.bzzzLength, determineOba() - determineObenUntenLaschenHeight()]);
+
+		modelLocal.paths["perforationCenterUpperRight" + i] = new makerjs.paths.Line([xLoop2, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop2 + perfInfo.bzzzLength, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
+		modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop2, determineOba() - determineObenUntenLaschenHeight()], [xLoop2 + 10, determineOba() - determineObenUntenLaschenHeight()]);
 	}
 }
 
@@ -687,11 +690,8 @@ function cabinetHeightChanged() {
 	let height = parseInt(document.getElementById("cabinetHeight").value);
 	
 	let lbh = [length, width, height];
-	console.log("Muhaha");
-	console.log(lbh);
 	lbh.sort(function(a, b){return a-b});
 	lbh.reverse();
-	console.log(lbh);
 
 	if ((length != lbh[0]) || (width != lbh[1]) || (height != lbh[2])){
 		document.getElementById("infoMessage").innerHTML = "Achtung Länge, Breite und Höhe wurden absteigent sortiert!";
