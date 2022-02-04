@@ -200,6 +200,10 @@ function determineOba() {
 	return ((determineTotalHeight() - (metadata.cabinetHeight + 8 )) / 2) + determineObenUntenLaschenHeight();
 }
 
+function einiBisObenuntenInnenLasche() {
+		return determineEini() + determineLinksRechtsLascheBreite() + 15;
+}
+
 document.addEventListener("DOMContentLoaded", function(event) { 
 	let thisYear = new Date();
 	document.getElementById('auftragsNummer').value = "K" + (thisYear.getYear() % 100);
@@ -264,18 +268,6 @@ function createModel() {
 		rightMiddlePartUpper : new makerjs.paths.Line([determineTotalWidth() - determineEini(), determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , determineTotalHeight() - obaLinkRechts]),
 		rightMiddlePartLower : new makerjs.paths.Line([determineTotalWidth() - determineEini(), obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , obaLinkRechts]),
 		rightMiddlePartMiddle : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite(), determineTotalHeight() - obaLinkRechts], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() , obaLinkRechts]),
-
-		upperMiddlePartLower : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineTotalHeight() - determineOba()]),
-		upperMiddlePartLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineTotalHeight() - determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-		upperMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-
-		lowerMiddlePartLower : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineOba()]),
-		lowerMiddlePartLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 , determineOba()]),
-		lowerMiddlePartRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 , determineOba()]),
-		lowerMiddlePartUpperLeft : new makerjs.paths.Line([determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba() - determineObenUntenLaschenHeight()], [ determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
-		lowerMiddlePartUpperRight : new makerjs.paths.Line([determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15, determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
 	  },
 	  models: {
 	  
@@ -286,8 +278,8 @@ function createModel() {
 
 	modelLocal.units = makerjs.unitType.Millimeter;
 
-	if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (determineEini() + determineLinksRechtsLascheBreite() + 15)) >= 260) {
-		//if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (determineEini() + determineLinksRechtsLascheBreite() + 15)) >= 560) {
+	if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (einiBisObenuntenInnenLasche())) >= 260) {
+		//if (((metadata.boxWidth - determineEini() - determineLinksRechtsLascheBreite() + 15) - (einiBisObenuntenInnenLasche())) >= 560) {
 			// 3 Spalten
 			// TODO
 		//} else {
@@ -405,13 +397,34 @@ function createVerticalPerforation(modelLocal) {
 }
 
 function createPerforation1Column(modelLocal) {
-	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
-
+	
+	// Laschen
+	modelLocal.paths["upperMiddlePartLower"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineTotalHeight() - determineOba()]);
+	modelLocal.paths["upperMiddlePartLeft"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [ einiBisObenuntenInnenLasche() , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths["upperMiddlePartRight"] = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths["upperMiddlePartUpperLeft"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths["upperMiddlePartUpperRight"] = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths["lowerMiddlePartLower"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineOba()]);
+	modelLocal.paths["lowerMiddlePartLeft"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() , determineOba()]);
+	modelLocal.paths["lowerMiddlePartRight"] = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineOba()]);
+	modelLocal.paths["lowerMiddlePartUpperLeft"] = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths["lowerMiddlePartUpperRight"] = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	
+	// radius für Laschen
+	modelLocal.paths.radiusUpperPartLowerLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartLowerRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartUpperLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperLeft, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperPartUpperRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperRight, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartLowerLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartLowerRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartUpperLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperLeft, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerPartUpperRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperRight, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
+	
+	// Perforation
+	let perforatorUpperX1 = einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01;
+	let perforatorUpperX2 = determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01;
 	let delta = perforatorUpperX2 - perforatorUpperX1;
-
 	let perfInfo = calculateGenericPerforation(perforatorUpperX1, delta);
-
 	for (let i = 0; i < perfInfo.numberOfBzzzz; i++) {
 		let xLoop = perfInfo.firstBzzzz + (i * (perfInfo.bzzzLength + perfInfo.gapLength));
 		modelLocal.paths["perforationCenterUpper" + i] = new makerjs.paths.Line([xLoop, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop + perfInfo.bzzzLength, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
@@ -419,49 +432,60 @@ function createPerforation1Column(modelLocal) {
 	}
 }
 
+function createColumnSpitAndPerforation3Columns(modelLocal) {
+
+}
+
 function createColumnSpitAndPerforation2Columns(modelLocal) {
 	const halfGapBetween2SplittedLaschen = 30;
-
-	modelLocal.paths["splitterUpper1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
-	modelLocal.paths["splitterUpper2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
-
-	modelLocal.paths["splitterLower1"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
-	modelLocal.paths["splitterLower2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
-
-	makerjs.path.converge(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.splitterUpper2, true, true);
-	makerjs.path.converge(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.splitterLower2, true, true);
 	
-	modelLocal.paths["upperMiddlePartLower2"] = new makerjs.paths.Line(
-		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineTotalHeight() - determineOba()], 
-		[(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()]);
+	// Laschen
+	// Lasche links Oben
+    modelLocal.paths.upperMiddleLeftPartLower = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()]);
+	modelLocal.paths.upperMiddleLeftPartLeft = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [ einiBisObenuntenInnenLasche() , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleLeftPartRight = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleLeftPartLeftSmallBack = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleLeftPartRightSmallBack = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.radiusUpperMiddleLeftPartLeftLower = makerjs.path.fillet(modelLocal.paths.upperMiddleLeftPartLower, modelLocal.paths.upperMiddleLeftPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleLeftPartRightLower = makerjs.path.fillet(modelLocal.paths.upperMiddleLeftPartLower, modelLocal.paths.upperMiddleLeftPartRight, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleLeftPartLeftLowerSmallBack = makerjs.path.fillet(modelLocal.paths.upperMiddleLeftPartLeftSmallBack, modelLocal.paths.upperMiddleLeftPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleLeftPartRightLowerSmallBack = makerjs.path.fillet(modelLocal.paths.upperMiddleLeftPartRightSmallBack, modelLocal.paths.upperMiddleLeftPartRight, metadata.largeRadius);
 
-	modelLocal.paths["lowerMiddlePartLower2"] = new makerjs.paths.Line(
-		[determineEini() + determineLinksRechtsLascheBreite() + 15, determineOba()], 
-		[(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()]);
+	// Lasche Links Unten
+	modelLocal.paths.lowerMiddleLeftPartUpper = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()]);
+	modelLocal.paths.lowerMiddleLeftPartLeft = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() , determineOba()]);
+	modelLocal.paths.lowerMiddleLeftPartRight = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.lowerMiddleLeftPartLeftSmallBack = new makerjs.paths.Line([einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.lowerMiddleLeftPartRightSmallBack = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.radiusLowerMiddleLeftPartLeftLower = makerjs.path.fillet(modelLocal.paths.lowerMiddleLeftPartUpper, modelLocal.paths.lowerMiddleLeftPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerMiddleLeftPartRightLower = makerjs.path.fillet(modelLocal.paths.lowerMiddleLeftPartUpper, modelLocal.paths.lowerMiddleLeftPartRight, metadata.largeRadius);
+	modelLocal.paths.radiusLowerMiddleLeftPartLeftLowerSmallBack = makerjs.path.fillet(modelLocal.paths.lowerMiddleLeftPartLeftSmallBack, modelLocal.paths.lowerMiddleLeftPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerMiddleLeftPartRightLowerSmallBack = makerjs.path.fillet(modelLocal.paths.lowerMiddleLeftPartRightSmallBack, modelLocal.paths.lowerMiddleLeftPartRight, metadata.largeRadius);
 
-	modelLocal.paths["upperMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
-	modelLocal.paths["upperMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]),
+	// Lasche rechts Oben
+    modelLocal.paths.upperMiddleRightPartUpper = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()]);
+	modelLocal.paths.upperMiddleRightPartLeft = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleRightPartRight = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleRightPartLeftSmallBack = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.upperMiddleRightPartRightSmallBack = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);
+	modelLocal.paths.radiusUpperMiddleRightPartLeftLower = makerjs.path.fillet(modelLocal.paths.upperMiddleRightPartUpper, modelLocal.paths.upperMiddleRightPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleRightPartRightLower = makerjs.path.fillet(modelLocal.paths.upperMiddleRightPartUpper, modelLocal.paths.upperMiddleRightPartRight, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleRightPartLeftSmallBack = makerjs.path.fillet(modelLocal.paths.upperMiddleRightPartLeftSmallBack, modelLocal.paths.upperMiddleRightPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusUpperMiddleRightPartRightSmallBack = makerjs.path.fillet(modelLocal.paths.upperMiddleRightPartRightSmallBack, modelLocal.paths.upperMiddleRightPartRight, metadata.largeRadius);
 
-	modelLocal.paths["lowerMiddlePartUpperLeft2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) - halfGapBetween2SplittedLaschen - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]),
-	modelLocal.paths["lowerMiddlePartUpperRight2"] = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]),
+	// Lasche rechts Unten
+    modelLocal.paths.lowerMiddleRightPartUpper = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba()]);
+	modelLocal.paths.lowerMiddleRightPartLeft = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba()], [(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.lowerMiddleRightPartRight = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() , determineOba()]);
+	modelLocal.paths.lowerMiddleRightPartLeftSmallBack = new makerjs.paths.Line([(determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen, determineOba() - determineObenUntenLaschenHeight()], [ (determineTotalWidth() / 2) + halfGapBetween2SplittedLaschen + metadata.largeRadius + 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.lowerMiddleRightPartRightSmallBack = new makerjs.paths.Line([determineTotalWidth() - einiBisObenuntenInnenLasche(), determineOba() - determineObenUntenLaschenHeight()], [ determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01, determineOba() - determineObenUntenLaschenHeight()]);
+	modelLocal.paths.radiusLowerMiddleRightPartLeftLower = makerjs.path.fillet(modelLocal.paths.lowerMiddleRightPartUpper, modelLocal.paths.lowerMiddleRightPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerMiddleRightPartRightLower = makerjs.path.fillet(modelLocal.paths.lowerMiddleRightPartUpper, modelLocal.paths.lowerMiddleRightPartRight, metadata.largeRadius);
+	modelLocal.paths.radiuslowerMiddleRightPartLeftSmallBack = makerjs.path.fillet(modelLocal.paths.lowerMiddleRightPartLeftSmallBack, modelLocal.paths.lowerMiddleRightPartLeft, metadata.largeRadius);
+	modelLocal.paths.radiusLowerMiddleRightPartRightSmallBack  = makerjs.path.fillet(modelLocal.paths.lowerMiddleRightPartRightSmallBack, modelLocal.paths.lowerMiddleRightPartRight, metadata.largeRadius);
 
-	modelLocal.paths.radiusLeftUpperxxx = makerjs.path.fillet(modelLocal.paths.splitterUpper2, modelLocal.paths.upperMiddlePartLower, metadata.largeRadius);
-	modelLocal.paths.radiusLeftUppervvv = makerjs.path.fillet(modelLocal.paths.splitterUpper1, modelLocal.paths.upperMiddlePartLower2, metadata.largeRadius);
-	modelLocal.paths.radiusLeftUpperwww = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLeft, modelLocal.paths.upperMiddlePartLower2, metadata.largeRadius);
-
-	modelLocal.paths.radiusLeftUpperyyy = makerjs.path.fillet(modelLocal.paths.splitterUpper1, modelLocal.paths.upperMiddlePartUpperLeft2, metadata.largeRadius);
-	modelLocal.paths.radiusLeftUpperzzz = makerjs.path.fillet(modelLocal.paths.splitterUpper2, modelLocal.paths.upperMiddlePartUpperRight2, metadata.largeRadius);
-
-	modelLocal.paths.radiusLeftLowerxxx = makerjs.path.fillet(modelLocal.paths.splitterLower2, modelLocal.paths.lowerMiddlePartLower, metadata.largeRadius);
-	modelLocal.paths.radiusLeftLowervvv = makerjs.path.fillet(modelLocal.paths.splitterLower1, modelLocal.paths.lowerMiddlePartLower2, metadata.largeRadius);
-	modelLocal.paths.radiusLeftLowerwww = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLeft, modelLocal.paths.lowerMiddlePartLower2, metadata.largeRadius);
-
-	modelLocal.paths.radiusLeftLoweryyy = makerjs.path.fillet(modelLocal.paths.splitterLower1, modelLocal.paths.lowerMiddlePartUpperLeft2, metadata.largeRadius);
-	modelLocal.paths.radiusLeftLowerzzz = makerjs.path.fillet(modelLocal.paths.splitterLower2, modelLocal.paths.lowerMiddlePartUpperRight2, metadata.largeRadius);
-
-
-	let perforatorUpperX1 = determineEini() + determineLinksRechtsLascheBreite() + 15 + metadata.largeRadius + 0.01;
-	let perforatorUpperX2 = determineTotalWidth() - determineEini() - determineLinksRechtsLascheBreite() - 15 - metadata.largeRadius - 0.01;
+	let perforatorUpperX1 = einiBisObenuntenInnenLasche() + metadata.largeRadius + 0.01;
+	let perforatorUpperX2 = determineTotalWidth() - einiBisObenuntenInnenLasche() - metadata.largeRadius - 0.01;
 
 	let totalDelta = perforatorUpperX2 - perforatorUpperX1;
 	let singleDelta = (totalDelta - (halfGapBetween2SplittedLaschen * 2)) / 2;
@@ -475,7 +499,7 @@ function createColumnSpitAndPerforation2Columns(modelLocal) {
 		modelLocal.paths["perforationCenterLowerLeft" + i] = new makerjs.paths.Line([xLoop1, determineOba() - determineObenUntenLaschenHeight()], [xLoop1 + perfInfo.bzzzLength, determineOba() - determineObenUntenLaschenHeight()]);
 
 		modelLocal.paths["perforationCenterUpperRight" + i] = new makerjs.paths.Line([xLoop2, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()], [xLoop2 + perfInfo.bzzzLength, determineTotalHeight() - determineOba() + determineObenUntenLaschenHeight()]);	
-		modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop2, determineOba() - determineObenUntenLaschenHeight()], [xLoop2 + 10, determineOba() - determineObenUntenLaschenHeight()]);
+		modelLocal.paths["perforationCenterLowerRight" + i] = new makerjs.paths.Line([xLoop2, determineOba() - determineObenUntenLaschenHeight()], [xLoop2 + perfInfo.bzzzLength, determineOba() - determineObenUntenLaschenHeight()]);
 	}
 }
 
@@ -513,18 +537,6 @@ function createRadius(modelLocal) {
 
 	modelLocal.paths.radiusRightMiddlePartUpper = makerjs.path.fillet(modelLocal.paths.rightMiddlePartMiddle, modelLocal.paths.rightMiddlePartUpper, metadata.largeRadius);
 	modelLocal.paths.radiusRightMiddlePartLower = makerjs.path.fillet(modelLocal.paths.rightMiddlePartMiddle, modelLocal.paths.rightMiddlePartLower, metadata.largeRadius);
-
-
-	modelLocal.paths.radiusUpperPartLowerLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
-	modelLocal.paths.radiusUpperPartLowerRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartLower, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
-	modelLocal.paths.radiusUpperPartUpperLeft = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperLeft, modelLocal.paths.upperMiddlePartLeft, metadata.largeRadius);
-	modelLocal.paths.radiusUpperPartUpperRight = makerjs.path.fillet(modelLocal.paths.upperMiddlePartUpperRight, modelLocal.paths.upperMiddlePartRight, metadata.largeRadius);
-
-
-	modelLocal.paths.radiusLowerPartLowerLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
-	modelLocal.paths.radiusLowerPartLowerRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartLower, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
-	modelLocal.paths.radiusLowerPartUpperLeft = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperLeft, modelLocal.paths.lowerMiddlePartLeft, metadata.largeRadius);
-	modelLocal.paths.radiusLowerPartUpperRight = makerjs.path.fillet(modelLocal.paths.lowerMiddlePartUpperRight, modelLocal.paths.lowerMiddlePartRight, metadata.largeRadius);
 }
 
 function boxSizeCheck() {
