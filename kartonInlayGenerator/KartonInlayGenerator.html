@@ -6,9 +6,9 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/bezier-js@2/bezier.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/opentype.js@0/dist/opentype.js"></script> -->
 
-<script src="browser.maker.js"></script>
-<script src="bezier.js"></script>
-<script src="opentype.js"></script>
+<script src="lib/browser.maker.js"></script>
+<script src="lib/bezier.js"></script>
+<script src="lib/opentype.js"></script>
 
 <script type="text/javascript">
 	var makerjs = require('makerjs');
@@ -215,7 +215,8 @@ function einiBisObenuntenInnenLasche() {
 document.addEventListener("DOMContentLoaded", function(event) { 
 	let thisYear = new Date();
 	document.getElementById('auftragsNummer').value = "K" + (thisYear.getYear() % 100);
-	opentype.load("https://fonts.cdnfonts.com/s/18519/Lovelo-Black.woff", function(err, fontParam) {
+	//opentype.load("https://fonts.cdnfonts.com/s/18519/Lovelo-Black.woff", function(err, fontParam) {
+	opentype.load("fonts/Lovelo-Black.woff", function(err, fontParam) {
 		if (err) {
 			alert("Error: " + err);
 		} else {
