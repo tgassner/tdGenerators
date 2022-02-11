@@ -7,7 +7,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
    sodipodi:docname="InlayLegende.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,8 +24,8 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.8284271"
-     inkscape:cx="112.42998"
-     inkscape:cy="651.42212"
+     inkscape:cx="289.38345"
+     inkscape:cy="226.98128"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="-8"
@@ -181,7 +181,7 @@
        transform="translate(-8.9958333,2.9104167)"><tspan
          x="83.872917"
          y="21.960417"
-         id="tspan194805">Kartonbreite -&gt; metadata.boxWidth</tspan></text>
+         id="tspan4055">Kartonbreite -&gt; metadata.boxWidth</tspan></text>
     <path
        style="fill:#ff6600;stroke:#d4aa00;stroke-width:0.1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 47.735279,159.83564 0,6.14701"
@@ -205,7 +205,7 @@
        transform="translate(-12.071765,136.78011)"><tspan
          x="83.872917"
          y="21.960417"
-         id="tspan194807">Kartonbreite -&gt; metadata.boxWidth</tspan></text>
+         id="tspan4057">Kartonbreite -&gt; metadata.boxWidth</tspan></text>
     <text
        x="69.585411"
        y="19.84375"
@@ -579,15 +579,30 @@
        id="text141873"
        transform="rotate(-90)"><tspan
          sodipodi:role="line"
-         id="tspan141871"
          style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
          x="-68.903885"
-         y="100.09656">10% der Schachtelbreite</tspan><tspan
+         y="100.09656"
+         id="tspan145053">10% der Schachtelbreite</tspan><tspan
          sodipodi:role="line"
          style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
          x="-68.903885"
          y="101.86044"
-         id="tspan145053">determineObenUntenLaschenHeight()</tspan></text>
+         id="tspan3116">determineObenUntenLaschenHeight()</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-68.903885"
+         y="103.62434"
+         id="tspan3118">begrenzt auf maximal 60 mm oder bei kleinen </tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-68.903885"
+         y="105.38822"
+         id="tspan3120">(determineTotalHeight() </tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-68.903885"
+         y="107.15211"
+         id="tspan3122">                - (obenUntenFetteLasche() * 2)) / 4</tspan></text>
     <path
        style="fill:#0000ff;stroke:#0000ff;stroke-width:0.1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 79.89338,171.06881 0,4.39905"
@@ -609,7 +624,22 @@
          style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
          x="-193.42274"
          y="81.344406"
-         id="tspan145053-4">determineObenUntenLaschenHeight()</tspan></text>
+         id="tspan145053-4">determineObenUntenLaschenHeight()</tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-193.42274"
+         y="83.108299"
+         id="tspan3376">begrenzt auf maximal 60 mm oder bei kleinen </tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-193.42274"
+         y="84.872185"
+         id="tspan5292">(determineTotalHeight() </tspan><tspan
+         sodipodi:role="line"
+         style="font-size:1.41111px;fill:#0000ff;stroke-width:0.264583"
+         x="-193.42274"
+         y="86.63607"
+         id="tspan5294">                - (obenUntenFetteLasche() * 2)) / 4</tspan></text>
     <path
        style="fill:#ff6600;stroke:#aa8800;stroke-width:0.1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 58.592849,196.62409 0,2.46402"
