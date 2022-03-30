@@ -71,6 +71,12 @@ var gl;
 var yAngle, xAngle, zAngle;
 const speed = 0.1;
 
+var posLog = {
+	x : 0,
+	y : 0,
+	history : [],
+}
+
 var metadata = {
 	
 	cabinetLength : 359,
@@ -268,11 +274,11 @@ function createLeftSurface() {
 	let sideLower = createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
-			console.log("obennnnn");
+			//console.log("obennnnn");
 			sideLower += createLowerDownSvgPath();
 			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss - (2 * calcEckInnenFix())));
 		} else {
-			console.log("untennnnn");
+			//console.log("untennnnn");
 			sideLower += createLowerUpSvgPath();
 			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckAussenFix())));
 		}
@@ -294,8 +300,9 @@ function createLeftSurface() {
 	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - calcDiffInnenAussen()));
 	sideLeft += createUpperLeftCorner();
 
-	console.log(sideUpper + sideRight + sideLower + sideLeft);
+	//console.log(sideUpper + sideRight + sideLower + sideLeft);
 
+	logHistoryLog();
 	return sideUpper + sideRight + sideLower + sideLeft;
 }
 
@@ -471,50 +478,173 @@ function replaceValues(input) {
 }
 
 function createUpperUpSvgPath() {
-	let upperUp = "m xx1,xy1 a xr1 xr1 0 0 0 xr1 -xr1 v -xl1 a xr2 xr2 0 0 0 -xr2 -xr2 h -xl2 a xr3 xr3 0 0 1 -xr3 -xr3 v -xl3 a xr4 xr4 0 0 1 xr4 -xr4 ";
+	let upperUp = "";
+	//addHistoryLog(0, 0);
+	upperUp += "m xx1,xy1 ";
+	addHistoryLog(metadata.radius1, -metadata.radius1);
+	upperUp += "a xr1 xr1 0 0 0  xr1 -xr1 ";
+	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper up");
+	upperUp += "v -xl1 ";
+	addHistoryLog(-metadata.radius2, -metadata.radius2);
+	upperUp += "a xr2 xr2 0 0 0 -xr2 -xr2 ";
+	addHistoryLog(-metadata.length2, 0);
+	upperUp += "h -xl2 ";
+	addHistoryLog(-metadata.radius3, -metadata.radius3);
+	upperUp += "a xr3 xr3 0 0 1 -xr3 -xr3 ";
+	addHistoryLog(0, -metadata.length3);
+	upperUp += "v -xl3 ";
+	addHistoryLog(metadata.radius4, -metadata.radius4);
+	upperUp += "a xr4 xr4 0 0 1  xr4 -xr4 ";
 	return replaceValues(upperUp);
 }
 
 function createUpperDownSvgPath() {
-	let upperDown = "m xx1,xy1 a xr4 xr4 0 0 1 xr4 xr4 v xl3 a xr3 xr3 0 0 1 -xr3 xr3 h -xl2 a xr2 xr2 0 0 0 -xr2 xr2 v xl1 a xr1 xr1 0 0 0 xr1 xr1 ";
+	let upperDown = "";
+	upperDown += "m xx1,xy1 ";
+	addHistoryLog(metadata.radius4, metadata.radius4);
+	upperDown += "a xr4 xr4 0 0 1 xr4 xr4 ";
+	addHistoryLog(0, metadata.length3);
+	upperDown += "v xl3 ";
+	addHistoryLog(-metadata.radius3, metadata.radius3);
+	upperDown += "a xr3 xr3 0 0 1 -xr3 xr3 ";
+	addHistoryLog(-metadata.length2, 0);
+	upperDown += "h -xl2 ";
+	addHistoryLog(-metadata.radius2, metadata.radius2);
+	upperDown += "a xr2 xr2 0 0 0 -xr2 xr2 ";
+	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper down");
+	upperDown += "v xl1 ";
+	addHistoryLog(metadata.radius1, metadata.radius1);
+	upperDown += "a xr1 xr1 0 0 0 xr1 xr1 ";
 	return replaceValues(upperDown);
 }
 	
 function createLowerDownSvgPath() {
-	let lowerDown = "m xx1,xy1 a xr1 xr1 0 0 0 -xr1 xr1 v xl1 a xr2 xr2 0 0 0 xr2 xr2 h xl2 a xr3 xr3 0 0 1 xr3 xr3 v xl3 a xr4 xr4 0 0 1 -xr4 xr4 ";
+	let lowerDown = "";
+	lowerDown += "m xx1,xy1 ";
+	addHistoryLog(-metadata.radius1, metadata.radius1);
+	lowerDown += "a xr1 xr1 0 0 0 -xr1 xr1 ";
+	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower down");
+	lowerDown += "v xl1 ";
+	addHistoryLog(metadata.radius2, metadata.radius2);
+	lowerDown += "a xr2 xr2 0 0 0  xr2 xr2 ";
+	addHistoryLog(metadata.length2, 0);
+	lowerDown += "h xl2 ";
+	addHistoryLog(metadata.radius3, metadata.radius3);
+	lowerDown += "a xr3 xr3 0 0 1  xr3 xr3 ";
+	addHistoryLog(0, metadata.length3);
+	lowerDown += "v xl3 ";
+	addHistoryLog(-metadata.radius4, metadata.radius4);
+	lowerDown += "a xr4 xr4 0 0 1 -xr4 xr4 ";
 	return replaceValues(lowerDown);
 }
 
 function createLowerUpSvgPath() {
-	let lowerUp = "m xx1,xy1 a xr4 xr4 0 0 1 -xr4 -xr4 v -xl3 a xr3 xr3 0 0 1 xr3 -xr3 h xl2 a xr2 xr2 0 0 0 xr2 -xr2 v -xl1 a xr1 xr1 0 0 0 -xr1 -xr1 ";
+	let lowerUp = "";
+	lowerUp += "m xx1,xy1 ";
+	addHistoryLog(-metadata.radius4, -metadata.radius4);
+	lowerUp += "a xr4 xr4 0 0 1 -xr4 -xr4 ";
+	addHistoryLog(0, metadata.length3);
+	lowerUp += "v -xl3 ";
+	addHistoryLog(metadata.radius3, -metadata.radius3);
+	lowerUp += "a xr3 xr3 0 0 1  xr3 -xr3 ";
+	addHistoryLog(metadata.length2, 0);
+	lowerUp += "h xl2 ";
+	addHistoryLog(metadata.radius2, -metadata.radius2);
+	lowerUp += "a xr2 xr2 0 0 0  xr2 -xr2 ";
+	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower up");
+	lowerUp += "v -xl1 ";
+	addHistoryLog(-metadata.radius1, -metadata.radius1);
+	lowerUp += "a xr1 xr1 0 0 0 -xr1 -xr1 ";
 	return replaceValues(lowerUp);
 }
 
 function createRightRightSvgPath() {
-	let rightRight = "m xx1,xy1 a xr1 xr1 0 0 0 xr1 xr1 h xl1 a xr2 xr2 0 0 0 xr2 -xr2 v -xl2 a xr3 xr3 0 0 1 xr3 -xr3 h xl3 a xr4 xr4 0 0 1 xr4 xr4 ";
+	let rightRight = "";
+	rightRight += "m xx1,xy1 ";
+	addHistoryLog(metadata.radius1, metadata.radius1);
+	rightRight += "a xr1 xr1 0 0 0 xr1  xr1 ";
+	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right right");
+	rightRight += "h xl1 ";
+	addHistoryLog(metadata.radius2, -metadata.radius2);
+	rightRight += "a xr2 xr2 0 0 0 xr2 -xr2 ";
+	addHistoryLog(0, -metadata.length2);
+	rightRight += "v -xl2 ";
+	addHistoryLog(metadata.radius3, -metadata.radius3);
+	rightRight += "a xr3 xr3 0 0 1 xr3 -xr3 ";
+	addHistoryLog(metadata.length3, 0);
+	rightRight += "h xl3 ";
+	addHistoryLog(metadata.radius4, metadata.radius4);
+	rightRight += "a xr4 xr4 0 0 1 xr4  xr4 ";
 	return replaceValues(rightRight);
 }
 
 function createRightLeftSvgPath() {
-	let rightLeft = "m xx1,xy1 a xr4 xr4 0 0 1 -xr4 xr4 h -xl3 a xr3 xr3 0 0 1 -xr3 -xr3 v -xl2 a xr2 xr2 0 0 0 -xr2 -xr2 h -xl1 a xr1 xr1 0 0 0 -xr1 xr1 ";
+	let rightLeft = "";
+	rightLeft += "m xx1,xy1 ";
+	addHistoryLog(-metadata.radius4, metadata.radius4);
+	rightLeft += "a xr4 xr4 0 0 1 -xr4  xr4 ";
+	addHistoryLog(-metadata.length3, 0);
+	rightLeft += "h -xl3 ";
+	addHistoryLog(-metadata.radius3, -metadata.radius3);
+	rightLeft += "a xr3 xr3 0 0 1 -xr3 -xr3 ";
+	addHistoryLog(0, -metadata.length2);
+	rightLeft += "v -xl2 ";
+	addHistoryLog(-metadata.radius2, -metadata.radius2);
+	rightLeft += "a xr2 xr2 0 0 0 -xr2 -xr2 ";
+	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right left");
+	rightLeft += "h -xl1 ";
+	addHistoryLog(-metadata.radius1, metadata.radius1);
+	rightLeft += "a xr1 xr1 0 0 0 -xr1  xr1 ";
 	return replaceValues(rightLeft);
 }
 
 function createLeftLeftSvgPath() {
-	let leftLeft = "m xx1,xy1 a xr1 xr1 0 0 0 -xr1 -xr1 h -xl1 a xr2 xr2 0 0 0 -xr2 xr2 v xl2 a xr3 xr3 0 0 1 -xr3 xr3 h -xl3 a xr4 xr4 0 0 1 -xr4 -xr4 ";
+	let leftLeft = "";
+	leftLeft += "m xx1,xy1 ";
+	addHistoryLog(-metadata.radius1, -metadata.radius1);
+	leftLeft += "a xr1 xr1 0 0 0 -xr1 -xr1 ";
+	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left left");
+	leftLeft += "h -xl1 ";
+	addHistoryLog(-metadata.radius2, metadata.radius2);
+	leftLeft += "a xr2 xr2 0 0 0 -xr2  xr2 ";
+	addHistoryLog(0, metadata.length2);
+	leftLeft += "v xl2 ";
+	addHistoryLog(-metadata.radius3, metadata.radius3);
+	leftLeft += "a xr3 xr3 0 0 1 -xr3  xr3 ";
+	addHistoryLog(-metadata.length3, 0);
+	leftLeft += "h -xl3 ";
+	addHistoryLog(-metadata.radius4, -metadata.radius4);
+	leftLeft += "a xr4 xr4 0 0 1 -xr4 -xr4 ";
 	return replaceValues(leftLeft);
 }
 
 function createLeftRightSvgPath() {
-	let leftRight = "m xx1,xy1 a xr4 xr4 0 0 1 xr4 -xr4 h xl3 a xr3 xr3 0 0 1 xr3 xr3 v xl2 a xr2 xr2 0 0 0 xr2 xr2 h xl1 a xr1 xr1 0 0 0 xr1 -xr1 ";
+	let leftRight = "";
+	leftRight += "m xx1,xy1 ";
+	addHistoryLog(metadata.radius4, -metadata.radius4);
+	leftRight += "a xr4 xr4 0 0 1 xr4 -xr4 ";
+	addHistoryLog(metadata.length3, 0);
+	leftRight += "h xl3 ";
+	addHistoryLog(metadata.radius3, metadata.radius3);
+	leftRight += "a xr3 xr3 0 0 1 xr3  xr3 ";
+	addHistoryLog(0, metadata.length2);
+	leftRight += "v xl2 ";
+	addHistoryLog(metadata.radius2, metadata.radius2);
+	leftRight += "a xr2 xr2 0 0 0 xr2  xr2 ";
+	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left right");
+	leftRight += "h xl1 ";
+	addHistoryLog(metadata.radius1, -metadata.radius1);
+	leftRight += "a xr1 xr1 0 0 0 xr1 -xr1 ";
 	return replaceValues(leftRight);
 }
 
 function createHorizontalSvgPath(length) {
+	addHistoryLog(length, 0, "h");
 	return "h " + length + " ";
 }
 
 function createVerticalSvgPath(length) {
+	addHistoryLog(0, length, "v");
 	return "v " + length + " ";
 }
 
@@ -531,25 +661,49 @@ function calcDiffInnenAussen() {
 }
 
 function createStartPos(x, y) {
+	initHistoryLog(x, y);
 	return "M " + x + " " + y + " ";
 }
 
 function createUpperLeftCorner() {
+	addHistoryLog(metadata.cornerRadius, -metadata.cornerRadius, "upper Left => y is Top again");
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
 }
 
 function createUpperRightCorner() {
+	addHistoryLog(metadata.cornerRadius, metadata.cornerRadius, "upper Right => x is right side");
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " " + metadata.cornerRadius + "";
 }
 
 function createLowerRightCorner() {
+	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower Left => y is bottom side");
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " " + metadata.cornerRadius + "";
 }
 
 function createLowerLeftCorner() {
+	addHistoryLog(-metadata.cornerRadius, -metadata.cornerRadius, "lower Left => x is left side again");
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
 }
 
+function initHistoryLog(x, y) {
+	posLog.x = x;
+	posLog.y = y;
+	posLog.history = [];
+	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y, "comment": "initial"});
+}
+
+function addHistoryLog(x, y, comment) {
+	if (!comment) {
+		comment = "";
+	}
+	posLog.x += x;
+	posLog.y += y;
+	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y,"comment": comment});
+}
+
+function logHistoryLog() {
+	console.log(JSON.stringify(posLog));
+}
 
 </script>
 </body>
