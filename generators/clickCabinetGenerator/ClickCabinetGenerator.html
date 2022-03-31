@@ -218,9 +218,33 @@ modelLocal.models["ggg"] = makerjs.importer.fromSVGPathData("M 137.5 -320 v 300"
 }
 
 function createLeftSurface() {
+	let sideUpper = createLeftSurfaceOben();
+
+	let sideRight = createLeftSurfaceRechts();
+
+	let sideLower = createLeftSurfaceUnten();
+
+	let sideLeft = createLeftSurfaceLinks();
+
+	logHistoryLog();
+	return sideUpper + sideRight + sideLower + sideLeft;
+}
+
+function hasHeightGeradeAnzahlAnElementen() {
+	return ((calcData.cabinetHeightNoOfElements % 2) == 0);
+}
+
+function hasWidthGeradeAnzahlAnElementen() {
+	return ((calcData.cabinetWidthNoOfElements % 2) == 0);
+}
+
+function hasLengthGeradeAnzahlAnElementen() {
+	
+}
+
+function createLeftSurfaceOben() {
 	let sideUpper = createStartPos(1, metadata.cabinetHeight + 10 - calculatePreviewHeight() + 2);
 	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius);
-	// Begin aussen
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
 			sideUpper += createUpperUpSvgPath();
@@ -232,21 +256,22 @@ function createLeftSurface() {
 			sideUpper += createHorizontalSvgPath(sum);
 		}
 	}
-	if ((calcData.cabinetHeightNoOfElements % 2) == 0) {
+	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideUpper += createUpperDownSvgPath();
 		sideUpper += createHorizontalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - calcDiffInnenAussen() + metadata.laserLoss);
 		sideUpper += createUpperRightCorner();
-	} else {
+	} else { // ungerade
 		sideUpper += createUpperUpSvgPath()
 		let sum = metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen();
-		console.log("Ende oben: " + metadata.borderElementLength + " + " + " - " + calcEckInnenFix() + " - " + metadata.cornerRadius + " - " + calcDiffInnenAussen() + " = " + sum);
 		sideUpper += createHorizontalSvgPath(sum);
 		sideUpper += createUpperRightCorner();
 		sideUpper += createVerticalSvgPath(calcDiffInnenAussen());
 	}
+	return sideUpper;
+}
 
-	// Begin innen
-	let sideRight = createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() - (metadata.laserLoss / 2) - calcDiffInnenAussen());
+function createLeftSurfaceRechts() {
+	let sideRight = createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() + (metadata.laserLoss / 2) - calcDiffInnenAussen());
 
 	for (let i = 0; i < calcData.cabinetWidthNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
@@ -259,19 +284,20 @@ function createLeftSurface() {
 			sideRight += createVerticalSvgPath(sum);
 		}
 	}
-	if ((calcData.cabinetWidthNoOfElements % 2) == 0) {
+	if (hasWidthGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
 		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss % 2));
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
-	} else {
+	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
 		sideRight += createVerticalSvgPath(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckInnenFix() - metadata.cornerRadius);
 		sideRight += createLowerRightCorner();
 	}
-	
+	return sideRight;
+}
 
-	// Begin unten
+function createLeftSurfaceUnten() {
 	let sideLower = createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
@@ -282,25 +308,24 @@ function createLeftSurface() {
 			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckAussenFix())));
 		}
 	}
-	if ((calcData.cabinetHeightNoOfElements % 2) == 0) {
+	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideLower += createLowerUpSvgPath();
 		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
 		sideLower += createLowerLeftCorner();
-	} else {
+	} else { // ungerade
 		sideLower += createLowerDownSvgPath();
 		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
 		sideLower += createVerticalSvgPath(-calcDiffInnenAussen());
 	}
+	return sideLower;
+}
 
-    // Begin aussen
+function createLeftSurfaceLinks() {
 	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - calcDiffInnenAussen()));
 	sideLeft += createUpperLeftCorner();
-
-
-	logHistoryLog();
-	return sideUpper + sideRight + sideLower + sideLeft;
+	return sideLeft;
 }
 
 function createSurfaceArea(modelLocal, deterministicName, width, height, startx, starty) {
@@ -706,7 +731,7 @@ function addHistoryLog(x, y, comment, important) {
 	posLog.y += y;
 	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y,"comment": comment});
 	if (important) {
-		posLog.history.push({"absX" : posLog.x, "absY" : posLog.y,"comment": comment});
+		poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y,"comment": comment});
 	}
 }
 
