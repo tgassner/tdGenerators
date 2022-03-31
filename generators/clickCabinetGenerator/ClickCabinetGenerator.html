@@ -86,9 +86,12 @@ var posLog = {
 var metadata = {
 	log : true,
 
+	//cabinetLength : 350,
+	//cabinetWidth : 170,
+	//cabinetHeight : 140,
 	cabinetLength : 350,
-	cabinetWidth : 170,
-	cabinetHeight : 140,
+	cabinetWidth : 140,
+	cabinetHeight : 110,
 
 	minSideLength : 60,
 	maxSideLength : 700,
@@ -293,7 +296,7 @@ function createLeftSurfaceRechts() {
 	let subtractForUntereLinieStartsHibeiOderHerdau = (hasHeightGeradeAnzahlAnElementen()) ? calcDiffInnenAussen() : 0;
 	if (hasWidthGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss / 2) - subtractForUntereLinieStartsHibeiOderHerdau);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 	} else { // ungerade
@@ -306,8 +309,12 @@ function createLeftSurfaceRechts() {
 
 function createLeftSurfaceUnten() {
 	let sideLower = "";
-	sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
-	
+	if (hasHeightGeradeAnzahlAnElementen()) {
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	} else { // ungerade
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	}
+
 	// main loop
 	let changer = hasHeightGeradeAnzahlAnElementen() ? 0 : 1;
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
@@ -326,7 +333,7 @@ function createLeftSurfaceUnten() {
 		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
-		sideLower += createLowerUpSvgPath();
+		sideLower += createLowerDownSvgPath();
 		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
