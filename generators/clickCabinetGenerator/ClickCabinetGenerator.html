@@ -86,7 +86,7 @@ var posLog = {
 var metadata = {
 	log : true,
 
-	cabinetLength : 359,
+	cabinetLength : 350,
 	cabinetWidth : 170,
 	cabinetHeight : 140,
 
@@ -275,7 +275,7 @@ function createLeftSurfaceOben() {
 
 function createLeftSurfaceRechts() {
 	let sideRight = "";
-	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() + (metadata.laserLoss / 2) - calcDiffInnenAussen());
+	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() - metadata.laserLoss - calcDiffInnenAussen());
 
 	// main loop
 	for (let i = 0; i < calcData.cabinetWidthNoOfElements; i++) {
@@ -293,12 +293,12 @@ function createLeftSurfaceRechts() {
 	let subtractForUntereLinieStartsHibeiOderHerdau = (hasHeightGeradeAnzahlAnElementen()) ? calcDiffInnenAussen() : 0;
 	if (hasWidthGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss % 2) - subtractForUntereLinieStartsHibeiOderHerdau);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss / 2) - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckInnenFix() - metadata.cornerRadius - subtractForUntereLinieStartsHibeiOderHerdau);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 	}
 	return sideRight;
@@ -306,24 +306,24 @@ function createLeftSurfaceRechts() {
 
 function createLeftSurfaceUnten() {
 	let sideLower = "";
-	sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	
 	// main loop
 	let changer = hasHeightGeradeAnzahlAnElementen() ? 0 : 1;
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if ((changer % 2) == 0) {
 			sideLower += createLowerDownSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss - (2 * calcEckAussenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix())));
 		} else {
 			sideLower += createLowerUpSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckInnenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix())));
 		}
 		changer++;
 	}
 	
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideLower += createLowerDownSvgPath();
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
 		sideLower += createLowerUpSvgPath();
@@ -711,7 +711,7 @@ function createUpperRightCorner() {
 }
 
 function createLowerRightCorner() {
-	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower Left => y is bottom side", true);
+	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower right => y is bottom side", true);
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " " + metadata.cornerRadius + "";
 }
 
@@ -752,7 +752,10 @@ function logHistoryLog() {
 	if (!metadata.log) {
 		return;
 	}
+	console.log("Importat");
 	console.log(JSON.stringify(poslogImportant));
+	console.log("All of them");
+	console.log(JSON.stringify(posLog));
 }
 
 </script>
