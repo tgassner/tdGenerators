@@ -245,6 +245,8 @@ function hasLengthGeradeAnzahlAnElementen() {
 function createLeftSurfaceOben() {
 	let sideUpper = createStartPos(1, metadata.cabinetHeight + 10 - calculatePreviewHeight() + 2);
 	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius);
+
+	// main loop
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
 			sideUpper += createUpperUpSvgPath();
@@ -256,6 +258,7 @@ function createLeftSurfaceOben() {
 			sideUpper += createHorizontalSvgPath(sum);
 		}
 	}
+
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideUpper += createUpperDownSvgPath();
 		sideUpper += createHorizontalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - calcDiffInnenAussen() + metadata.laserLoss);
@@ -271,8 +274,10 @@ function createLeftSurfaceOben() {
 }
 
 function createLeftSurfaceRechts() {
-	let sideRight = createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() + (metadata.laserLoss / 2) - calcDiffInnenAussen());
+	let sideRight = "";
+	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() + (metadata.laserLoss / 2) - calcDiffInnenAussen());
 
+	// main loop
 	for (let i = 0; i < calcData.cabinetWidthNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
 			sideRight += createRightLeftSvgPath();
@@ -284,36 +289,44 @@ function createLeftSurfaceRechts() {
 			sideRight += createVerticalSvgPath(sum);
 		}
 	}
+
+	let subtractForUntereLinieStartsHibeiOderHerdau = (hasHeightGeradeAnzahlAnElementen()) ? calcDiffInnenAussen() : 0;
 	if (hasWidthGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss % 2));
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss % 2) - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckInnenFix() - metadata.cornerRadius);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckInnenFix() - metadata.cornerRadius - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 	}
 	return sideRight;
 }
 
 function createLeftSurfaceUnten() {
-	let sideLower = createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	let sideLower = "";
+	sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	
+	// main loop
+	let changer = hasHeightGeradeAnzahlAnElementen() ? 0 : 1;
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
-		if (((i+1) % 2) == 0) {
+		if ((changer % 2) == 0) {
 			sideLower += createLowerDownSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss - (2 * calcEckInnenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss - (2 * calcEckAussenFix())));
 		} else {
 			sideLower += createLowerUpSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckAussenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckInnenFix())));
 		}
+		changer++;
 	}
+	
 	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLower += createLowerUpSvgPath();
+		sideLower += createLowerDownSvgPath();
 		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
-		sideLower += createLowerDownSvgPath();
+		sideLower += createLowerUpSvgPath();
 		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
@@ -323,7 +336,7 @@ function createLeftSurfaceUnten() {
 }
 
 function createLeftSurfaceLinks() {
-	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - calcDiffInnenAussen()));
+	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - ((hasHeightGeradeAnzahlAnElementen()) ? 0 : calcDiffInnenAussen())));
 	sideLeft += createUpperLeftCorner();
 	return sideLeft;
 }
