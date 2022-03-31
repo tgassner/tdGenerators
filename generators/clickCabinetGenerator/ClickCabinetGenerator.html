@@ -71,6 +71,12 @@ var gl;
 var yAngle, xAngle, zAngle;
 const speed = 0.1;
 
+var poslogImportant = {
+	x : 0,
+	y : 0,
+	history : [],
+}
+
 var posLog = {
 	x : 0,
 	y : 0,
@@ -78,7 +84,8 @@ var posLog = {
 }
 
 var metadata = {
-	
+	log : true,
+
 	cabinetLength : 359,
 	cabinetWidth : 170,
 	cabinetHeight : 140,
@@ -218,12 +225,10 @@ function createLeftSurface() {
 		if (((i+1) % 2) == 0) {
 			sideUpper += createUpperUpSvgPath();
 			let sum = calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix());
-			//console.log("oben:" + calcData.cabinetHeightlengthElement + " + " + metadata.laserLoss + " + " +  metadata.laserLoss + " - " + (2 * calcEckAussenFix()) + " = " + sum);
 			sideUpper += createHorizontalSvgPath(sum);
 		} else {
 			sideUpper += createUpperDownSvgPath();
 			let sum = calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix());
-			//console.log("unten:" + calcData.cabinetHeightlengthElement + " - " + metadata.laserLoss + " - " +  metadata.laserLoss + " - " + (2 * calcEckInnenFix()) + " = " + sum);
 			sideUpper += createHorizontalSvgPath(sum);
 		}
 	}
@@ -247,23 +252,19 @@ function createLeftSurface() {
 		if (((i+1) % 2) == 0) {
 			sideRight += createRightLeftSvgPath();
 			let sum = calcData.cabinetWidthlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix());
-			//console.log("oben: " + calcData.cabinetWidthlengthElement + " - " + metadata.laserLoss + " - " + metadata.laserLoss + " - " + (2 * calcEckInnenFix()) + " = " + sum);
 			sideRight += createVerticalSvgPath(sum);
 		} else {
 			sideRight += createRightRightSvgPath();
 			let sum = calcData.cabinetWidthlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix());
-			//console.log("unten: " + calcData.cabinetWidthlengthElement + " + " + metadata.laserLoss + " + " + metadata.laserLoss + " - " + (2 * calcEckAussenFix()) + " = " + sum);
 			sideRight += createVerticalSvgPath(sum);
 		}
 	}
 	if ((calcData.cabinetWidthNoOfElements % 2) == 0) {
-		//console.log("oben");
 		sideRight += createRightRightSvgPath();
 		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - (metadata.laserLoss % 2));
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 	} else {
-		//console.log("unten");
 		sideRight += createRightLeftSvgPath();
 		sideRight += createVerticalSvgPath(metadata.borderElementLength - (metadata.laserLoss / 2) - calcEckInnenFix() - metadata.cornerRadius);
 		sideRight += createLowerRightCorner();
@@ -274,11 +275,9 @@ function createLeftSurface() {
 	let sideLower = createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
 		if (((i+1) % 2) == 0) {
-			//console.log("obennnnn");
 			sideLower += createLowerDownSvgPath();
 			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss - (2 * calcEckInnenFix())));
 		} else {
-			//console.log("untennnnn");
 			sideLower += createLowerUpSvgPath();
 			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - (2 * calcEckAussenFix())));
 		}
@@ -290,7 +289,6 @@ function createLeftSurface() {
 	} else {
 		sideLower += createLowerDownSvgPath();
 		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
-		//console.log("Ende oben: " + metadata.borderElementLength + " + " + " - " + calcEckInnenFix() + " - " + metadata.cornerRadius + " - " + calcDiffInnenAussen() + " = " + sum);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
 		sideLower += createVerticalSvgPath(-calcDiffInnenAussen());
@@ -300,7 +298,6 @@ function createLeftSurface() {
 	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - calcDiffInnenAussen()));
 	sideLeft += createUpperLeftCorner();
 
-	//console.log(sideUpper + sideRight + sideLower + sideLeft);
 
 	logHistoryLog();
 	return sideUpper + sideRight + sideLower + sideLeft;
@@ -483,7 +480,7 @@ function createUpperUpSvgPath() {
 	upperUp += "m xx1,xy1 ";
 	addHistoryLog(metadata.radius1, -metadata.radius1);
 	upperUp += "a xr1 xr1 0 0 0  xr1 -xr1 ";
-	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper up");
+	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper up", true);
 	upperUp += "v -xl1 ";
 	addHistoryLog(-metadata.radius2, -metadata.radius2);
 	upperUp += "a xr2 xr2 0 0 0 -xr2 -xr2 ";
@@ -511,7 +508,7 @@ function createUpperDownSvgPath() {
 	upperDown += "h -xl2 ";
 	addHistoryLog(-metadata.radius2, metadata.radius2);
 	upperDown += "a xr2 xr2 0 0 0 -xr2 xr2 ";
-	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper down");
+	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa upper down", true);
 	upperDown += "v xl1 ";
 	addHistoryLog(metadata.radius1, metadata.radius1);
 	upperDown += "a xr1 xr1 0 0 0 xr1 xr1 ";
@@ -523,7 +520,7 @@ function createLowerDownSvgPath() {
 	lowerDown += "m xx1,xy1 ";
 	addHistoryLog(-metadata.radius1, metadata.radius1);
 	lowerDown += "a xr1 xr1 0 0 0 -xr1 xr1 ";
-	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower down");
+	addHistoryLog(0, metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower down", true);
 	lowerDown += "v xl1 ";
 	addHistoryLog(metadata.radius2, metadata.radius2);
 	lowerDown += "a xr2 xr2 0 0 0  xr2 xr2 ";
@@ -551,7 +548,7 @@ function createLowerUpSvgPath() {
 	lowerUp += "h xl2 ";
 	addHistoryLog(metadata.radius2, -metadata.radius2);
 	lowerUp += "a xr2 xr2 0 0 0  xr2 -xr2 ";
-	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower up");
+	addHistoryLog(0, -metadata.length1, "aaaaaaaaaaaaaaaaaaaaaaaaaa lower up", true);
 	lowerUp += "v -xl1 ";
 	addHistoryLog(-metadata.radius1, -metadata.radius1);
 	lowerUp += "a xr1 xr1 0 0 0 -xr1 -xr1 ";
@@ -563,7 +560,7 @@ function createRightRightSvgPath() {
 	rightRight += "m xx1,xy1 ";
 	addHistoryLog(metadata.radius1, metadata.radius1);
 	rightRight += "a xr1 xr1 0 0 0 xr1  xr1 ";
-	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right right");
+	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right right", true);
 	rightRight += "h xl1 ";
 	addHistoryLog(metadata.radius2, -metadata.radius2);
 	rightRight += "a xr2 xr2 0 0 0 xr2 -xr2 ";
@@ -591,7 +588,7 @@ function createRightLeftSvgPath() {
 	rightLeft += "v -xl2 ";
 	addHistoryLog(-metadata.radius2, -metadata.radius2);
 	rightLeft += "a xr2 xr2 0 0 0 -xr2 -xr2 ";
-	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right left");
+	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa right left", true);
 	rightLeft += "h -xl1 ";
 	addHistoryLog(-metadata.radius1, metadata.radius1);
 	rightLeft += "a xr1 xr1 0 0 0 -xr1  xr1 ";
@@ -603,7 +600,7 @@ function createLeftLeftSvgPath() {
 	leftLeft += "m xx1,xy1 ";
 	addHistoryLog(-metadata.radius1, -metadata.radius1);
 	leftLeft += "a xr1 xr1 0 0 0 -xr1 -xr1 ";
-	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left left");
+	addHistoryLog(-metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left left", true);
 	leftLeft += "h -xl1 ";
 	addHistoryLog(-metadata.radius2, metadata.radius2);
 	leftLeft += "a xr2 xr2 0 0 0 -xr2  xr2 ";
@@ -631,7 +628,7 @@ function createLeftRightSvgPath() {
 	leftRight += "v xl2 ";
 	addHistoryLog(metadata.radius2, metadata.radius2);
 	leftRight += "a xr2 xr2 0 0 0 xr2  xr2 ";
-	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left right");
+	addHistoryLog(metadata.length1, 0, "aaaaaaaaaaaaaaaaaaaaaaaaaa left right", true);
 	leftRight += "h xl1 ";
 	addHistoryLog(metadata.radius1, -metadata.radius1);
 	leftRight += "a xr1 xr1 0 0 0 xr1 -xr1 ";
@@ -666,43 +663,58 @@ function createStartPos(x, y) {
 }
 
 function createUpperLeftCorner() {
-	addHistoryLog(metadata.cornerRadius, -metadata.cornerRadius, "upper Left => y is Top again");
+	addHistoryLog(metadata.cornerRadius, -metadata.cornerRadius, "upper Left => y is Top again", true);
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
 }
 
 function createUpperRightCorner() {
-	addHistoryLog(metadata.cornerRadius, metadata.cornerRadius, "upper Right => x is right side");
+	addHistoryLog(metadata.cornerRadius, metadata.cornerRadius, "upper Right => x is right side", true);
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " " + metadata.cornerRadius + "";
 }
 
 function createLowerRightCorner() {
-	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower Left => y is bottom side");
+	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower Left => y is bottom side", true);
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " " + metadata.cornerRadius + "";
 }
 
 function createLowerLeftCorner() {
-	addHistoryLog(-metadata.cornerRadius, -metadata.cornerRadius, "lower Left => x is left side again");
+	addHistoryLog(-metadata.cornerRadius, -metadata.cornerRadius, "lower Left => x is left side again", true);
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
 }
 
 function initHistoryLog(x, y) {
+	if (!metadata.log) {
+		return;
+	}
 	posLog.x = x;
 	posLog.y = y;
 	posLog.history = [];
 	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y, "comment": "initial"});
+
+	poslogImportant.history = [];
+	poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y, "comment": "initial"});
 }
 
-function addHistoryLog(x, y, comment) {
+function addHistoryLog(x, y, comment, important) {
+	if (!metadata.log) {
+		return;
+	}
 	if (!comment) {
 		comment = "";
 	}
 	posLog.x += x;
 	posLog.y += y;
 	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y,"comment": comment});
+	if (important) {
+		posLog.history.push({"absX" : posLog.x, "absY" : posLog.y,"comment": comment});
+	}
 }
 
 function logHistoryLog() {
-	console.log(JSON.stringify(posLog));
+	if (!metadata.log) {
+		return;
+	}
+	console.log(JSON.stringify(poslogImportant));
 }
 
 </script>
