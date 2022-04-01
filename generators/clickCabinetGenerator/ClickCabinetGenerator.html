@@ -185,30 +185,9 @@ function createModel() {
 		"</pre>";
 
 	modelLocal.models["leftSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createLeftSurface());
+	modelLocal.models["upperSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createUpperSurface());
 
-	/*
-	modelLocal.models["aaa"] = makerjs.importer.fromSVGPathData("M 0 -300 h 300");
-	modelLocal.models["bbb"] = makerjs.importer.fromSVGPathData("M 0 -290.1 h 300");
-	modelLocal.models["ccc"] = makerjs.importer.fromSVGPathData("M 0 -254.95 h 300");
-	modelLocal.models["ddd"] = makerjs.importer.fromSVGPathData("M 0 -220.6 h 300");
-	modelLocal.models["eee"] = makerjs.importer.fromSVGPathData("M 0 -185.45 h 300");
-	modelLocal.models["fff"] = makerjs.importer.fromSVGPathData("M 0 -151.1 h 300");
-	modelLocal.models["ggg"] = makerjs.importer.fromSVGPathData("M 0 -141 h 300");
-
-	modelLocal.models["a11"] = makerjs.importer.fromSVGPathData("M 5 -300 v 300");
-
-	modelLocal.models["b11"] = makerjs.importer.fromSVGPathData("M 15.1 -300 v 300");
-
-	modelLocal.models["c11"] = makerjs.importer.fromSVGPathData("M 49.3666666 -300 v 300");
-
-	modelLocal.models["d11"] = makerjs.importer.fromSVGPathData("M 84.43333333 -300 v 300");
-
-	modelLocal.models["e11"] = makerjs.importer.fromSVGPathData("M 118.7 -300 v 300");
-
-	modelLocal.models["g11"] = makerjs.importer.fromSVGPathData("M 129 -300 v 300");
-
-*/
-
+/*
 modelLocal.models["aaa"] = makerjs.importer.fromSVGPathData("M 0 -320 v 300");
 modelLocal.models["bbb"] = makerjs.importer.fromSVGPathData("M 10.1 -320 v 300");
 modelLocal.models["ccc"] = makerjs.importer.fromSVGPathData("M 39.7 -320 v 300");
@@ -216,20 +195,98 @@ modelLocal.models["ddd"] = makerjs.importer.fromSVGPathData("M 70.1 -320 v 300")
 modelLocal.models["eee"] = makerjs.importer.fromSVGPathData("M 99.7 -320 v 300");
 modelLocal.models["fff"] = makerjs.importer.fromSVGPathData("M 130.1 -320 v 300");
 modelLocal.models["ggg"] = makerjs.importer.fromSVGPathData("M 137.5 -320 v 300");
-
+*/
 	return modelLocal;
+}
+
+function createUpperSurface() {
+	let sideUpper = createUpperSurfaceOben();
+	let sideRight = createUpperSurfaceRechts();
+	let sideLower = createUpperSurfaceUnten();
+
+
+	logHistoryLog();
+	return sideUpper + sideRight + sideLower;
+}
+
+function createUpperSurfaceUnten() {
+	let sideLower = "";
+	if (hasHeightGeradeAnzahlAnElementen()) {
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	} else { // ungerade
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	}
+
+	// main loop
+	let changer = hasHeightGeradeAnzahlAnElementen() ? 0 : 1;
+	for (let i = 0; i < calcData.cabinetLengthNoOfElements; i++) {
+		if ((changer % 2) == 0) {
+			sideLower += createLowerDownSvgPath();
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix())));
+		} else {
+			sideLower += createLowerUpSvgPath();
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix())));
+		}
+		changer++;
+	}
+	
+	if (hasHeightGeradeAnzahlAnElementen()) {
+		sideLower += createLowerDownSvgPath();
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
+		sideLower += createLowerLeftCorner();
+	} else { // ungerade
+		sideLower += createLowerDownSvgPath();
+		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
+		sideLower += createHorizontalSvgPath(sum);
+		sideLower += createLowerLeftCorner();
+		sideLower += createVerticalSvgPath(-calcDiffInnenAussen());
+	}
+	return sideLower;
+}
+
+function createUpperSurfaceOben() {
+	let sideUpper = createStartPos(metadata.cabinetHeight + 10 + metadata.cornerRadius, -calculatePreviewHeight() + 2);
+	sideUpper += createHorizontalSvgPath(metadata.cabinetLength - (2 * metadata.cornerRadius) - calcDiffInnenAussen());
+	sideUpper += createUpperRightCorner();
+	return sideUpper;
+}
+
+function createUpperSurfaceRechts() {
+	let sideRight = "";
+	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() - metadata.laserLoss);
+
+	// main loop
+	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
+		if (((i+1) % 2) == 0) {
+			sideRight += createRightLeftSvgPath();
+			let sum = calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix());
+			sideRight += createVerticalSvgPath(sum);
+		} else {
+			sideRight += createRightRightSvgPath();
+			let sum = calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix());
+			sideRight += createVerticalSvgPath(sum);
+		}
+	}
+
+	if (hasHeightGeradeAnzahlAnElementen()) {
+		sideRight += createRightRightSvgPath();
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss);
+		sideRight += createLowerRightCorner();
+		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
+	} else { // ungerade
+		sideRight += createRightLeftSvgPath();
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius);
+		sideRight += createLowerRightCorner();
+	}
+	return sideRight;
 }
 
 function createLeftSurface() {
 	let sideUpper = createLeftSurfaceOben();
-
 	let sideRight = createLeftSurfaceRechts();
-
 	let sideLower = createLeftSurfaceUnten();
-
 	let sideLeft = createLeftSurfaceLinks();
 
-	logHistoryLog();
 	return sideUpper + sideRight + sideLower + sideLeft;
 }
 
@@ -242,11 +299,11 @@ function hasWidthGeradeAnzahlAnElementen() {
 }
 
 function hasLengthGeradeAnzahlAnElementen() {
-	
+	return ((calcData.cabinetLengthNoOfElements % 2) == 0);
 }
 
 function createLeftSurfaceOben() {
-	let sideUpper = createStartPos(1, metadata.cabinetHeight + 10 - calculatePreviewHeight() + 2);
+	let sideUpper = createStartPos(metadata.cornerRadius, metadata.cabinetHeight + 10 - calculatePreviewHeight() + 2);
 	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius);
 
 	// main loop
