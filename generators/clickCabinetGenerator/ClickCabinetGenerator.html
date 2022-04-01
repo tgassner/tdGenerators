@@ -51,7 +51,7 @@
 		<div style="padding: 15px;">
 			<button id="downloadDXF" onclick="downloadDXF()" title="Generiere und download eine DXF Datei"> DXF Download</button>
 			<button id="downloadSVG" onclick="downloadSVG()" title="Generiere und download eine SVG Datei"> SVG Download</button>
-			<button id="sayJipee" onclick="alert('Jipee')" title="Say Jipee"> Say Jipee</button>
+			<button id="sayJipee" onclick="doTest()" title="do a Test"> do a Test</button>
 		</div>
 	</div>
 
@@ -203,16 +203,56 @@ function createUpperSurface() {
 	let sideUpper = createUpperSurfaceOben();
 	let sideRight = createUpperSurfaceRechts();
 	let sideLower = createUpperSurfaceUnten();
-
+	let sideLeft = createUpperSurfaceLinks();
 
 	logHistoryLog();
-	return sideUpper + sideRight + sideLower;
+	return sideUpper + sideRight + sideLower + sideLeft;
+}
+
+function createUpperSurfaceLinks() {
+	let sideLeft = "";
+
+
+	if (hasHeightGeradeAnzahlAnElementen()) {
+		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	} else { // ungerade
+		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+	}
+
+
+	// main loop
+	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
+		if (((i+1) % 2) == 0) {
+			sideLeft += createLeftLeftSvgPath();
+			let sum = calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix());
+			sideLeft += createVerticalSvgPath(-sum);
+		} else {
+			sideLeft += createLeftRightSvgPath();
+			let sum = calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix());
+			sideLeft += createVerticalSvgPath(-sum);
+		}
+	}
+
+	if (hasLengthGeradeAnzahlAnElementen()) {
+		sideLeft += createLeftRightSvgPath();
+		let sum = -(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius)
+		sideLeft += createVerticalSvgPath();
+		sideLeft += createUpperLeftCorner();
+	} else { // ungerade
+		sideLeft += createLeftLeftSvgPath();
+		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
+		sideLeft += createVerticalSvgPath(sum);
+		sideLeft += createUpperLeftCorner();
+	}
+
+
+	return sideLeft;
 }
 
 function createUpperSurfaceUnten() {
 	let sideLower = "";
 	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2) - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	} else { // ungerade
 		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
 	}
@@ -222,16 +262,16 @@ function createUpperSurfaceUnten() {
 	for (let i = 0; i < calcData.cabinetLengthNoOfElements; i++) {
 		if ((changer % 2) == 0) {
 			sideLower += createLowerDownSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetLengthlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix())));
 		} else {
 			sideLower += createLowerUpSvgPath();
-			sideLower += createHorizontalSvgPath(-(calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix())));
+			sideLower += createHorizontalSvgPath(-(calcData.cabinetLengthlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix())));
 		}
 		changer++;
 	}
 	
-	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLower += createLowerDownSvgPath();
+	if (hasLengthGeradeAnzahlAnElementen()) {
+		sideLower += createLowerUpSvgPath();
 		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
@@ -245,7 +285,7 @@ function createUpperSurfaceUnten() {
 }
 
 function createUpperSurfaceOben() {
-	let sideUpper = createStartPos(metadata.cabinetHeight + 10 + metadata.cornerRadius, -calculatePreviewHeight() + 2);
+	let sideUpper = createStartPos(metadata.cabinetHeight + 10 + metadata.cornerRadius, -calculateTotalHeight() + 2);
 	sideUpper += createHorizontalSvgPath(metadata.cabinetLength - (2 * metadata.cornerRadius) - calcDiffInnenAussen());
 	sideUpper += createUpperRightCorner();
 	return sideUpper;
@@ -270,9 +310,10 @@ function createUpperSurfaceRechts() {
 
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss - calcDiffInnenAussen());
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
+		console.log("DönerDönerDöner");
 	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
 		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius);
@@ -303,7 +344,7 @@ function hasLengthGeradeAnzahlAnElementen() {
 }
 
 function createLeftSurfaceOben() {
-	let sideUpper = createStartPos(metadata.cornerRadius, metadata.cabinetHeight + 10 - calculatePreviewHeight() + 2);
+	let sideUpper = createStartPos(metadata.cornerRadius, metadata.cabinetHeight + 10 - calculateTotalHeight() + 2);
 	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius);
 
 	// main loop
@@ -427,7 +468,7 @@ function drawPreview() {
 			return;
 	}
 
-	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : calculatePreviewWidth() + "px", "height" : calculatePreviewHeight() + "px", "id" : "preViewSvg" } });
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : calculateTotalWidth() + "px", "height" : calculateTotalHeight() + "px", "id" : "preViewSvg" } });
 		
 	document.getElementById('clickCabinetPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>";
 	
@@ -436,7 +477,7 @@ function drawPreview() {
 	document.getElementById('contentDiv').innerHTML = svg;
 	document.getElementById('contentDiv').style.position = "relative";
 
-	let viewBoxAttrib = "-1 -1 " + (calculatePreviewWidth() + 2) + " " + (calculatePreviewHeight() + 2) ;
+	let viewBoxAttrib = "-1 -1 " + (calculateTotalWidth() + 2) + " " + (calculateTotalHeight() + 2) ;
 	document.getElementById('preViewSvg').setAttribute("viewBox", viewBoxAttrib);
 
 	let g = document.querySelector('#preViewSvg>g');
@@ -450,11 +491,11 @@ function drawPreview() {
 	document.getElementById("cabinetLength").value = metadata.cabinetLength;
 }
 
-function calculatePreviewWidth() {
+function calculateTotalWidth() {
 	return metadata.cabinetHeight + 10 + metadata.cabinetLength + 10 + metadata.cabinetHeight + 2;
 }
 
-function calculatePreviewHeight() {
+function calculateTotalHeight() {
 	return metadata.cabinetHeight + 10 + metadata.cabinetWidth + 10 + metadata.cabinetHeight + 2;
 }
 
@@ -478,23 +519,27 @@ function download(data, filename, type) {
 
 function downloadDXF() {
 	var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
-	download(dxfExp, "Karton Inlay " + document.getElementById('auftragsNummer').value + ".dxf", "dxf")
+	download(dxfExp, "Click Vitrine " + document.getElementById('auftragsNummer').value + ".dxf", "dxf")
 }
 
 function downloadSVG() {
-   var svgExp = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+	download(convertSVG(), "Click Vitrine " + document.getElementById('auftragsNummer').value + ".svg", "svg")
+}
+
+function convertSVG() {
+	var svgExp = '<?xml version="1.0" encoding="UTF-8"?>' + 
 		makerjs.exporter.toSVG(model, { 
 			units: makerjs.unitType.Millimeter, 
 			svgAttrs : {
-				"width" : (determineTotalWidth() + "mm"), 
-				"height" : (determineTotalHeight() + "mm"), 
+				"width" : (calculateTotalWidth() + "mm"), 
+				"height" : (calculateTotalHeight() + "mm"), 
 				"xmlns" : "http://www.w3.org/2000/svg",
 				"xmlns:xlink" : "http://www.w3.org/1999/xlink",
 				"version" : "1.1",
 				"baseProfile" : "full"
 						}
-		});
-	download(svgExp, "Karton Inlay " + document.getElementById('auftragsNummer').value + ".svg", "svg")
+		}) + "\n";
+	return svgExp;
 }
 
 function genericChanged(elementId, metaDataFieldName1, metaDataFieldName2, metaDataFieldName3) {
@@ -820,6 +865,50 @@ function logHistoryLog() {
 	console.log(JSON.stringify(poslogImportant));
 	console.log("All of them");
 	console.log(JSON.stringify(posLog));
+}
+
+function doTest() {
+	let counter = 0;
+	let svgs = "";
+	for (let li = 3; li <= 5; li++) {
+		for (let lii = 0; lii < 2; lii++) {
+			metadata.cabinetLength = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
+			if (lii == 1) {
+				metadata.cabinetLength += Math.trunc(metadata.clickElementLength / 4);
+			} else if (lii == 2) {
+				metadata.cabinetLength -= Math.trunc(metadata.clickElementLength / 4);
+							}
+			for (let bi = 3; bi <= 5; bi++) {
+				for (let bii = 0; bii < 3; bii++) {
+					metadata.cabinetWidth = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
+					if (bii == 1) {
+						metadata.cabinetWidth += Math.trunc(metadata.clickElementLength / 4);
+					} else if (bii == 2) {
+						metadata.cabinetWidth -= Math.trunc(metadata.clickElementLength / 4);
+					}
+					for (let hi = 3; hi <= 5; hi++) {
+						for (let hii = 0; hii < 3; hii++) {
+							metadata.cabinetHeight = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
+							if (hii == 1) {
+								metadata.cabinetHeight += Math.trunc(metadata.clickElementLength / 4);
+							} else if (hii == 2) {
+								metadata.cabinetHeight -= Math.trunc(metadata.clickElementLength / 4);
+							}
+							counter++;
+							console.log(metadata.cabinetLength);
+							console.log(metadata.cabinetWidth);
+							console.log(metadata.cabinetHeight);
+
+							createModel();
+							svgs += convertSVG();
+						}
+					}
+				}
+			}
+		}
+	}
+	console.log("No of Test Cases:" + counter);
+	download(svgs, "ClickVitrinenTestResult.svg", "svg")
 }
 
 </script>
