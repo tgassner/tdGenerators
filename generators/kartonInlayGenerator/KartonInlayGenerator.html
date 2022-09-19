@@ -68,7 +68,7 @@
 
 			<br>
 			<div style='font-weight: bold; margin-bottom: 8px;padding-top: 15px;padding-left: 15px;'>Karton LxBxH Innenmaß</div>
-			<div style="float: left; width:10px; padding-left: 20px;margin:7px">L: </div>              <input type="number" id="boxLength" name="boxLength" onchange="boxLengthChanged()" style="width: 60px;margin:5px">mm<br> 
+			<div style="float: left; width:10px; padding-left: 20px;margin:7px">L: </div> <input type="number" id="boxLength" name="boxLength" onchange="boxLengthChanged()" style="width: 60px;margin:5px">mm<br>
 			<div style="float: left; width:10px; padding-left: 20px;margin:6px; clear:left;">B: </div> <input type="number" id="boxWidth"  name="boxWidth"  onchange="boxWidthChanged()"  style="width: 60px;margin:5px">mm <br> 
 			<div style="float: left; width:10px; padding-left: 20px;margin:7px; clear:left;">H: </div> <input type="number" id="boxHeight" name="boxHeight" onchange="boxHeightChanged()" style="width: 60px;margin:5px">mm
 		</div>
@@ -329,6 +329,7 @@ function createLogo(modelLocal) {
 	
 	makerjs.model.moveRelative(modelLocal.models.tdLogoToken, [determineTotalWidth() / 2 - (0 * scalefactor), determineTotalHeight() / 2 + (23 * scalefactor)]);
 	makerjs.model.moveRelative(modelLocal.models.auftragsnummer, [determineTotalWidth() / 2 - (25 * scalefactor), determineTotalHeight() / 2 - (162 * scalefactor)]);
+	makerjs.model.moveRelative(modelLocal.models.karton, [determineTotalWidth() / 2 - (25 * scalefactor), determineTotalHeight() / 2 - (210 * scalefactor) ]);
 }
 
 function createToken(modelLocal, scalefactor) {
@@ -348,6 +349,11 @@ function createAuftragsnummer(modelLocal, scalefactor) {
 	modelLocal.models["auftragsnummer"] = new makerjs.models.Text(font, auftragsNummerGesperrtStr, 18);
 	makerjs.model.scale(modelLocal.models.auftragsnummer, scalefactor * 2);
 	makerjs.model.center(modelLocal.models.auftragsnummer);
+
+	let kartonmasse = metadata.boxHeight + "   " + metadata.boxWidth + "   " + metadata.boxLength;
+	modelLocal.models["karton"] = new makerjs.models.Text(font, kartonmasse, 16);
+	makerjs.model.scale(modelLocal.models.karton, scalefactor * 2);
+	makerjs.model.center(modelLocal.models.karton);
 }
 
 function calculateGenericPerforation(start, bruttoPerforatorLength) {
