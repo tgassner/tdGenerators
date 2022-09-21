@@ -674,8 +674,27 @@ function download(data, filename, type) {
 
 function downloadDXF() {
 	var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 }) ;
-	let filename = "Karton Inlay " + document.getElementById('auftragsNummer').value + " zs= " + determineTotalWidth() + "x" + determineTotalHeight() + "mm" +  ".dxf";
-	download(dxfExp, filename, "dxf");
+	download(dxfExp, determineFilename("dxf"), "dxf");
+}
+
+function determineFilename(extension) {
+	let filename = "Karton Inlay -";
+	let auftragsnummer = document.getElementById('auftragsNummer').value;
+	if (auftragsnummer) {
+		filename += " AuftNr=" + auftragsnummer;
+	}
+	let position = document.getElementById('position').value;
+	if (position) {
+		filename += " Position=" + position;
+	}
+
+	filename += " K=" + metadata.boxLength + "x" + metadata.boxWidth + "x" + metadata.boxHeight;
+
+	filename += " V=" + metadata.cabinetLength + "x" + metadata.cabinetWidth + "x" + metadata.cabinetHeight;
+
+	filename += " zs=" + determineTotalWidth() + "x" + determineTotalHeight() + "mm" +  "." + extension;
+
+	return filename;
 }
 
 function downloadDXFPolyLine() {
@@ -685,8 +704,7 @@ function downloadDXFPolyLine() {
 		units: makerjs.unitType.Millimeter, 
 		pointMatchingDistance : 0.1,
 		});
-	let filename = "Karton Inlay " + document.getElementById('auftragsNummer').value + " zs= " + determineTotalWidth() + "x" + determineTotalHeight() + "mm PolyLine" +  ".dxf";
-	download(dxfExp, filename, "dxf");
+	download(dxfExp, determineFilename("dxf"), "dxf");
 }
 
 function downloadSVG() {
@@ -702,7 +720,7 @@ function downloadSVG() {
 				"baseProfile" : "full"
 						}
 		});
-	download(svgExp, "Karton Inlay " + document.getElementById('auftragsNummer').value + ".svg", "svg")
+	download(svgExp, determineFilename("svg"), "svg")
 }
 
 function showHideDebugValues() {
