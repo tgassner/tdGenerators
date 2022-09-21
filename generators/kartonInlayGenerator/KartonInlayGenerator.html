@@ -350,7 +350,7 @@ function createAuftragsnummer(modelLocal, scalefactor) {
 	makerjs.model.scale(modelLocal.models.auftragsnummer, scalefactor * 2);
 	makerjs.model.center(modelLocal.models.auftragsnummer);
 
-	let kartonmasse = metadata.boxHeight + "   " + metadata.boxWidth + "   " + metadata.boxLength;
+	let kartonmasse = metadata.boxLength + "   " + metadata.boxWidth + "   " + metadata.boxHeight;
 	modelLocal.models["karton"] = new makerjs.models.Text(font, kartonmasse, 16);
 	makerjs.model.scale(modelLocal.models.karton, scalefactor * 2);
 	makerjs.model.center(modelLocal.models.karton);
