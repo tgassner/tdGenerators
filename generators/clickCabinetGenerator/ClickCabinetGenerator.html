@@ -27,7 +27,7 @@
 
 <br><br>
 
-<div style="width: 500px">
+<div style="width: 600px">
 	<div id="guiElements" style="display: flex; flex-flow: column; ">
 		<div style="background-color: aliceblue;height: fit-content;clear: both; width: 100%;display: table;">
 			<div style='font-weight: bold; margin-left: 15px; margin-bottom: 8px;'>Vitrine LxBxH Außenmaße</div>
@@ -35,32 +35,35 @@
 			<div style="display: flex; flex-flow: column">
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">L: </div>
-					<input type="number" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 60px">
+					<input type="number" min="50" max="1000" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 60px">
 					<span style="margin-left: 8px">mm</span>
+					<div id="cabinetLengthErrorMsg" style="margin-left: 10px; color: #ff0000"></div>
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">B: </div>
-					<input type="number" id="cabinetWidth"  name="cabinetWidth"  onchange="cabinetWidthChanged()"  style="width: 60px">
+					<input type="number" min="50" max="1000" id="cabinetWidth"  name="cabinetWidth"  onchange="cabinetWidthChanged()"  style="width: 60px">
 					<span style="margin-left: 8px">mm</span>
+					<div id="cabinetWidthErrorMsg" style="margin-left: 10px; color: #ff0000"></div>
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">H: </div>
-					<input type="number" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 60px">
+					<input type="number" min="50" max="1000" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 60px">
 					<span style="margin-left: 8px">mm</span>
+					<div id="cabinetHeightErrorMsg" style="margin-left: 10px; color: #ff0000"></div>
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">Mit Boden: </div>
-					<input type="checkbox" id="cabinetFloor" name="cabinetBoden" onchange="cabinetFloorChanged()" style="display: flex; justify-content: left; margin-left: 0px">
+					<input type="checkbox" id="processAlsoFloor" name="processAlsoFloor" onchange="processAlsoFloorChanged()" style="display: flex; justify-content: left; margin-left: 0px">
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px ">Materialdicke: </div>
 					<div style="display: flex; justify-content: left; margin-left: 0px; flex-flow: column">
 						<div style="display: flex; justify-content: left; margin-left: 0px">
-							<input type="radio" id="ratio1dot5mm" name="materialThicknessRadio" checked onchange="materialThicknessChanged()" style="margin-left: 0px; display: flex">
+							<input type="radio" id="ratio1dot5mm" name="materialThicknessRadio" value="1.5" checked onchange="materialThicknessChanged()" style="margin-left: 0px; display: flex">
 							<span style="margin-left: 8px">1.5 mm</span>
 						</div>
 						<div style="display: flex; justify-content: left; margin-left: 0px">
-							<input type="radio" id="ratio2mm" name="materialThicknessRadio" onchange="materialThicknessChanged()" style="margin-left: 0px; display: flex">
+							<input type="radio" id="ratio2mm" name="materialThicknessRadio" value="2" onchange="materialThicknessChanged()" style="margin-left: 0px; display: flex">
 							<span style="margin-left: 8px">2 mm</span>
 						</div>
 					</div>
@@ -74,7 +77,7 @@
 		<div id="exportButtons" style="background-color: cornsilk; display:flex; padding-top:10px; padding-bottom:10px; justify-content : space-around">
 			<button id="downloadDXF" onclick="downloadDXF()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine DXF Datei"> DXF Download</button>
 			<button id="downloadSVG" onclick="downloadSVG()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine SVG Datei"> SVG Download</button>
-			<button id="sayJipee"    onclick="doTest()"      style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="do a Test"> do a Test</button>
+			<button onclick="determinenoOfElementsIncludingTheHalf()"> muhaha </button>
 		</div>
 
 		<div id="debugInfosOuter" style="background-color: cadetblue; display: flex">
@@ -105,7 +108,7 @@ var posLog = {
 }
 
 var metadata = {
-	log : true,
+	log : false,
 
 	//cabinetLength : 350,
 	//cabinetWidth : 170,
@@ -114,8 +117,8 @@ var metadata = {
 	cabinetWidth : 140,
 	cabinetHeight : 110,
 
-	minSideLength : 60,
-	maxSideLength : 700,
+	minSideLength : 50,
+	maxSideLength : 1000,
 
 	radius1 : 0.2,
 	radius2 : 0.2,
@@ -132,6 +135,9 @@ var metadata = {
 	borderElementLength : 10,
 
 	laserLoss : 0.2,
+
+	processAlsoFloor : false,
+	materialThickness : 1.5,
 };
 
 var calcData = {
@@ -205,7 +211,7 @@ function createModel() {
 		"</pre>";
 
 	modelLocal.models["leftSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createLeftSurface());
-	modelLocal.models["upperSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createUpperSurface());
+	//modelLocal.models["upperSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createUpperSurface());
 
 /*
 modelLocal.models["aaa"] = makerjs.importer.fromSVGPathData("M 0 -320 v 300");
@@ -562,17 +568,23 @@ function convertSVG() {
 	return svgExp;
 }
 
-function genericChanged(elementId, metaDataFieldName1, metaDataFieldName2, metaDataFieldName3) {
-	var widthInt = parseInt(document.getElementById(elementId).value);
-	if (!isNaN(widthInt)) {
-		document.getElementById(elementId).style.backgroundColor = "";
-		if (metaDataFieldName3) {
-		    metadata[metaDataFieldName1][metaDataFieldName2][metaDataFieldName3] = parseInt(widthInt);
-		} else if (metaDataFieldName2) {
-			metadata[metaDataFieldName1][metaDataFieldName2] = parseInt(widthInt);
-		} else {
-			metadata[metaDataFieldName1] = parseInt(widthInt);
+function genericChanged(elementId, metaDataFieldName, checkFkt) {
+	var intValue = parseInt(document.getElementById(elementId).value);
+	document.getElementById(elementId).value = intValue;
+	let checkFktResult = true;
+	if (checkFkt) {
+		let checkFktReturn = checkFkt(intValue);
+		checkFktResult = checkFktReturn.checkResult;
+		if (!checkFktResult && document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = checkFktReturn.errorMessage;
 		}
+	}
+	if (!isNaN(intValue) && checkFktResult) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		if (document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = "";
+		}
+		metadata[metaDataFieldName] = intValue;
 		return true;
 	} else {
 	    document.getElementById(elementId).style.backgroundColor = "#d87979";
@@ -584,17 +596,34 @@ function cabinetLengthChanged() {
 	document.getElementById("infoMessage").innerHTML = "";
 	document.getElementById("infoMessage").style.backgroundColor = "";
 
-	if (genericChanged("cabinetLength", "cabinetLength")) {
+	if (genericChanged("cabinetLength", "cabinetLength", checkNumberRange)) {
 		model = createModel();
 		drawPreview();
 	}
+}
+
+function checkNumberRange(toCheck) {
+	let toCheckInt = parseInt(toCheck);
+
+	if (isNaN(toCheckInt)) {
+		return {
+			checkResult: false,
+			errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+		};
+	}
+
+	let checkResultBool = toCheckInt >= 50 && toCheckInt <= 1000;
+	return {
+		checkResult: checkResultBool,
+		errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+	};
 }
 
 function cabinetWidthChanged() {
 	document.getElementById("infoMessage").innerHTML = "";
 	document.getElementById("infoMessage").style.backgroundColor = "";
 
-	if (genericChanged("cabinetWidth", "cabinetWidth")) {
+	if (genericChanged("cabinetWidth", "cabinetWidth", checkNumberRange)) {
 		model = createModel();
 		drawPreview();
 	}
@@ -609,35 +638,47 @@ function cabinetHeightChanged() {
 	lbh.sort(function(a, b){return a-b});
 	lbh.reverse();
 
-	if ((length != lbh[0]) || (width != lbh[1]) || (height != lbh[2])){
-		document.getElementById("infoMessage").innerHTML = "Achtung Länge, Breite und Höhe wurden absteigent sortiert!";
-		document.getElementById("infoMessage").style.backgroundColor = "yellow";
+	let toSortDesc = (length != lbh[0]) || (width != lbh[1]) || (height != lbh[2]);
 
-		document.getElementById("cabinetLength").value = lbh[0];
-		document.getElementById("cabinetWidth").value = lbh[1];
-		document.getElementById("cabinetHeight").value = lbh[2];
+	if (genericChanged("cabinetHeight", "cabinetHeight", checkNumberRange)) {
+		if (toSortDesc){
+			document.getElementById("infoMessage").innerHTML = "Achtung Länge, Breite und Höhe wurden absteigent sortiert!";
+			document.getElementById("infoMessage").style.backgroundColor = "yellow";
 
-		metadata.cabinetLength = lbh[0];
-		metadata.cabinetWidth = lbh[1];
-		metadata.cabinetHeight = lbh[2];
+			document.getElementById("cabinetLength").value = lbh[0];
+			document.getElementById("cabinetWidth").value = lbh[1];
+			document.getElementById("cabinetHeight").value = lbh[2];
 
-	} else {
-		document.getElementById("infoMessage").innerHTML = "";
-		document.getElementById("infoMessage").style.backgroundColor = "";
-	}
+			metadata.cabinetLength = lbh[0];
+			metadata.cabinetWidth = lbh[1];
+			metadata.cabinetHeight = lbh[2];
 
-	if (genericChanged("cabinetHeight", "cabinetHeight")) {
+		} else {
+			document.getElementById("infoMessage").innerHTML = "";
+			document.getElementById("infoMessage").style.backgroundColor = "";
+		}
 		model = createModel();
 		drawPreview();
 	}
 }
 
-function cabinetFloorChanged() {
-	alert("cabinetFloorChanged - TODO");
+function processAlsoFloorChanged() {
+	let processAlsoFloor = document.getElementById("processAlsoFloor").checked;
+	metadata["processAlsoFloor"] = processAlsoFloor;
+	model = createModel();
+	drawPreview();
 }
 
 function materialThicknessChanged() {
-	alert("materialThicknessChanged - TODO");
+	let materialThickness = parseFloat(document.querySelector('input[name="materialThicknessRadio"]:checked').value);
+	if (materialThickness != 1.5) {
+		materialThickness = 1.5;
+		document.getElementById("ratio1dot5mm").checked = true;
+		alert("Sorry daweil nur 1.5 mm unterstützt");
+	}
+	metadata["processAlsoFloor"] = materialThickness;
+	model = createModel();
+	drawPreview();
 }
 
 function replaceValues(input) {
@@ -857,6 +898,19 @@ function createLowerLeftCorner() {
 	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
 }
 
+function determineNoOfElementsIncludingTheHalf(edgeLengthInMM) {
+	let numberOfElements = Math. trunc(edgeLengthInMM / 25);
+	if ((numberOfElements % 2) === 1) {
+		numberOfElements--;
+	}
+	let sizeOfElement = edgeLengthInMM / numberOfElements;
+	if (sizeOfElement > 45) {
+		numberOfElements += 2;
+		//sizeOfElement = edgeLengthInMM / numberOfElements;
+	}
+	return numberOfElements + 1; // "split" the first half and the last half as calculated Elements
+}
+
 function initHistoryLog(x, y) {
 	if (!metadata.log) {
 		return;
@@ -893,50 +947,6 @@ function logHistoryLog() {
 	console.log(JSON.stringify(poslogImportant));
 	console.log("All of them");
 	console.log(JSON.stringify(posLog));
-}
-
-function doTest() {
-	let counter = 0;
-	let svgs = "";
-	for (let li = 3; li <= 5; li++) {
-		for (let lii = 0; lii < 2; lii++) {
-			metadata.cabinetLength = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
-			if (lii == 1) {
-				metadata.cabinetLength += Math.trunc(metadata.clickElementLength / 4);
-			} else if (lii == 2) {
-				metadata.cabinetLength -= Math.trunc(metadata.clickElementLength / 4);
-							}
-			for (let bi = 3; bi <= 5; bi++) {
-				for (let bii = 0; bii < 3; bii++) {
-					metadata.cabinetWidth = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
-					if (bii == 1) {
-						metadata.cabinetWidth += Math.trunc(metadata.clickElementLength / 4);
-					} else if (bii == 2) {
-						metadata.cabinetWidth -= Math.trunc(metadata.clickElementLength / 4);
-					}
-					for (let hi = 3; hi <= 5; hi++) {
-						for (let hii = 0; hii < 3; hii++) {
-							metadata.cabinetHeight = metadata.clickElementLength * li + 2 * metadata.borderElementLength;
-							if (hii == 1) {
-								metadata.cabinetHeight += Math.trunc(metadata.clickElementLength / 4);
-							} else if (hii == 2) {
-								metadata.cabinetHeight -= Math.trunc(metadata.clickElementLength / 4);
-							}
-							counter++;
-							console.log(metadata.cabinetLength);
-							console.log(metadata.cabinetWidth);
-							console.log(metadata.cabinetHeight);
-
-							createModel();
-							svgs += convertSVG();
-						}
-					}
-				}
-			}
-		}
-	}
-	console.log("No of Test Cases:" + counter);
-	download(svgs, "ClickVitrinenTestResult.svg", "svg")
 }
 
 </script>
