@@ -293,23 +293,34 @@ function createHeight(startX, startY, left) {
 
 	let firstVerticalPath = ((metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) / 2) - metadata.nettoDelta - metadata.radiusOutSideClick;
 
+	if (left) {
+		firstVerticalPath += 0.1;
+	} else {
+		firstVerticalPath -= 0.1;
+	}
+
 	currentPath += createVerticalSvgPath(firstVerticalPath);
 
 	for (let i = 0; i < (metadata.cabinetHeightNumberOfElements - 2); i++) {
+		let cabinetHeightMmOfLongElementLocal = metadata.cabinetHeightMmOfLongElement;
 		if (((i+1) % 2) == 0) {
 			if (left) {
 				currentPath += createLeftRightSvgPath();
+				cabinetHeightMmOfLongElementLocal += 0.2;
 			} else {
 				currentPath += createRightRightSvgPath();
+				cabinetHeightMmOfLongElementLocal -= 0.2;
 			}
 		} else {
 			if (left) {
 				currentPath += createLeftLeftSvgPath();
+				cabinetHeightMmOfLongElementLocal -= 0.2;
 			} else {
 				currentPath += createRightLeftSvgPath();
+				cabinetHeightMmOfLongElementLocal += 0.2;
 			}
 		}
-		currentPath += createVerticalSvgPath(metadata.cabinetHeightMmOfLongElement);
+		currentPath += createVerticalSvgPath(cabinetHeightMmOfLongElementLocal);
 	}
 
 	if (left) {
