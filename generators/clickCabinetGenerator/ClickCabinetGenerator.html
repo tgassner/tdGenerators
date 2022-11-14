@@ -74,7 +74,6 @@
 		<div id="exportButtons" style="background-color: cornsilk; display:flex; padding-top:10px; padding-bottom:10px; justify-content : space-around">
 			<button id="downloadDXF" onclick="downloadDXF()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine DXF Datei"> DXF Download</button>
 			<button id="downloadSVG" onclick="downloadSVG()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine SVG Datei"> SVG Download</button>
-			<button onclick="determinenoOfElementsIncludingTheHalf()"> muhaha </button>
 		</div>
 
 		<div id="debugInfosOuter" style="background-color: cadetblue; display: flex">
@@ -218,6 +217,10 @@ function createModel() {
 	modelLocal.models["radius6"] = makerjs.importer.fromSVGPathData(createRadiusRightUpper(5 + metadata.cabinetLength - metadata.radiusInClickCornerInside, 5 - calculateTotalHeight() + metadata.cabinetHeight + 5, metadata.radiusInClickCornerInside));
 	modelLocal.models["radius7"] = makerjs.importer.fromSVGPathData(createRadiusLeftLower(5 + calcDiffInnenAussen(), 5 + metadata.cabinetHeight - calculateTotalHeight() - calcDiffInnenAussen() - metadata.radiusInClickCornerInside + metadata.cabinetHeight + 5, metadata.radiusInClickCornerInside));
 	modelLocal.models["radius8"] = makerjs.importer.fromSVGPathData(createRadiusRightLower(5 + metadata.cabinetLength, 5 - calculateTotalHeight() + metadata.cabinetHeight - calcDiffInnenAussen() - metadata.radiusInClickCornerInside + metadata.cabinetHeight + 5, metadata.radiusInClickCornerInside));
+
+	modelLocal.models["line1"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerInside, 5 + metadata.radiusOutSideClick - calculateTotalHeight() - metadata.radiusInClickCornerInside) + createHorizontalSvgPath(metadata.cabinetWidth - calcDiffInnenAussen() - metadata.radiusInClickCornerInside - metadata.radiusInClickCornerInside));
+
+	modelLocal.models["line2"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerInside, 5 + metadata.radiusOutSideClick - calculateTotalHeight() - metadata.radiusInClickCornerInside + 5 + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - calcDiffInnenAussen() - metadata.radiusInClickCornerInside - metadata.radiusInClickCornerInside));
 
 	return modelLocal;
 }
@@ -570,6 +573,11 @@ function cabinetHeightChanged() {
 
 function processAlsoFloorChanged() {
 	let processAlsoFloor = document.getElementById("processAlsoFloor").checked;
+	if (processAlsoFloor) {
+		alert("Sorry daweil nur mit ohne Boden unterstützt!");
+		document.getElementById("processAlsoFloor").checked = false;
+		processAlsoFloor = false;
+	}
 	metadata["processAlsoFloor"] = processAlsoFloor;
 	model = createModel();
 	drawPreview();
