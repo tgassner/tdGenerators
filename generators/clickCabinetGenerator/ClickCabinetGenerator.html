@@ -69,9 +69,6 @@
 					</div>
 				</div>
 			</div>
-			<div style="width:45%;float: left;display:table-cell">
-				<div id="infoMessage" style="padding:10px;"></div>
-			</div>
 		</div>
 
 		<div id="exportButtons" style="background-color: cornsilk; display:flex; padding-top:10px; padding-bottom:10px; justify-content : space-around">
@@ -117,19 +114,31 @@ var metadata = {
 	cabinetWidth : 140,
 	cabinetHeight : 110,
 
+	cabinetLengthNumberOfElements : 3,
+	cabinetWidthNumberOfElements : 3,
+	cabinetHeightNumberOfElements : 3,
+
+	cabinetLengthMmOfLongElement : 1,
+	cabinetWidthMmOfLongElement : 1,
+	cabinetHeightMmOfLongElement : 1,
+
 	minSideLength : 50,
 	maxSideLength : 1000,
 
 	radius1 : 0.2,
 	radius2 : 0.2,
 	radius3 : 0.2,
-	radius4 : 1,
+	radius4 : 1.1,
+
+	radiusInClickCornerOutside : 3.1,
+	radiusInClickCornerInside : 1.1,
+	radiusOutSideClick : 1.1,
 
 	length1 : 0.9,
 	length2 : 0.1,
 	length3 : 0,
 
-	cornerRadius : 1,
+
 
 	clickElementLength : 30,
 	borderElementLength : 10,
@@ -138,6 +147,8 @@ var metadata = {
 
 	processAlsoFloor : false,
 	materialThickness : 1.5,
+
+	nettoDelta : 0.8,
 };
 
 var calcData = {
@@ -167,6 +178,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 
 function createModel() {
+	metadata.cabinetLengthNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetLength);
+	metadata.cabinetWidthNumberOfElements  = determineNoOfElementsIncludingTheHalf(metadata.cabinetWidth);
+	metadata.cabinetHeightNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetHeight);
+
+	metadata.cabinetLengthMmOfLongElement = (metadata.cabinetLength / (metadata.cabinetLengthNumberOfElements - 1)) - (2 * metadata.nettoDelta);
+	metadata.cabinetWidthMmOfLongElement  = (metadata.cabinetWidth  / (metadata.cabinetWidthNumberOfElements  - 1)) - (2 * metadata.nettoDelta);
+	metadata.cabinetHeightMmOfLongElement = (metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) - (2 * metadata.nettoDelta);
+
 	var modelLocal = {
 	  paths: {
 
@@ -211,6 +230,8 @@ function createModel() {
 		"</pre>";
 
 	modelLocal.models["leftSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createLeftSurface());
+	modelLocal.models["leftSurfaceUpperMitHakerl2"] = makerjs.importer.fromSVGPathData(createLeftSurfaceMitHakerl2());
+
 	//modelLocal.models["upperSurfaceMitHakerl"] = makerjs.importer.fromSVGPathData(createUpperSurface());
 
 /*
@@ -223,6 +244,31 @@ modelLocal.models["fff"] = makerjs.importer.fromSVGPathData("M 130.1 -320 v 300"
 modelLocal.models["ggg"] = makerjs.importer.fromSVGPathData("M 137.5 -320 v 300");
 */
 	return modelLocal;
+}
+
+function createLeftSurfaceMitHakerl2() {
+	let currentPath = createStartPos(metadata.radiusOutSideClick, metadata.cabinetHeight + 10 - calculateTotalHeight() + 2 - 5);
+
+	let firstHorizontalPath = ((metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) / 2) - metadata.nettoDelta - metadata.radiusOutSideClick;
+	currentPath += createHorizontalSvgPath(firstHorizontalPath);
+
+	for (let i = 0; i < (metadata.cabinetHeightNumberOfElements - 2); i++) {
+		if (((i+1) % 2) == 0) {
+			currentPath += createUpperUpSvgPath();
+			//let sum = calcData.cabinetHeightlengthElement + metadata.laserLoss + metadata.laserLoss - (2 * calcEckAussenFix());
+			currentPath += createHorizontalSvgPath(metadata.cabinetHeightMmOfLongElement);
+		} else {
+			currentPath += createUpperDownSvgPath();
+			//let sum = calcData.cabinetHeightlengthElement - metadata.laserLoss - metadata.laserLoss - (2 * calcEckInnenFix());
+			currentPath += createHorizontalSvgPath(metadata.cabinetHeightMmOfLongElement);
+		}
+	}
+
+	currentPath += createUpperUpSvgPath()
+	let lastHorizontalPath = ((metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) / 2) - metadata.nettoDelta - metadata.radiusInClickCornerInside - calcDiffInnenAussen();
+	currentPath += createHorizontalSvgPath(lastHorizontalPath);
+
+	return currentPath;
 }
 
 function createUpperSurface() {
@@ -240,9 +286,9 @@ function createUpperSurfaceLinks() {
 
 
 	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	} else { // ungerade
-		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLeft += createVerticalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	}
 
 
@@ -261,12 +307,12 @@ function createUpperSurfaceLinks() {
 
 	if (hasLengthGeradeAnzahlAnElementen()) {
 		sideLeft += createLeftRightSvgPath();
-		let sum = -(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius)
+		let sum = -(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.radiusOutSideClick)
 		sideLeft += createVerticalSvgPath();
 		sideLeft += createUpperLeftCorner();
 	} else { // ungerade
 		sideLeft += createLeftLeftSvgPath();
-		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
+		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.radiusOutSideClick);
 		sideLeft += createVerticalSvgPath(sum);
 		sideLeft += createUpperLeftCorner();
 	}
@@ -278,9 +324,9 @@ function createUpperSurfaceLinks() {
 function createUpperSurfaceUnten() {
 	let sideLower = "";
 	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2) - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2) - calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	} else { // ungerade
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	}
 
 	// main loop
@@ -298,11 +344,11 @@ function createUpperSurfaceUnten() {
 	
 	if (hasLengthGeradeAnzahlAnElementen()) {
 		sideLower += createLowerUpSvgPath();
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.radiusOutSideClick));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
 		sideLower += createLowerDownSvgPath();
-		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
+		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.radiusOutSideClick);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
 		sideLower += createVerticalSvgPath(-calcDiffInnenAussen());
@@ -311,15 +357,15 @@ function createUpperSurfaceUnten() {
 }
 
 function createUpperSurfaceOben() {
-	let sideUpper = createStartPos(metadata.cabinetHeight + 10 + metadata.cornerRadius, -calculateTotalHeight() + 2);
-	sideUpper += createHorizontalSvgPath(metadata.cabinetLength - (2 * metadata.cornerRadius) - calcDiffInnenAussen());
+	let sideUpper = createStartPos(metadata.cabinetHeight + 10 + metadata.radiusOutSideClick, -calculateTotalHeight() + 2);
+	sideUpper += createHorizontalSvgPath(metadata.cabinetLength - (2 * metadata.radiusOutSideClick) - calcDiffInnenAussen());
 	sideUpper += createUpperRightCorner();
 	return sideUpper;
 }
 
 function createUpperSurfaceRechts() {
 	let sideRight = "";
-	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() - metadata.laserLoss);
+	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.radiusOutSideClick - calcEckInnenFix() - metadata.laserLoss);
 
 	// main loop
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
@@ -336,13 +382,13 @@ function createUpperSurfaceRechts() {
 
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss - calcDiffInnenAussen());
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.radiusOutSideClick + metadata.laserLoss - calcDiffInnenAussen());
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 		console.log("DönerDönerDöner");
 	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.radiusOutSideClick);
 		sideRight += createLowerRightCorner();
 	}
 	return sideRight;
@@ -370,8 +416,8 @@ function hasLengthGeradeAnzahlAnElementen() {
 }
 
 function createLeftSurfaceOben() {
-	let sideUpper = createStartPos(metadata.cornerRadius, metadata.cabinetHeight + 10 - calculateTotalHeight() + 2);
-	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius);
+	let sideUpper = createStartPos(metadata.radiusOutSideClick, metadata.cabinetHeight + 10 - calculateTotalHeight() + 2);
+	sideUpper += createHorizontalSvgPath(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.radiusOutSideClick);
 
 	// main loop
 	for (let i = 0; i < calcData.cabinetHeightNoOfElements; i++) {
@@ -388,11 +434,11 @@ function createLeftSurfaceOben() {
 
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideUpper += createUpperDownSvgPath();
-		sideUpper += createHorizontalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius - calcDiffInnenAussen() + metadata.laserLoss);
+		sideUpper += createHorizontalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen() + metadata.laserLoss);
 		sideUpper += createUpperRightCorner();
 	} else { // ungerade
 		sideUpper += createUpperUpSvgPath()
-		let sum = metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen();
+		let sum = metadata.borderElementLength - calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen();
 		sideUpper += createHorizontalSvgPath(sum);
 		sideUpper += createUpperRightCorner();
 		sideUpper += createVerticalSvgPath(calcDiffInnenAussen());
@@ -402,7 +448,7 @@ function createLeftSurfaceOben() {
 
 function createLeftSurfaceRechts() {
 	let sideRight = "";
-	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.cornerRadius - calcEckInnenFix() - metadata.laserLoss - calcDiffInnenAussen());
+	sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.radiusOutSideClick - calcEckInnenFix() - metadata.laserLoss - calcDiffInnenAussen());
 
 	// main loop
 	for (let i = 0; i < calcData.cabinetWidthNoOfElements; i++) {
@@ -420,12 +466,12 @@ function createLeftSurfaceRechts() {
 	let subtractForUntereLinieStartsHibeiOderHerdau = (hasHeightGeradeAnzahlAnElementen()) ? calcDiffInnenAussen() : 0;
 	if (hasWidthGeradeAnzahlAnElementen()) {
 		sideRight += createRightRightSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.cornerRadius + metadata.laserLoss - subtractForUntereLinieStartsHibeiOderHerdau);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - calcEckAussenFix() - metadata.radiusOutSideClick + metadata.laserLoss - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 		sideRight += createHorizontalSvgPath(-calcDiffInnenAussen());
 	} else { // ungerade
 		sideRight += createRightLeftSvgPath();
-		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - subtractForUntereLinieStartsHibeiOderHerdau);
+		sideRight += createVerticalSvgPath(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.radiusOutSideClick - subtractForUntereLinieStartsHibeiOderHerdau);
 		sideRight += createLowerRightCorner();
 	}
 	return sideRight;
@@ -434,9 +480,9 @@ function createLeftSurfaceRechts() {
 function createLeftSurfaceUnten() {
 	let sideLower = "";
 	if (hasHeightGeradeAnzahlAnElementen()) {
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - (metadata.laserLoss /2)- calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	} else { // ungerade
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.cornerRadius - calcDiffInnenAussen()));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength - metadata.laserLoss - calcEckInnenFix() - metadata.radiusOutSideClick - calcDiffInnenAussen()));
 	}
 
 	// main loop
@@ -454,11 +500,11 @@ function createLeftSurfaceUnten() {
 	
 	if (hasHeightGeradeAnzahlAnElementen()) {
 		sideLower += createLowerDownSvgPath();
-		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.cornerRadius));
+		sideLower += createHorizontalSvgPath(-(metadata.borderElementLength + (metadata.laserLoss / 2) - calcEckAussenFix() - metadata.radiusOutSideClick));
 		sideLower += createLowerLeftCorner();
 	} else { // ungerade
 		sideLower += createLowerDownSvgPath();
-		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.cornerRadius);
+		let sum = -(metadata.borderElementLength - calcEckInnenFix() - metadata.radiusOutSideClick);
 		sideLower += createHorizontalSvgPath(sum);
 		sideLower += createLowerLeftCorner();
 		sideLower += createVerticalSvgPath(-calcDiffInnenAussen());
@@ -467,7 +513,7 @@ function createLeftSurfaceUnten() {
 }
 
 function createLeftSurfaceLinks() {
-	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.cornerRadius) - ((hasHeightGeradeAnzahlAnElementen()) ? 0 : calcDiffInnenAussen())));
+	let sideLeft = createVerticalSvgPath(-(metadata.cabinetWidth - (2 * metadata.radiusOutSideClick) - ((hasHeightGeradeAnzahlAnElementen()) ? 0 : calcDiffInnenAussen())));
 	sideLeft += createUpperLeftCorner();
 	return sideLeft;
 }
@@ -525,169 +571,111 @@ function calculateTotalHeight() {
 	return metadata.cabinetHeight + 10 + metadata.cabinetWidth + 10 + metadata.cabinetHeight + 2;
 }
 
-function download(data, filename, type) {
-        var file = new Blob([data], {type: type});
-        if (window.navigator.msSaveOrOpenBlob) // IE10+
-            window.navigator.msSaveOrOpenBlob(file, filename);
-        else { // Others
-            var a = document.createElement("a"),
-                    url = URL.createObjectURL(file);
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(function() {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);  
-            }, 0); 
-        }
-    }
-
-function downloadDXF() {
-	var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
-	download(dxfExp, "Click Vitrine " + document.getElementById('auftragsNummer').value + ".dxf", "dxf")
+function calcEckAussenFix() {
+	return metadata.radius4 - metadata.radius3 - metadata.length2 - metadata.radius3;
 }
 
-function downloadSVG() {
-	download(convertSVG(), "Click Vitrine " + document.getElementById('auftragsNummer').value + ".svg", "svg")
+function calcEckInnenFix() {
+	return metadata.radius1;
 }
 
-function convertSVG() {
-	var svgExp = '<?xml version="1.0" encoding="UTF-8"?>' + 
-		makerjs.exporter.toSVG(model, { 
-			units: makerjs.unitType.Millimeter, 
-			svgAttrs : {
-				"width" : (calculateTotalWidth() + "mm"), 
-				"height" : (calculateTotalHeight() + "mm"), 
-				"xmlns" : "http://www.w3.org/2000/svg",
-				"xmlns:xlink" : "http://www.w3.org/1999/xlink",
-				"version" : "1.1",
-				"baseProfile" : "full"
-						}
-		}) + "\n";
-	return svgExp;
+function calcDiffInnenAussen() {
+	return metadata.radius1 + metadata.length1 + metadata.radius2 + metadata.radius3 + metadata.length3 + metadata.radius4;
 }
 
-function genericChanged(elementId, metaDataFieldName, checkFkt) {
-	var intValue = parseInt(document.getElementById(elementId).value);
-	document.getElementById(elementId).value = intValue;
-	let checkFktResult = true;
-	if (checkFkt) {
-		let checkFktReturn = checkFkt(intValue);
-		checkFktResult = checkFktReturn.checkResult;
-		if (!checkFktResult && document.getElementById(elementId + "ErrorMsg")) {
-			document.getElementById(elementId + "ErrorMsg").innerHTML = checkFktReturn.errorMessage;
-		}
+/**
+ * @param edgeLengthInMM edge length in mm
+ * @returns number of shackles
+ * 				__----__                    == 3
+ * 				__----____----__            == 5
+ *				__----____----____----__    == 7
+ */
+function determineNoOfElementsIncludingTheHalf(edgeLengthInMM) {
+	let numberOfElements = Math. trunc(edgeLengthInMM / 25);
+	if ((numberOfElements % 2) === 1) {
+		numberOfElements--;
 	}
-	if (!isNaN(intValue) && checkFktResult) {
-		document.getElementById(elementId).style.backgroundColor = "";
-		if (document.getElementById(elementId + "ErrorMsg")) {
-			document.getElementById(elementId + "ErrorMsg").innerHTML = "";
-		}
-		metadata[metaDataFieldName] = intValue;
-		return true;
-	} else {
-	    document.getElementById(elementId).style.backgroundColor = "#d87979";
-		return false;
+	let sizeOfElement = edgeLengthInMM / numberOfElements;
+	if (sizeOfElement > 45) {
+		numberOfElements += 2;
+		//sizeOfElement = edgeLengthInMM / numberOfElements;
+	}
+	return numberOfElements + 1; // "split" the first half and the last half as calculated Elements
+}
+
+function initHistoryLog(x, y) {
+	if (!metadata.log) {
+		return;
+	}
+	posLog.x = x;
+	posLog.y = y;
+	posLog.history = [];
+	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y, "comment": "initial"});
+
+	poslogImportant.history = [];
+	poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y, "comment": "initial"});
+}
+
+function addHistoryLog(x, y, comment, important) {
+	if (!metadata.log) {
+		return;
+	}
+	if (!comment) {
+		comment = "";
+	}
+	posLog.x += x;
+	posLog.y += y;
+	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y,"comment": comment});
+	if (important) {
+		poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y,"comment": comment});
 	}
 }
 
-function cabinetLengthChanged() {
-	document.getElementById("infoMessage").innerHTML = "";
-	document.getElementById("infoMessage").style.backgroundColor = "";
-
-	if (genericChanged("cabinetLength", "cabinetLength", checkNumberRange)) {
-		model = createModel();
-		drawPreview();
+function logHistoryLog() {
+	if (!metadata.log) {
+		return;
 	}
+	console.log("Importat");
+	console.log(JSON.stringify(poslogImportant));
+	console.log("All of them");
+	console.log(JSON.stringify(posLog));
 }
 
-function checkNumberRange(toCheck) {
-	let toCheckInt = parseInt(toCheck);
+/*********************************************** SVG Path Elements BEGIN **********************************************/
 
-	if (isNaN(toCheckInt)) {
-		return {
-			checkResult: false,
-			errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
-		};
-	}
-
-	let checkResultBool = toCheckInt >= 50 && toCheckInt <= 1000;
-	return {
-		checkResult: checkResultBool,
-		errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
-	};
+function createHorizontalSvgPath(length) {
+	addHistoryLog(length, 0, "h");
+	return "h " + length + " ";
 }
 
-function cabinetWidthChanged() {
-	document.getElementById("infoMessage").innerHTML = "";
-	document.getElementById("infoMessage").style.backgroundColor = "";
-
-	if (genericChanged("cabinetWidth", "cabinetWidth", checkNumberRange)) {
-		model = createModel();
-		drawPreview();
-	}
+function createVerticalSvgPath(length) {
+	addHistoryLog(0, length, "v");
+	return "v " + length + " ";
 }
 
-function cabinetHeightChanged() {
-	let length = parseInt(document.getElementById("cabinetLength").value);
-	let width = parseInt(document.getElementById("cabinetWidth").value);
-	let height = parseInt(document.getElementById("cabinetHeight").value);
-	
-	let lbh = [length, width, height];
-	lbh.sort(function(a, b){return a-b});
-	lbh.reverse();
-
-	let toSortDesc = (length != lbh[0]) || (width != lbh[1]) || (height != lbh[2]);
-
-	if (genericChanged("cabinetHeight", "cabinetHeight", checkNumberRange)) {
-		if (toSortDesc){
-			document.getElementById("infoMessage").innerHTML = "Achtung Länge, Breite und Höhe wurden absteigent sortiert!";
-			document.getElementById("infoMessage").style.backgroundColor = "yellow";
-
-			document.getElementById("cabinetLength").value = lbh[0];
-			document.getElementById("cabinetWidth").value = lbh[1];
-			document.getElementById("cabinetHeight").value = lbh[2];
-
-			metadata.cabinetLength = lbh[0];
-			metadata.cabinetWidth = lbh[1];
-			metadata.cabinetHeight = lbh[2];
-
-		} else {
-			document.getElementById("infoMessage").innerHTML = "";
-			document.getElementById("infoMessage").style.backgroundColor = "";
-		}
-		model = createModel();
-		drawPreview();
-	}
+function createStartPos(x, y) {
+	initHistoryLog(x, y);
+	return "M " + x + " " + y + " ";
 }
 
-function processAlsoFloorChanged() {
-	let processAlsoFloor = document.getElementById("processAlsoFloor").checked;
-	metadata["processAlsoFloor"] = processAlsoFloor;
-	model = createModel();
-	drawPreview();
+function createUpperLeftCorner() {
+	addHistoryLog(metadata.radiusOutSideClick, -metadata.radiusOutSideClick, "upper Left => y is Top again", true);
+	return "a " + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + " 0 0 1 " + metadata.radiusOutSideClick + " -" + metadata.radiusOutSideClick + "";
 }
 
-function materialThicknessChanged() {
-	let materialThickness = parseFloat(document.querySelector('input[name="materialThicknessRadio"]:checked').value);
-	if (materialThickness != 1.5) {
-		materialThickness = 1.5;
-		document.getElementById("ratio1dot5mm").checked = true;
-		alert("Sorry daweil nur 1.5 mm unterstützt");
-	}
-	metadata["processAlsoFloor"] = materialThickness;
-	model = createModel();
-	drawPreview();
+function createUpperRightCorner() {
+	addHistoryLog(metadata.radiusOutSideClick, metadata.radiusOutSideClick, "upper Right => x is right side", true);
+	return "a " + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + " 0 0 1 " + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + "";
 }
 
-function replaceValues(input) {
-	return input.replaceAll("xr1",  metadata.radius1)
-				.replaceAll("xr2",  metadata.radius2)
-				.replaceAll("xr3",  metadata.radius3)
-				.replaceAll("xr4",  metadata.radius4)
-				.replaceAll("xx1",  0).replaceAll("xy1",  0)
-				.replaceAll("xl1",  metadata.length1).replaceAll("xl2",  metadata.length2).replaceAll("xl3",  metadata.length3);
+function createLowerRightCorner() {
+	addHistoryLog(-metadata.radiusOutSideClick, metadata.radiusOutSideClick, "lower right => y is bottom side", true);
+	return "a " + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + " 0 0 1 -" + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + "";
+}
+
+function createLowerLeftCorner() {
+	addHistoryLog(-metadata.radiusOutSideClick, -metadata.radiusOutSideClick, "lower Left => x is left side again", true);
+	return "a " + metadata.radiusOutSideClick + " " + metadata.radiusOutSideClick + " 0 0 1 -" + metadata.radiusOutSideClick + " -" + metadata.radiusOutSideClick + "";
 }
 
 function createUpperUpSvgPath() {
@@ -730,7 +718,7 @@ function createUpperDownSvgPath() {
 	upperDown += "a xr1 xr1 0 0 0 xr1 xr1 ";
 	return replaceValues(upperDown);
 }
-	
+
 function createLowerDownSvgPath() {
 	let lowerDown = "";
 	lowerDown += "m xx1,xy1 ";
@@ -851,103 +839,147 @@ function createLeftRightSvgPath() {
 	return replaceValues(leftRight);
 }
 
-function createHorizontalSvgPath(length) {
-	addHistoryLog(length, 0, "h");
-	return "h " + length + " ";
+function replaceValues(input) {
+	return input.replaceAll("xr1",  metadata.radius1)
+			.replaceAll("xr2",  metadata.radius2)
+			.replaceAll("xr3",  metadata.radius3)
+			.replaceAll("xr4",  metadata.radius4)
+			.replaceAll("xx1",  0).replaceAll("xy1",  0)
+			.replaceAll("xl1",  metadata.length1).replaceAll("xl2",  metadata.length2).replaceAll("xl3",  metadata.length3);
 }
 
-function createVerticalSvgPath(length) {
-	addHistoryLog(0, length, "v");
-	return "v " + length + " ";
-}
+/*********************************************** SVG Path Elements END ************************************************/
 
-function calcEckAussenFix() {
-	return metadata.radius4 - metadata.radius3 - metadata.length2 - metadata.radius3;
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function calcEckInnenFix() {
-	return metadata.radius1;
-}
+/*********************************************** GUI Event Handler BEGIN **********************************************/
 
-function calcDiffInnenAussen() {
-	return metadata.radius1 + metadata.length1 + metadata.radius2 + metadata.radius3 + metadata.length3 + metadata.radius4;
-}
-
-function createStartPos(x, y) {
-	initHistoryLog(x, y);
-	return "M " + x + " " + y + " ";
-}
-
-function createUpperLeftCorner() {
-	addHistoryLog(metadata.cornerRadius, -metadata.cornerRadius, "upper Left => y is Top again", true);
-	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
-}
-
-function createUpperRightCorner() {
-	addHistoryLog(metadata.cornerRadius, metadata.cornerRadius, "upper Right => x is right side", true);
-	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 " + metadata.cornerRadius + " " + metadata.cornerRadius + "";
-}
-
-function createLowerRightCorner() {
-	addHistoryLog(-metadata.cornerRadius, metadata.cornerRadius, "lower right => y is bottom side", true);
-	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " " + metadata.cornerRadius + "";
-}
-
-function createLowerLeftCorner() {
-	addHistoryLog(-metadata.cornerRadius, -metadata.cornerRadius, "lower Left => x is left side again", true);
-	return "a " + metadata.cornerRadius + " " + metadata.cornerRadius + " 0 0 1 -" + metadata.cornerRadius + " -" + metadata.cornerRadius + "";
-}
-
-function determineNoOfElementsIncludingTheHalf(edgeLengthInMM) {
-	let numberOfElements = Math. trunc(edgeLengthInMM / 25);
-	if ((numberOfElements % 2) === 1) {
-		numberOfElements--;
-	}
-	let sizeOfElement = edgeLengthInMM / numberOfElements;
-	if (sizeOfElement > 45) {
-		numberOfElements += 2;
-		//sizeOfElement = edgeLengthInMM / numberOfElements;
-	}
-	return numberOfElements + 1; // "split" the first half and the last half as calculated Elements
-}
-
-function initHistoryLog(x, y) {
-	if (!metadata.log) {
-		return;
-	}
-	posLog.x = x;
-	posLog.y = y;
-	posLog.history = [];
-	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y, "comment": "initial"});
-
-	poslogImportant.history = [];
-	poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y, "comment": "initial"});
-}
-
-function addHistoryLog(x, y, comment, important) {
-	if (!metadata.log) {
-		return;
-	}
-	if (!comment) {
-		comment = "";
-	}
-	posLog.x += x;
-	posLog.y += y;
-	posLog.history.push({"absX" : posLog.x, "absY" : posLog.y, "relX" : x, "relY" : y,"comment": comment});
-	if (important) {
-		poslogImportant.history.push({"absX" : posLog.x, "absY" : posLog.y,"comment": comment});
+function cabinetLengthChanged() {
+	if (genericChanged("cabinetLength", "cabinetLength", checkNumberRange)) {
+		model = createModel();
+		drawPreview();
 	}
 }
 
-function logHistoryLog() {
-	if (!metadata.log) {
-		return;
+function cabinetWidthChanged() {
+	if (genericChanged("cabinetWidth", "cabinetWidth", checkNumberRange)) {
+		model = createModel();
+		drawPreview();
 	}
-	console.log("Importat");
-	console.log(JSON.stringify(poslogImportant));
-	console.log("All of them");
-	console.log(JSON.stringify(posLog));
 }
+
+function cabinetHeightChanged() {
+	if (genericChanged("cabinetHeight", "cabinetHeight", checkNumberRange)) {
+		model = createModel();
+		drawPreview();
+	}
+}
+
+function processAlsoFloorChanged() {
+	let processAlsoFloor = document.getElementById("processAlsoFloor").checked;
+	metadata["processAlsoFloor"] = processAlsoFloor;
+	model = createModel();
+	drawPreview();
+}
+
+function materialThicknessChanged() {
+	let materialThickness = parseFloat(document.querySelector('input[name="materialThicknessRadio"]:checked').value);
+	if (materialThickness != 1.5) {
+		materialThickness = 1.5;
+		document.getElementById("ratio1dot5mm").checked = true;
+		alert("Sorry daweil nur 1.5 mm unterstützt");
+	}
+	metadata["processAlsoFloor"] = materialThickness;
+	model = createModel();
+	drawPreview();
+}
+
+function genericChanged(elementId, metaDataFieldName, checkFkt) {
+	var intValue = parseInt(document.getElementById(elementId).value);
+	document.getElementById(elementId).value = intValue;
+	let checkFktResult = true;
+	if (checkFkt) {
+		let checkFktReturn = checkFkt(intValue);
+		checkFktResult = checkFktReturn.checkResult;
+		if (!checkFktResult && document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = checkFktReturn.errorMessage;
+		}
+	}
+	if (!isNaN(intValue) && checkFktResult) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		if (document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = "";
+		}
+		metadata[metaDataFieldName] = intValue;
+		return true;
+	} else {
+		document.getElementById(elementId).style.backgroundColor = "#d87979";
+		return false;
+	}
+}
+
+function checkNumberRange(toCheck) {
+	let toCheckInt = parseInt(toCheck);
+
+	if (isNaN(toCheckInt)) {
+		return {
+			checkResult: false,
+			errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+		};
+	}
+
+	let checkResultBool = toCheckInt >= 50 && toCheckInt <= 1000;
+	return {
+		checkResult: checkResultBool,
+		errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+	};
+}
+
+function download(data, filename, type) {
+	var file = new Blob([data], {type: type});
+	if (window.navigator.msSaveOrOpenBlob) // IE10+
+		window.navigator.msSaveOrOpenBlob(file, filename);
+	else { // Others
+		var a = document.createElement("a"),
+				url = URL.createObjectURL(file);
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(function() {
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		}, 0);
+	}
+}
+
+function downloadDXF() {
+	var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
+	download(dxfExp, "Click Vitrine " + document.getElementById('auftragsNummer').value + ".dxf", "dxf")
+}
+
+function downloadSVG() {
+	download(convertSVG(), "Click Vitrine " + document.getElementById('auftragsNummer').value + ".svg", "svg")
+}
+
+function convertSVG() {
+	var svgExp = '<?xml version="1.0" encoding="UTF-8"?>' +
+			makerjs.exporter.toSVG(model, {
+				units: makerjs.unitType.Millimeter,
+				svgAttrs : {
+					"width" : (calculateTotalWidth() + "mm"),
+					"height" : (calculateTotalHeight() + "mm"),
+					"xmlns" : "http://www.w3.org/2000/svg",
+					"xmlns:xlink" : "http://www.w3.org/1999/xlink",
+					"version" : "1.1",
+					"baseProfile" : "full"
+				}
+			}) + "\n";
+	return svgExp;
+}
+
+/*********************************************** GUI Event Handler END ************************************************/
 
 </script>
 </body>
