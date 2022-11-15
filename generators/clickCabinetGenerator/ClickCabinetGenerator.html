@@ -133,70 +133,62 @@ var metadata = {
 };
 
 document.addEventListener("DOMContentLoaded", function(event) { 
-	model = createModel();
+	createModel();
 	drawPreview();
 	document.getElementById('cabinetLength').focus();
 });
 
 function createModel() {
-	metadata.cabinetLengthNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetLength);
-	metadata.cabinetWidthNumberOfElements  = determineNoOfElementsIncludingTheHalf(metadata.cabinetWidth);
-	metadata.cabinetHeightNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetHeight);
 
-	metadata.cabinetLengthMmOfLongElement = (metadata.cabinetLength / (metadata.cabinetLengthNumberOfElements - 1)) - calcNettoDelta();
-	metadata.cabinetWidthMmOfLongElement  = (metadata.cabinetWidth  / (metadata.cabinetWidthNumberOfElements  - 1)) - calcNettoDelta();
-	metadata.cabinetHeightMmOfLongElement = (metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) - calcNettoDelta();
+	calculateMetadata();
 
-	var modelLocal = {
+	model = {
 	  paths: {
 	  },
 	  models: {
 	  }
 	};
 
-	modelLocal.units = makerjs.unitType.Millimeter;
+	model.units = makerjs.unitType.Millimeter;
 
 	createHelperLinesIfNeeded();
 
-
 	fillDebugInfoArea();
 
-	createFirstElement(modelLocal);
+	createFirstElement();
 
-	createSecondElement(modelLocal);
-
-	return modelLocal;
+	createSecondElement();
 }
 
-function createFirstElement(modelLocal) {
-	modelLocal.models["heightLeftFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), true));
-	modelLocal.models["heightRightFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetWidth, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), false));
+function createFirstElement() {
+	model.models["heightLeftFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), true));
+	model.models["heightRightFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetWidth, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), false));
 
-	modelLocal.models["widthLowerFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - calculateTotalHeight() + 5 - calcDiffInnenAussen()));
+	model.models["widthLowerFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - calculateTotalHeight() + 5 - calcDiffInnenAussen()));
 
-	modelLocal.models["radius1FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius2FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, 5 - calculateTotalHeight(), metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius3FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.cabinetHeight - calculateTotalHeight() - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius4FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetWidth, 5 - calculateTotalHeight() + metadata.cabinetHeight - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
+	model.models["radius1FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight(), metadata.radiusInClickCornerSmall));
+	model.models["radius2FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, 5 - calculateTotalHeight(), metadata.radiusInClickCornerSmall));
+	model.models["radius3FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.cabinetHeight - calculateTotalHeight() - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
+	model.models["radius4FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetWidth, 5 - calculateTotalHeight() + metadata.cabinetHeight - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
 
 	if (!metadata.processAlsoFloor) {
-		modelLocal.models["lineFirstElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		model.models["lineFirstElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	}
 }
 
-function createSecondElement(modelLocal) {
-	modelLocal.models["hightLeftSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, true));
-	modelLocal.models["hightRightSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetLength, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, false));
+function createSecondElement() {
+	model.models["hightLeftSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, true));
+	model.models["hightRightSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetLength, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, false));
 
-	modelLocal.models["widthLowerSecondElement"] = makerjs.importer.fromSVGPathData(createLength(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + 5 - calculateTotalHeight() + 5 - calcDiffInnenAussen()));
+	model.models["widthLowerSecondElement"] = makerjs.importer.fromSVGPathData(createLength(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + 5 - calculateTotalHeight() + 5 - calcDiffInnenAussen()));
 
-	modelLocal.models["radius1SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius2SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetLength - metadata.radiusInClickCornerSmall, 5 - calculateTotalHeight() + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius3SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.cabinetHeight - calculateTotalHeight() - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
-	modelLocal.models["radius4SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetLength, 5 - calculateTotalHeight() + metadata.cabinetHeight - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
+	model.models["radius1SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
+	model.models["radius2SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetLength - metadata.radiusInClickCornerSmall, 5 - calculateTotalHeight() + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
+	model.models["radius3SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + calcDiffInnenAussen(), 5 + metadata.cabinetHeight - calculateTotalHeight() - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
+	model.models["radius4SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetLength, 5 - calculateTotalHeight() + metadata.cabinetHeight - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
 
 	if (!metadata.processAlsoFloor) {
-		modelLocal.models["lineSecondElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() - metadata.radiusInClickCornerSmall + 5 + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		model.models["lineSecondElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + calcDiffInnenAussen() + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - calculateTotalHeight() - metadata.radiusInClickCornerSmall + 5 + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - calcDiffInnenAussen() - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	}
 }
 
@@ -301,9 +293,9 @@ function createHeight(startX, startY, left) {
 
 function createHelperLinesIfNeeded() {
 	if (metadata.helperLines) {
-		createRectangle(modelLocal, "side1", metadata.cabinetWidth, metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
-		createRectangle(modelLocal, "side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
-		createRectangle(modelLocal, "top", metadata.cabinetLength, metadata.cabinetWidth, 5, 5);
+		createRectangle("side1", metadata.cabinetWidth, metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
+		createRectangle("side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
+		createRectangle("top", metadata.cabinetLength, metadata.cabinetWidth, 5, 5);
 	}
 }
 
@@ -315,11 +307,21 @@ function fillDebugInfoArea() {
 			"</pre>";
 }
 
-function createRectangle(modelLocal, deterministicName, width, height, startx, starty) {
-	modelLocal.paths[deterministicName + "_1"] = new makerjs.paths.Line([startx, starty], [startx + width, starty]);
-	modelLocal.paths[deterministicName + "_2"] = new makerjs.paths.Line([startx, starty + height], [startx + width, starty + height]);
-	modelLocal.paths[deterministicName + "_3"] = new makerjs.paths.Line([startx, starty], [startx, starty + height]);
-	modelLocal.paths[deterministicName + "_4"] = new makerjs.paths.Line([startx + width, starty], [startx + width, starty + height]);
+function createRectangle(deterministicName, width, height, startx, starty) {
+	model.paths[deterministicName + "_1"] = new makerjs.paths.Line([startx, starty], [startx + width, starty]);
+	model.paths[deterministicName + "_2"] = new makerjs.paths.Line([startx, starty + height], [startx + width, starty + height]);
+	model.paths[deterministicName + "_3"] = new makerjs.paths.Line([startx, starty], [startx, starty + height]);
+	model.paths[deterministicName + "_4"] = new makerjs.paths.Line([startx + width, starty], [startx + width, starty + height]);
+}
+
+function calculateMetadata() {
+	metadata.cabinetLengthNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetLength);
+	metadata.cabinetWidthNumberOfElements  = determineNoOfElementsIncludingTheHalf(metadata.cabinetWidth);
+	metadata.cabinetHeightNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetHeight);
+
+	metadata.cabinetLengthMmOfLongElement = (metadata.cabinetLength / (metadata.cabinetLengthNumberOfElements - 1)) - calcNettoDelta();
+	metadata.cabinetWidthMmOfLongElement  = (metadata.cabinetWidth  / (metadata.cabinetWidthNumberOfElements  - 1)) - calcNettoDelta();
+	metadata.cabinetHeightMmOfLongElement = (metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) - calcNettoDelta();
 }
 
 function drawPreview() {
@@ -541,21 +543,21 @@ function replaceValues(input) {
 
 function cabinetLengthChanged() {
 	if (genericChanged("cabinetLength", "cabinetLength", checkNumberRange)) {
-		model = createModel();s
+		createModel();s
 		drawPreview();
 	}
 }
 
 function cabinetWidthChanged() {
 	if (genericChanged("cabinetWidth", "cabinetWidth", checkNumberRange)) {
-		model = createModel();
+		createModel();
 		drawPreview();
 	}
 }
 
 function cabinetHeightChanged() {
 	if (genericChanged("cabinetHeight", "cabinetHeight", checkNumberRange)) {
-		model = createModel();
+		createModel();
 		drawPreview();
 	}
 }
@@ -568,14 +570,14 @@ function processAlsoFloorChanged() {
 		processAlsoFloor = false;
 	}
 	metadata["processAlsoFloor"] = processAlsoFloor;
-	model = createModel();
+	createModel();
 	drawPreview();
 }
 
 function helperLinesChanged() {
 	let helperLines = document.getElementById("helperLines").checked;
 	metadata["helperLines"] = helperLines;
-	model = createModel();
+	createModel();
 	drawPreview();
 }
 
@@ -587,7 +589,7 @@ function materialThicknessChanged() {
 		alert("Sorry daweil nur 1.5 mm unterstützt");
 	}
 	metadata["processAlsoFloor"] = materialThickness;
-	model = createModel();
+	createModel();
 	drawPreview();
 }
 
@@ -655,7 +657,7 @@ function downloadDXF() {
 
 	if (helperLines) {
 		metadata.helperLines = false;
-		model = createModel();
+		createModel();
 	}
 
 	let dxfExp = makerjs.exporter.toDXF(model);
@@ -663,7 +665,7 @@ function downloadDXF() {
 
 	if (helperLines) {
 		metadata.helperLines = true;
-		model = createModel();
+		createModel();
 		drawPreview();
 	}
 }
