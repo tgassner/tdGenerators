@@ -156,17 +156,10 @@ function createModel() {
 
 	modelLocal.units = makerjs.unitType.Millimeter;
 
-	if (metadata.helperLines) {
-		createSurfaceArea(modelLocal, "side1", metadata.cabinetWidth,  metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
-		createSurfaceArea(modelLocal, "side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
-		createSurfaceArea(modelLocal, "top",  metadata.cabinetLength, metadata.cabinetWidth,  5, 5);
-	}
+	createHelperLinesIfNeeded();
 
-	document.getElementById('debugInfosInner').innerHTML = 
-		"Debug Infos:<br><pre>" + "metaData: \n" +  JSON.stringify(metadata, null, 2) + "\n\n" +
-		"calcDiffInnenAussen()= " + calcDiffInnenAussen() + "\n" +
-		"calcNettoDelta()= "      + calcNettoDelta()      + "\n" +
-		"</pre>";
+
+	fillDebugInfoArea();
 
 	createFirstElement(modelLocal);
 
@@ -306,7 +299,23 @@ function createHeight(startX, startY, left) {
 	return currentPath;
 }
 
-function createSurfaceArea(modelLocal, deterministicName, width, height, startx, starty) {
+function createHelperLinesIfNeeded() {
+	if (metadata.helperLines) {
+		createRectangle(modelLocal, "side1", metadata.cabinetWidth, metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
+		createRectangle(modelLocal, "side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
+		createRectangle(modelLocal, "top", metadata.cabinetLength, metadata.cabinetWidth, 5, 5);
+	}
+}
+
+function fillDebugInfoArea() {
+	document.getElementById('debugInfosInner').innerHTML =
+			"Debug Infos:<br><pre>" + "metaData: \n" + JSON.stringify(metadata, null, 2) + "\n\n" +
+			"calcDiffInnenAussen()= " + calcDiffInnenAussen() + "\n" +
+			"calcNettoDelta()= " + calcNettoDelta() + "\n" +
+			"</pre>";
+}
+
+function createRectangle(modelLocal, deterministicName, width, height, startx, starty) {
 	modelLocal.paths[deterministicName + "_1"] = new makerjs.paths.Line([startx, starty], [startx + width, starty]);
 	modelLocal.paths[deterministicName + "_2"] = new makerjs.paths.Line([startx, starty + height], [startx + width, starty + height]);
 	modelLocal.paths[deterministicName + "_3"] = new makerjs.paths.Line([startx, starty], [startx, starty + height]);
