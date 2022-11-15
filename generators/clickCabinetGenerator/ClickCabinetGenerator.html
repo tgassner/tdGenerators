@@ -56,6 +56,10 @@
 					<input type="checkbox" id="processAlsoFloor" name="processAlsoFloor" onchange="processAlsoFloorChanged()" style="display: flex; justify-content: left; margin-left: 0px">
 				</div>
 				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">Hilfslinien: </div>
+					<input type="checkbox" id="helperLines" name="helperLines" onchange="helperLinesChanged()" style="display: flex; justify-content: left; margin-left: 0px">
+				</div>
+				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px ">Materialdicke: </div>
 					<div style="display: flex; justify-content: left; margin-left: 0px; flex-flow: column">
 						<div style="display: flex; justify-content: left; margin-left: 0px">
@@ -131,6 +135,8 @@ var metadata = {
 	processAlsoFloor : false,
 	materialThickness : 1.5,
 
+	helperLines : false,
+
 	nettoDelta : 0.8,
 };
 
@@ -177,11 +183,12 @@ function createModel() {
 	};
 
 	modelLocal.units = makerjs.unitType.Millimeter;
-/*
-	createSurfaceArea(modelLocal, "side1", metadata.cabinetWidth,  metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
-	createSurfaceArea(modelLocal, "side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
-	createSurfaceArea(modelLocal, "top",  metadata.cabinetLength, metadata.cabinetWidth,  5, 5);
-*/
+
+	if (metadata.helperLines) {
+		createSurfaceArea(modelLocal, "side1", metadata.cabinetWidth,  metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
+		createSurfaceArea(modelLocal, "side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
+		createSurfaceArea(modelLocal, "top",  metadata.cabinetLength, metadata.cabinetWidth,  5, 5);
+	}
 
 	calcData.cabinetHeightNoOfElements = Math.trunc((metadata.cabinetHeight - (2 * metadata.borderElementLength)) / metadata.clickElementLength);
 	calcData.cabinetHeightlengthElement = (metadata.cabinetHeight - (2 * metadata.borderElementLength)) / calcData.cabinetHeightNoOfElements;
@@ -594,6 +601,13 @@ function processAlsoFloorChanged() {
 	drawPreview();
 }
 
+function helperLinesChanged() {
+	let helperLines = document.getElementById("helperLines").checked;
+	metadata["helperLines"] = helperLines;
+	model = createModel();
+	drawPreview();
+}
+
 function materialThicknessChanged() {
 	let materialThickness = parseFloat(document.querySelector('input[name="materialThicknessRadio"]:checked').value);
 	if (materialThickness != 1.5) {
@@ -666,8 +680,21 @@ function download(data, filename, type) {
 }
 
 function downloadDXF() {
-	var dxfExp = makerjs.exporter.toDXF(model, { fontSize: 4 })
+	let helperLines = metadata.helperLines;
+
+	if (helperLines) {
+		metadata.helperLines = false;
+		model = createModel();
+	}
+
+	let dxfExp = makerjs.exporter.toDXF(model, {fontSize: 4});
 	download(dxfExp, "Click Vitrine.dxf", "dxf")
+
+	if (helperLines) {
+		metadata.helperLines = true;
+		model = createModel();
+		drawPreview();
+	}
 }
 
 function downloadSVG() {
