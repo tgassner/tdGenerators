@@ -120,6 +120,10 @@ var metadata = {
 
 	helperLines : false,
 
+	borderSpace : 5,
+
+	insideClipLargerThanOutsideClip : 0.4,
+
 	// calculated Values...
 	cabinetLengthNumberOfElements : 0,
 	cabinetWidthNumberOfElements : 0,
@@ -138,7 +142,10 @@ var metadata = {
 	nettoDeltaHalf : 0,
 
 	totalHeight : 0,
-	totalWidth : 0,	
+	totalWidth : 0,
+
+	insideClipLargerThanOutsideClipHalf : 0,
+	insideClipLargerThanOutsideClipQuarter : 0,
 };
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -172,64 +179,64 @@ function createModel() {
 }
 
 function createFirstElement() {
-	model.models["heightLeftFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.diffInnenAussen, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight, true));
-	model.models["heightRightFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetWidth, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight, false));
+	model.models["heightLeftFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, true));
+	model.models["heightRightFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, false));
 
-	model.models["widthLowerFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - metadata.totalHeight + 5 - metadata.diffInnenAussen, true, false));
+	model.models["widthLowerFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
 
 
 
-	model.models["radius1FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + metadata.diffInnenAussen, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius2FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, 5 - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius3FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + metadata.diffInnenAussen, 5 + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
-	model.models["radius4FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetWidth, 5 - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
+	model.models["radius1FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	model.models["radius2FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	model.models["radius3FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
+	model.models["radius4FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
 
 	if (!metadata.processAlsoFloor) {
-		model.models["lineFirstElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		model.models["lineFirstElement"] = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	} else {
-		model.models["widthHigherFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, -metadata.totalHeight + 5 + metadata.diffInnenAussen, false, false));
+		model.models["widthHigherFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, -metadata.totalHeight + metadata.borderSpace + metadata.diffInnenAussen, false, false));
 	}
 }
 
 function createSecondElement() {
-	model.models["hightLeftSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.diffInnenAussen, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + 5, true));
-	model.models["hightRightSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(5 + metadata.cabinetLength, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + 5, false));
+	model.models["hightLeftSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, true));
+	model.models["hightRightSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, false));
 
-	model.models["widthLowerSecondElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + 5 - metadata.totalHeight + 5 - metadata.diffInnenAussen, true, false));
+	model.models["widthLowerSecondElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
 
-	model.models["radius1SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5 + metadata.diffInnenAussen, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + 5 + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius2SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetLength - metadata.radiusInClickCornerSmall, 5 - metadata.totalHeight + metadata.cabinetHeight + 5 + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius3SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5 + metadata.diffInnenAussen, 5 + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
-	model.models["radius4SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetLength, 5 - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + 5, metadata.radiusInClickCornerSmall));
+	model.models["radius1SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	model.models["radius2SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	model.models["radius3SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
+	model.models["radius4SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
 
 	if (!metadata.processAlsoFloor) {
-		model.models["lineSecondElement"] = makerjs.importer.fromSVGPathData(createStartPos(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, 5 + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall + 5 + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		model.models["lineSecondElement"] = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall + metadata.borderSpace + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	} else {
-		// TODO
+		model.models["widthUpperSecondElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.diffInnenAussen - metadata.totalHeight, false, false));
 	}
 }
 
 function createThirdElement() {
-	model.models["lengthUpperThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 - metadata.totalHeight + 5, false, true));
-	model.models["lengthLowerThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + 5 + 5 - metadata.totalHeight + 5, true, true));
+	model.models["lengthUpperThirdElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, false, true));
+	model.models["lengthLowerThirdElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, true, true));
 
-	model.models["widthLeftThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(5, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 + 5 + metadata.radiusInClickCornerLarge - metadata.totalHeight, true, true));
-	model.models["widthRightThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + metadata.cabinetLength, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 + 5 + metadata.radiusInClickCornerLarge - metadata.totalHeight, false, true));
+	model.models["widthLeftThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, true, true));
+	model.models["widthRightThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.cabinetLength, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, false, true));
 
-	model.models["radius1ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(5, 5 + metadata.radiusInClickCornerLarge - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5, metadata.radiusInClickCornerLarge));
-	model.models["radius2ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(5 + metadata.cabinetLength - metadata.radiusInClickCornerLarge, 5 - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5, metadata.radiusInClickCornerLarge));
-	model.models["radius3ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(5, 5 + metadata.cabinetHeight - metadata.totalHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + 5 + 5, metadata.radiusInClickCornerLarge));
-	model.models["radius4ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(5 + metadata.cabinetLength, 5 - metadata.totalHeight + metadata.cabinetHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + 5 + 5, metadata.radiusInClickCornerLarge));
+	model.models["radius1ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	model.models["radius2ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerLarge, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	model.models["radius3ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	model.models["radius4ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
 }
 
 function createWidth(startX, startY, flag, floor) {
 	let currentPath = createStartPos(startX, startY);
 
 	if (floor) {
-		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - 0.1;
+		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createVerticalSvgPath(firstLinePathLength);
 	} else {
-		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - metadata.nettoDeltaHalf + 0.1;
+		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - metadata.nettoDeltaHalf + metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(firstLinePathLength);
 	}
 
@@ -239,36 +246,36 @@ function createWidth(startX, startY, flag, floor) {
 			if (floor) {
 				if (flag) {
 					currentPath += createLeftLeftSvgPath();
-					cabinetWidthMmOfLongElementLocal -= 0.2;
+					cabinetWidthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createRightRightSvgPath();
-					cabinetWidthMmOfLongElementLocal -= 0.2;
+					cabinetWidthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			} else {
 				if (flag) {
 					currentPath += createLowerUpSvgPath();
-					cabinetWidthMmOfLongElementLocal += 0.2;
+					cabinetWidthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createUpperDownSvgPath();
-					cabinetWidthMmOfLongElementLocal += 0.2;
+					cabinetWidthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			}
 		} else {
 			if (floor) {
 				if (flag) {
 					currentPath += createLeftRightSvgPath();
-					cabinetWidthMmOfLongElementLocal += 0.2;
+					cabinetWidthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createRightLeftSvgPath();
-					cabinetWidthMmOfLongElementLocal += 0.2;
+					cabinetWidthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			} else {
 				if (flag) {
 					currentPath += createLowerDownSvgPath();
-					cabinetWidthMmOfLongElementLocal -= 0.2;
+					cabinetWidthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createUpperUpSvgPath();
-					cabinetWidthMmOfLongElementLocal -= 0.2;
+					cabinetWidthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			}
 		}
@@ -295,10 +302,10 @@ function createWidth(startX, startY, flag, floor) {
 	}
 
 	if (floor) {
-		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - 0.1;
+		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createVerticalSvgPath(lastLinePathLength);
 	} else {
-		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.nettoDeltaHalf + 0.1;
+		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.nettoDeltaHalf + metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	}
 	return currentPath;
@@ -308,10 +315,10 @@ function createLength(startX, startY, flag, floor) {
 	let currentPath = createStartPos(startX, startY);
 
 	if (floor) {
-		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - 0.1;
+		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(firstLinePathLength);
 	} else {
-		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + 0.1;
+		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(firstLinePathLength);
 	}
 
@@ -322,34 +329,36 @@ function createLength(startX, startY, flag, floor) {
 			if (floor) {
 				if (flag) {
 					currentPath += createLowerDownSvgPath();
-					cabinetLengthMmOfLongElementLocal -= 0.2;
+					cabinetLengthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createUpperUpSvgPath();
-					cabinetLengthMmOfLongElementLocal -= 0.2;
+					cabinetLengthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			} else {
 				if (flag) {
 					currentPath += createLowerUpSvgPath();
-					cabinetLengthMmOfLongElementLocal += 0.2;
+					cabinetLengthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
-					alert("Alarm!");
+					currentPath += createUpperDownSvgPath();
+					cabinetLengthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			}
 		} else {
 			if (floor) {
 				if (flag) {
 					currentPath += createLowerUpSvgPath();
-					cabinetLengthMmOfLongElementLocal += 0.2;
+					cabinetLengthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
 					currentPath += createUpperDownSvgPath();
-					cabinetLengthMmOfLongElementLocal += 0.2;
+					cabinetLengthMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			} else {
 				if (flag) {
 					currentPath += createLowerDownSvgPath();
-					cabinetLengthMmOfLongElementLocal -= 0.2;
+					cabinetLengthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				} else {
-					alert("Alarm!");
+					currentPath += createUpperUpSvgPath();
+					cabinetLengthMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 				}
 			}
 		}
@@ -364,17 +373,17 @@ function createLength(startX, startY, flag, floor) {
 		}
 	} else {
 		if (flag) {
-			currentPath += createLowerUpSvgPath()
+			currentPath += createLowerUpSvgPath();
 		} else {
-			alert("Alarm!");
+			currentPath += createUpperDownSvgPath();
 		}
 	}
 	
 	if (floor) {
-		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - 0.1;
+		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	} else {
-		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + 0.1;
+		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	}
 
@@ -389,13 +398,13 @@ function createHeight(startX, startY, left) {
 	let currentPath = createStartPos(startX, startY);
 
 	if (left) {
-		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + 0.1;
+		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + metadata.insideClipLargerThanOutsideClipQuarter;
 		if (metadata.processAlsoFloor) {
 			firstLinePathLength -= metadata.diffInnenAussen;
 		}
 		currentPath += createVerticalSvgPath(firstLinePathLength);
 	} else {
-		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - 0.1;
+		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.insideClipLargerThanOutsideClipQuarter;
 		if (metadata.processAlsoFloor) {
 			firstLinePathLength -= metadata.diffInnenAussen;
 		}
@@ -407,18 +416,18 @@ function createHeight(startX, startY, left) {
 		if (((i+1) % 2) === 0) {
 			if (left) {
 				currentPath += createLeftRightSvgPath();
-				cabinetHeightMmOfLongElementLocal += 0.2;
+				cabinetHeightMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 			} else {
 				currentPath += createRightRightSvgPath();
-				cabinetHeightMmOfLongElementLocal -= 0.2;
+				cabinetHeightMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 			}
 		} else {
 			if (left) {
 				currentPath += createLeftLeftSvgPath();
-				cabinetHeightMmOfLongElementLocal -= 0.2;
+				cabinetHeightMmOfLongElementLocal -= metadata.insideClipLargerThanOutsideClipHalf;
 			} else {
 				currentPath += createRightLeftSvgPath();
-				cabinetHeightMmOfLongElementLocal += 0.2;
+				cabinetHeightMmOfLongElementLocal += metadata.insideClipLargerThanOutsideClipHalf;
 			}
 		}
 		currentPath += createVerticalSvgPath(cabinetHeightMmOfLongElementLocal);
@@ -430,10 +439,10 @@ function createHeight(startX, startY, left) {
 		currentPath += createRightRightSvgPath();
 	}
 	if (left) {
-		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen + 0.1;
+		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen + metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createVerticalSvgPath(lastLinePathLength);
 	} else {
-		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - 0.1;
+		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - metadata.insideClipLargerThanOutsideClipQuarter;
 		currentPath += createVerticalSvgPath(lastLinePathLength);
 	}
 	return currentPath;
@@ -441,9 +450,9 @@ function createHeight(startX, startY, left) {
 
 function createHelperLinesIfNeeded() {
 	if (metadata.helperLines) {
-		createRectangle("side1", metadata.cabinetWidth, metadata.cabinetHeight, 5, metadata.cabinetHeight + metadata.cabinetWidth + 15);
-		createRectangle("side2", metadata.cabinetLength, metadata.cabinetHeight, 5, metadata.cabinetWidth + 10);
-		createRectangle("top", metadata.cabinetLength, metadata.cabinetWidth, 5, 5);
+		createRectangle("side1", metadata.cabinetWidth, metadata.cabinetHeight, metadata.borderSpace, metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace);
+		createRectangle("side2", metadata.cabinetLength, metadata.cabinetHeight, metadata.borderSpace, metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace);
+		createRectangle("top", metadata.cabinetLength, metadata.cabinetWidth, metadata.borderSpace, metadata.borderSpace);
 	}
 }
 
@@ -461,12 +470,15 @@ function createRectangle(deterministicName, width, height, startx, starty) {
 }
 
 function calculateMetadata() {
+	metadata.insideClipLargerThanOutsideClipHalf = metadata.insideClipLargerThanOutsideClip / 2;
+	metadata.insideClipLargerThanOutsideClipQuarter = metadata.insideClipLargerThanOutsideClip / 4;
+
 	metadata.nettoDelta = metadata.radius4 - metadata.radius3 - metadata.length2 -  metadata.radius2 + metadata.radius1;
 	metadata.nettoDeltaHalf = metadata.nettoDelta / 2; 
 	metadata.diffInnenAussen = metadata.radius1 + metadata.length1 + metadata.radius2 + metadata.radius3 + metadata.length3 + metadata.radius4;
 
-	metadata.totalHeight = metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + 20;
-	metadata.totalWidth = Math.max(metadata.cabinetWidth, metadata.cabinetLength) + 10;
+	metadata.totalHeight = metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + (4 * metadata.borderSpace);
+	metadata.totalWidth = Math.max(metadata.cabinetWidth, metadata.cabinetLength) + (2 * metadata.borderSpace);
 	
 	metadata.cabinetLengthNumberOfElements = determineNoOfElementsIncludingTheHalf(metadata.cabinetLength);
 	metadata.cabinetWidthNumberOfElements  = determineNoOfElementsIncludingTheHalf(metadata.cabinetWidth);
