@@ -226,7 +226,7 @@ function createWidth(startX, startY, flag, floor) {
 		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - 0.2;
 		currentPath += createVerticalSvgPath(firstLinePathLength);
 	} else {
-		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen;
+		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - (metadata.nettoDelta / 2) + 0.1;
 		console.log("firstLinePathLength Width: " + firstLinePathLength);
 		currentPath += createHorizontalSvgPath(firstLinePathLength);
 	}
@@ -290,13 +290,11 @@ function createWidth(startX, startY, flag, floor) {
 		}
 	}
 
-
 	if (floor) {
 		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge;
 		currentPath += createVerticalSvgPath(lastLinePathLength);
 	} else {
-		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall;
-		console.log("lastLinePathLength Width: " + lastLinePathLength);
+		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - (metadata.nettoDelta / 2) + 0.1;
 		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	}
 	return currentPath;
@@ -414,8 +412,13 @@ function createHeight(startX, startY, left) {
 	} else {
 		currentPath += createRightRightSvgPath();
 	}
-	let lastHorizontalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen;
-	currentPath += createVerticalSvgPath(lastHorizontalPath);
+	if (left) {
+		let lastHorizontalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen + 0.1;
+		currentPath += createVerticalSvgPath(lastHorizontalPath);
+	} else {
+		let lastHorizontalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - 0.1;
+		currentPath += createVerticalSvgPath(lastHorizontalPath);
+	}
 	return currentPath;
 }
 
@@ -456,7 +459,7 @@ function calculateMetadata() {
 	metadata.cabinetHeightMmOfLongElement = (metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) - metadata.nettoDelta;
 
 	metadata.cabinetLengthStartEndElementLengthMm = ((metadata.cabinetLength / (metadata.cabinetLengthNumberOfElements - 1)) / 2);
-	metadata.cabinetWidthStartEndElementLengthMm  = ((metadata.cabinetWidth / (metadata.cabinetWidthNumberOfElements - 1)) / 2) - (metadata.nettoDelta / 2) + 0.1 /* die 0.2 weil klick innen außen Versetzung */;
+	metadata.cabinetWidthStartEndElementLengthMm  = ((metadata.cabinetWidth / (metadata.cabinetWidthNumberOfElements - 1)) / 2);
 	metadata.cabinetHeightStartEndElementLengthMm = ((metadata.cabinetHeight / (metadata.cabinetHeightNumberOfElements - 1)) / 2);
 }
 
