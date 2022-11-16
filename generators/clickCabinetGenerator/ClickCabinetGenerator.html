@@ -57,7 +57,7 @@
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px">Hilfslinien: </div>
-					<input type="checkbox" id="helperLines" name="helperLines" checked onchange="helperLinesChanged()" style="display: flex; justify-content: left; margin-left: 0px">
+					<input type="checkbox" id="helperLines" name="helperLines" onchange="helperLinesChanged()" style="display: flex; justify-content: left; margin-left: 0px">
 				</div>
 				<div style="display: flex; flex-flow: row;">
 					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px ">Materialdicke: </div>
@@ -118,7 +118,7 @@ var metadata = {
 	processAlsoFloor : false,
 	materialThickness : 1.5,
 
-	helperLines : true,
+	helperLines : false,
 
 	// calculated Values...
 	cabinetLengthNumberOfElements : 0,
@@ -135,6 +135,7 @@ var metadata = {
 
 	diffInnenAussen : 0,
 	nettoDelta : 0,
+	nettoDeltaHalf : 0,
 
 	totalHeight : 0,
 	totalWidth : 0,	
@@ -207,8 +208,8 @@ function createSecondElement() {
 }
 
 function createThirdElement() {
-	model.models["lengthUpperThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 - metadata.totalHeight + 5, false, true));
-	model.models["lengthLowerThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + 5 + 5 - metadata.totalHeight + 5, true, true));
+	model.models["lengthUpperThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 - metadata.totalHeight + 5, false, true));
+	model.models["lengthLowerThirdElement"] = makerjs.importer.fromSVGPathData(createLength(5 + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + 5 + 5 - metadata.totalHeight + 5, true, true));
 
 	model.models["widthLeftThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(5, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 + 5 + metadata.radiusInClickCornerLarge - metadata.totalHeight, true, true));
 	model.models["widthRightThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(5 + metadata.cabinetLength, metadata.cabinetHeight + metadata.cabinetHeight + 5 + 5 + 5 + metadata.radiusInClickCornerLarge - metadata.totalHeight, false, true));
@@ -223,10 +224,10 @@ function createWidth(startX, startY, flag, floor) {
 	let currentPath = createStartPos(startX, startY);
 
 	if (floor) {
-		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - 0.2;
+		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - 0.1;
 		currentPath += createVerticalSvgPath(firstLinePathLength);
 	} else {
-		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - (metadata.nettoDelta / 2) + 0.1;
+		let firstLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - metadata.nettoDeltaHalf + 0.1;
 		console.log("firstLinePathLength Width: " + firstLinePathLength);
 		currentPath += createHorizontalSvgPath(firstLinePathLength);
 	}
@@ -291,10 +292,10 @@ function createWidth(startX, startY, flag, floor) {
 	}
 
 	if (floor) {
-		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge;
+		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerLarge - metadata.nettoDeltaHalf - 0.1;
 		currentPath += createVerticalSvgPath(lastLinePathLength);
 	} else {
-		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - (metadata.nettoDelta / 2) + 0.1;
+		let lastLinePathLength = metadata.cabinetWidthStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.nettoDeltaHalf + 0.1;
 		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	}
 	return currentPath;
@@ -303,9 +304,14 @@ function createWidth(startX, startY, flag, floor) {
 function createLength(startX, startY, flag, floor) {
 	let currentPath = createStartPos(startX, startY);
 
-	let firstHorizontalPath = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDelta - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + 0.1;
+	if (floor) {
+		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - 0.1;
+		currentPath += createHorizontalSvgPath(firstLinePathLength);
+	} else {
+		let firstLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + 0.1;
+		currentPath += createHorizontalSvgPath(firstLinePathLength);
+	}
 
-	currentPath += createHorizontalSvgPath(firstHorizontalPath);
 
 	for (let i = 0; i < (metadata.cabinetLengthNumberOfElements - 2); i++) {
 		let cabinetLengthMmOfLongElementLocal = metadata.cabinetLengthMmOfLongElement;
@@ -360,30 +366,28 @@ function createLength(startX, startY, flag, floor) {
 			alert("Alarm!");
 		}
 	}
-	let lastHorizontalPath = metadata.cabinetLengthStartEndElementLengthMm - metadata.radiusInClickCornerSmall;
-
+	
 	if (floor) {
-		lastHorizontalPath -= 0.1;
+		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerLarge - 0.1;
+		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	} else {
-		lastHorizontalPath += 0.1;
+		let lastLinePathLength = metadata.cabinetLengthStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + 0.1;
+		currentPath += createHorizontalSvgPath(lastLinePathLength);
 	}
 
-	currentPath += createHorizontalSvgPath(lastHorizontalPath);
 	return currentPath;
 }
 
 function createHeight(startX, startY, left) {
 	let currentPath = createStartPos(startX, startY);
 
-	let firstVerticalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDelta - metadata.radiusInClickCornerSmall;
-
 	if (left) {
-		firstVerticalPath += 0.1;
+		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall + 0.1;
+		currentPath += createVerticalSvgPath(firstLinePathLength);
 	} else {
-		firstVerticalPath -= 0.1;
+		let firstLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - 0.1;
+		currentPath += createVerticalSvgPath(firstLinePathLength);
 	}
-
-	currentPath += createVerticalSvgPath(firstVerticalPath);
 
 	for (let i = 0; i < (metadata.cabinetHeightNumberOfElements - 2); i++) {
 		let cabinetHeightMmOfLongElementLocal = metadata.cabinetHeightMmOfLongElement;
@@ -413,11 +417,11 @@ function createHeight(startX, startY, left) {
 		currentPath += createRightRightSvgPath();
 	}
 	if (left) {
-		let lastHorizontalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen + 0.1;
-		currentPath += createVerticalSvgPath(lastHorizontalPath);
+		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen + 0.1;
+		currentPath += createVerticalSvgPath(lastLinePathLength);
 	} else {
-		let lastHorizontalPath = metadata.cabinetHeightStartEndElementLengthMm - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - 0.1;
-		currentPath += createVerticalSvgPath(lastHorizontalPath);
+		let lastLinePathLength = metadata.cabinetHeightStartEndElementLengthMm - metadata.nettoDeltaHalf - metadata.radiusInClickCornerSmall - metadata.diffInnenAussen - 0.1;
+		currentPath += createVerticalSvgPath(lastLinePathLength);
 	}
 	return currentPath;
 }
@@ -445,6 +449,7 @@ function createRectangle(deterministicName, width, height, startx, starty) {
 
 function calculateMetadata() {
 	metadata.nettoDelta = metadata.radius4 - metadata.radius3 - metadata.length2 -  metadata.radius2 + metadata.radius1;
+	metadata.nettoDeltaHalf = metadata.nettoDelta / 2; 
 	metadata.diffInnenAussen = metadata.radius1 + metadata.length1 + metadata.radius2 + metadata.radius3 + metadata.length3 + metadata.radius4;
 
 	metadata.totalHeight = metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + 20;
