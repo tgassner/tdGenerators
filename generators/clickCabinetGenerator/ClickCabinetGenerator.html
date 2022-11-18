@@ -848,7 +848,6 @@ function genericChanged(elementId, metaDataFieldName, checkFkt, addNumericValue)
 		document.getElementById(elementId + "OutsideDimension").innerHTML = "";
 	}
 	let intValue = parseInt(document.getElementById(elementId).value);
-	console.log("elementId= " + elementId + " value= " + intValue);
 	if (!isNaN(intValue)) {
 		document.getElementById(elementId).value = intValue;
 		intValue += addNumericValue;
