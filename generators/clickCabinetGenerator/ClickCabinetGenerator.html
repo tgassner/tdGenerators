@@ -201,57 +201,86 @@ function createModel() {
 	createSecondElement();
 
 	createThirdElement();
+
+	cloneElements();
+}
+
+function cloneElements() {
+	let cloneShift = Math.max(metadata.cabinetWidth, metadata.cabinetLength) + (2 * metadata.borderSpace);
+
+	cloneElement(model.models.firstElement, "clonedFirstElement", cloneShift);
+
+	cloneElement(model.models.secondElement, "clonedSecondElement", cloneShift);
+
+	if (metadata.processAlsoFloor) {
+		cloneElement(model.models.thirdElement, "clonedThirdElement", cloneShift);
+	}
+}
+
+function cloneElement(toCloneElement, cloneElementName, cloneShift) {
+	let clone = makerjs.model.clone(toCloneElement);
+	makerjs.model.move(clone, [cloneShift, 0]);
+	model.models[cloneElementName] = clone;
 }
 
 function createFirstElement() {
-	model.models["heightLeftFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, true));
-	model.models["heightRightFirstElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, false));
+	let heightLeftFirstElement = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, true));
+	let heightRightFirstElement = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight, false));
 
-	model.models["widthLowerFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
+	let widthLowerFirstElement = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
 
+	let radius1FirstElement = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	let radius2FirstElement = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	let radius3FirstElement = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
+	let radius4FirstElement = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
 
-
-	model.models["radius1FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius2FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetWidth - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius3FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
-	model.models["radius4FirstElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetWidth, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall, metadata.radiusInClickCornerSmall));
-
+	let widthUpperFirstElement = null;
 	if (!metadata.processAlsoFloor) {
-		model.models["lineFirstElement"] = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		widthUpperFirstElement = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall) + createHorizontalSvgPath(metadata.cabinetWidth - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	} else {
-		model.models["widthHigherFirstElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, -metadata.totalHeight + metadata.borderSpace + metadata.diffInnenAussen, false, false));
+		widthUpperFirstElement = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, -metadata.totalHeight + metadata.borderSpace + metadata.diffInnenAussen, false, false));
 	}
+
+	model.models["firstElement"] = combine(radius1FirstElement, widthUpperFirstElement, radius2FirstElement, heightRightFirstElement,
+		radius3FirstElement, widthLowerFirstElement, radius4FirstElement, heightLeftFirstElement);
 }
 
 function createSecondElement() {
-	model.models["hightLeftSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, true));
-	model.models["hightRightSecondElement"] = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, false));
+	let hightLeftSecondElement = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, true));
+	let hightRightSecondElement = makerjs.importer.fromSVGPathData(createHeight(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace, false));
 
-	model.models["widthLowerSecondElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
+	let widthLowerSecondElement = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace - metadata.diffInnenAussen, true, false));
 
-	model.models["radius1SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius2SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
-	model.models["radius3SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
-	model.models["radius4SecondElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
+	let radius1SecondElement = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	let radius2SecondElement = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerSmall, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.borderSpace + (metadata.processAlsoFloor ? metadata.diffInnenAussen : 0), metadata.radiusInClickCornerSmall));
+	let radius3SecondElement = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace + metadata.diffInnenAussen, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
+	let radius4SecondElement = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall + metadata.cabinetHeight + metadata.borderSpace, metadata.radiusInClickCornerSmall));
 
+	let widthUpperSecondElement;
 	if (!metadata.processAlsoFloor) {
-		model.models["lineSecondElement"] = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall + metadata.borderSpace + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
+		widthUpperSecondElement = makerjs.importer.fromSVGPathData(createStartPos(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.borderSpace + metadata.radiusInClickCornerSmall - metadata.totalHeight - metadata.radiusInClickCornerSmall + metadata.borderSpace + metadata.cabinetHeight) + createHorizontalSvgPath(metadata.cabinetLength - metadata.diffInnenAussen - metadata.radiusInClickCornerSmall - metadata.radiusInClickCornerSmall));
 	} else {
-		model.models["widthUpperSecondElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.diffInnenAussen - metadata.totalHeight, false, false));
+		widthUpperSecondElement = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.diffInnenAussen + metadata.radiusInClickCornerSmall, metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.diffInnenAussen - metadata.totalHeight, false, false));
 	}
+
+	model.models["secondElement"] = combine(radius1SecondElement, widthUpperSecondElement, radius2SecondElement,
+			hightRightSecondElement, radius3SecondElement, widthLowerSecondElement, radius4SecondElement, hightLeftSecondElement);
 }
 
 function createThirdElement() {
-	model.models["lengthUpperThirdElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, false, true));
-	model.models["lengthLowerThirdElement"] = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, true, true));
+	let lengthUpperThirdElement = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, false, true));
+	let lengthLowerThirdElement = makerjs.importer.fromSVGPathData(createLength(metadata.borderSpace + metadata.radiusInClickCornerLarge, metadata.cabinetHeight + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace - metadata.totalHeight + metadata.borderSpace, true, true));
 
-	model.models["widthLeftThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, true, true));
-	model.models["widthRightThirdElement"] = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.cabinetLength, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, false, true));
+	let widthLeftThirdElement = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, true, true));
+	let widthRightThirdElement = makerjs.importer.fromSVGPathData(createWidth(metadata.borderSpace + metadata.cabinetLength, metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace + metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight, false, true));
 
-	model.models["radius1ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
-	model.models["radius2ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerLarge, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
-	model.models["radius3ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
-	model.models["radius4ThirdElement"] = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	let radius1ThirdElement = makerjs.importer.fromSVGPathData(createRadiusLeftUpperSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.radiusInClickCornerLarge - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	let radius2ThirdElement = makerjs.importer.fromSVGPathData(createRadiusRightUpperSvgPath(metadata.borderSpace + metadata.cabinetLength - metadata.radiusInClickCornerLarge, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight + metadata.cabinetHeight + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	let radius3ThirdElement = makerjs.importer.fromSVGPathData(createRadiusLeftLowerSvgPath(metadata.borderSpace, metadata.borderSpace + metadata.cabinetHeight - metadata.totalHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+	let radius4ThirdElement = makerjs.importer.fromSVGPathData(createRadiusRightLowerSvgPath(metadata.borderSpace + metadata.cabinetLength, metadata.borderSpace - metadata.totalHeight + metadata.cabinetHeight - metadata.radiusInClickCornerLarge + metadata.cabinetHeight + metadata.cabinetWidth + metadata.borderSpace + metadata.borderSpace, metadata.radiusInClickCornerLarge));
+
+	model.models["thirdElement"] = combine(radius1ThirdElement, lengthUpperThirdElement, radius2ThirdElement, widthRightThirdElement, radius3ThirdElement,
+		lengthLowerThirdElement, radius4ThirdElement, widthLeftThirdElement);
 }
 
 function createWidth(startX, startY, flag, floor) {
@@ -472,6 +501,37 @@ function createHeight(startX, startY, left) {
 	}
 	return currentPath;
 }
+
+	function combine(...args) {
+		if (args.length === 0) {
+			throw "Invalid empty Argument!";
+		}
+
+		if (args.length === 1) {
+			return args[0];
+		}
+
+		let combination = makerjs.model.combine(args[0], args[1], true, true, true, true, createOpts());
+
+		if (args.length === 2) {
+			return combination;
+		}
+
+		for (var i = 2; i < arguments.length; i++) {
+			combination = makerjs.model.combine(combination, args[i], true, true, true, true, createOpts());
+		}
+
+		return combination;
+	}
+
+
+	function createOpts() {
+		return  {
+			trimDeadEnds: false,
+			pointMatchingDistance: 2,
+			out_deleted: [{ paths: {} }, { paths: {} }]
+		};
+	}
 
 function createHelperLinesIfNeeded() {
 	if (metadata.helperLines) {
