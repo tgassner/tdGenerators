@@ -4,6 +4,8 @@
 <head>
    <meta charset="UTF-8">
    <title>Jigsaw puzzle</title>
+   <script src="lib/browser.maker.js"></script>
+   <script src="lib/bezier.js"></script>
    <script type="text/javascript">
       function save(filename, data)
       {
@@ -137,7 +139,7 @@
          $("puzzlepath").setAttribute("d", gen_d());
       }
       
-      function generate()
+      function generateSVG()
       {
          width = parseInt($("width").value);
          height = parseInt($("height").value);
@@ -151,6 +153,46 @@
          
          save("jigsaw.svg", data);
       }
+	  
+	  function generateDXF() {
+		var makerjs = require('makerjs');
+		
+		var modelLocal = {
+			paths: { },
+			models: {}
+		};
+		
+		
+		modelLocal.models["puzzle"] = makerjs.importer.fromSVGPathData(gen_d());
+		
+		var dxfExp = makerjs.exporter.toDXF(modelLocal, {
+			fontSize: 4,
+			usePOLYLINE: true,
+			units: makerjs.unitType.Millimeter,
+			pointMatchingDistance : 0.1,
+		});
+		download(dxfExp, "puzzle", "dxf");
+		
+	  }
+	  
+	  function download(data, filename, type) {
+        var file = new Blob([data], {type: type});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        else { // Others
+            var a = document.createElement("a"),
+                    url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
+        }
+    }
+	  
    </script>
 </head>
 
@@ -179,7 +221,8 @@
       <tr>
          <td>Size:</td>
          <td><input id="width" type="text" value="300" size="4" onchange="update()"/> x <input id="height" type="text" value="200"  size="4" onchange="update()"/> mm</td>
-         <td><button onclick="generate()">Download SVG</button></td>
+         <td><button onclick="generateSVG()">Download SVG</button></td>
+		 <td><button onclick="generateDXF()">Download DXF</button></td>
 		 <td>by <a href="https://telegnom.org/">telegnom.org</a></td>
       </tr>
    </table>
