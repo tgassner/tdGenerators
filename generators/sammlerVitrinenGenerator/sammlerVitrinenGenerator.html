@@ -1,0 +1,509 @@
+<html lang="de">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<link id="favicon" rel="shortcut icon" href="favicon.png" type="image/png">
+	<link rel="apple-touch-icon" sizes="194x194" href="apple-touch-icon.png" type="image/png">
+	<title>Sammler Vitrinen Generator</title>
+	<script src="lib/browser.maker.js"></script>
+	<script type="text/javascript">
+		var makerjs = require('makerjs');
+	</script>
+</head>
+<body style="margin: 0px; ">
+<div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
+	<div style="display: flex; flex-flow: column;">
+		<h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">Sammler Vitrinen Generator</h1>
+		<div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1 &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.11.2022 by Gassi</div>
+	</div>
+	<img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
+</div>
+
+	<div id="clickCabinetPreviewDiv" name="clickCabinetPreviewDiv" ></div>
+<br><br>
+
+<div style="width: 700px">
+	<div id="guiElements" style="display: flex; flex-flow: column; ">
+		<div style="background-color: aliceblue;height: fit-content;clear: both; width: 100%;display: table;">
+			<div style='font-weight: bold; margin-left: 15px; margin-bottom: 8px;'>Vitrine LxBxH</div>
+
+			<div style="display: flex; flex-flow: column">
+
+				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px"> </div>
+					<div style="display: flex; width: 80px;font-weight: bold; align-items: center;">Innenmaße</div>
+					<span style="margin-left: 8px; width:25px"></span>
+					<div style="margin-left: 30px; width: 90px; align-items: center; display: flex">Außenmaße</div>
+					<div style="display: flex; margin-left: 10px; flex-flow: column">
+						<div style="display: flex;"><span style="width: 165px; display: flex">Totale Länge des Pfades: </span><span style="margin-left: 5px; width: 65px" id="modellength"></span><span>mm</span><br></div>
+						<div style="display: flex;"><span style="width: 165px; display: flex">Fläche der Rechtecke:</span><span style="margin-left: 5px; width: 65px" id="surfaceArea"></span><span>m²</span></div>
+					</div>
+				</div>
+
+				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px"><label for="cabinetLength">L: </label></div>
+					<input type="number" value="350" min="50" max="1000" id="cabinetLength" name="cabinetLength" onchange="cabinetLengthChanged()" style="width: 80px">
+					<span style="margin-left: 8px; width:25px">mm</span>
+					<div id="cabinetLengthOutsideDimension" style="margin-left: 30px; width: 70px"></div>
+					<div id="cabinetLengthErrorMsg" style="margin-left: 30px; color: #ff0000"></div>
+				</div>
+				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px"><label for="cabinetWidth">B: </label></div>
+					<input type="number" value="140" min="50" max="1000" id="cabinetWidth" name="cabinetWidth" onchange="cabinetWidthChanged()" style="width: 80px">
+					<span style="margin-left: 8px; width:25px">mm</span>
+					<div id="cabinetWidthOutsideDimension" style="margin-left: 30px; width: 70px "></div>
+					<div id="cabinetWidthErrorMsg" style="margin-left: 10px; color: #ff0000"></div>
+				</div>
+				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px"><label for="cabinetHeight">H: </label></div>
+					<input type="number" value="110" min="50" max="1000" id="cabinetHeight" name="cabinetHeight" onchange="cabinetHeightChanged()" style="width: 80px">
+					<span style="margin-left: 8px; width:25px">mm</span>
+					<div id="cabinetHeightOutsideDimension" style="margin-left: 30px; width: 70px; "></div>
+					<div id="cabinetHeightErrorMsg" style="margin-left: 10px; color: #ff0000"></div>
+				</div>
+				<div style="display: flex; flex-flow: row;">
+					<div style="flex-basis: 100px; justify-content: right; display: flex; margin-right: 8px ">Materialdicke: </div>
+					<div style="display: flex; justify-content: left; margin-left: 0; flex-flow: column">
+						<div style="display: flex; justify-content: left; margin-left: 0">
+							<input type="radio" id="ratio1dot5mm" name="materialThicknessRadio" value="1.5" onchange="materialThicknessChanged()" style="margin-left: 0; display: flex">
+							<span style="margin-left: 8px"><label for="ratio1dot5mm">1.5 mm</label></span>
+						</div>
+						<div style="display: flex; justify-content: left; margin-left: 0">
+							<input type="radio" id="ratio2mm" name="materialThicknessRadio" value="2" onchange="materialThicknessChanged()" style="margin-left: 0; display: flex">
+							<span style="margin-left: 8px"><label for="ratio2mm">2 mm</label></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="exportButtons" style="background-color: cornsilk; display:flex; padding-top:10px; padding-bottom:10px; justify-content : space-around">
+			<button id="downloadDXF" onclick="downloadDXF()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine DXF Datei"> DXF Download</button>
+			<button id="downloadSVG" onclick="downloadSVG()" style="display: flex; flex-grow: 1; margin-left: 5px; margin-right: 5px" title="Generiere und download eine SVG Datei"> SVG Download</button>
+		</div>
+
+		<div id="debugInfosOuter" style="background-color: cadetblue; display: flex; flex-flow: column">
+			<div style="padding-left: 15px; padding-top: 15px; display: flex" id="debugInfosHeadline">Debug Infos: <a id="linkShowDebugInfos" style="margin-left:15px;font-family: monospace; text-decoration: none; color: #000000" href="javascript:openDebugInfos();"> [+] </a></div>
+			<div style="padding-left:15px; padding-top: 3px;display: none" id="debugInfosInner"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+	function openDebugInfos() {
+
+		let displayVal = document.getElementById("debugInfosInner").style.display;
+
+		if (displayVal === "none") {
+			document.getElementById("debugInfosInner").style.display = "flex";
+			document.getElementById("linkShowDebugInfos").innerHTML = " [-]";
+		} else {
+			document.getElementById("debugInfosInner").style.display = "none";
+			document.getElementById("linkShowDebugInfos").innerHTML = " [+]";
+		}
+		//linkShowDebugInfos
+	}
+
+var makerjs = require('makerjs');
+var model;
+
+var metadata = {
+	// calculated Values...
+
+	cabinetLength : 0,
+	cabinetWidth : 0,
+	cabinetHeight : 0,
+
+	cabinetLengthNumberOfElements : 0,
+	cabinetWidthNumberOfElements : 0,
+	cabinetHeightNumberOfElements : 0,
+
+	cabinetLengthMmOfLongElement : 0,
+	cabinetWidthMmOfLongElement : 0,
+	cabinetHeightMmOfLongElement : 0,
+
+	cabinetLengthStartEndElementLengthMm : 0,
+	cabinetWidthStartEndElementLengthMm : 0,
+	cabinetHeightStartEndElementLengthMm : 0,
+
+	diffInnenAussen : 0,
+	nettoDelta : 0,
+	nettoDeltaHalf : 0,
+
+	totalHeight : 0,
+	totalWidth : 0,
+
+	insideClipLargerThanOutsideClipHalf : 0,
+	insideClipLargerThanOutsideClipQuarter : 0,
+
+	modellength : 0,
+
+	// const values
+
+	minSideLength : 50,
+	maxSideLength : 1000,
+
+	radius1 : 0.2,
+	radius2 : 0.2,
+	radius3 : 0.2,
+	radius4 : 1.1,
+
+	radiusInClickCornerLarge : 3.1,
+	radiusInClickCornerSmall : 1.1,
+
+	length1WithoutMaterialThickness : -0.6,
+	length1 : -100,  // with material thickness 1.5 mm length1 == 0.9
+	length2 : 0.1,
+	length3 : 0,
+	borderSpace : 5,
+	insideClipLargerThanOutsideClip : 0.4,
+
+	// preconfigured values
+	materialThickness : 1.5,
+	helperLines : false,
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+	createModel();
+	drawPreview();
+	document.getElementById('cabinetLength').focus();
+});
+
+function createModel() {
+
+	calculateMetadata();
+
+	initModel();
+
+	model.units = makerjs.unitType.Millimeter;
+
+	fillDebugInfoArea();
+
+	//cloneElements();
+
+	//computeLength();
+
+}
+
+function computeLength() {
+	let sumModelLength = 0;
+	for (const key in model.models) {
+		let currentElementModel = model.models[key];
+		let currentModelLength = makerjs.measure.modelPathLength(currentElementModel);
+		console.log(key + "= " + currentModelLength);
+		sumModelLength += currentModelLength;
+	}
+	metadata.modellength = sumModelLength;
+}
+
+function cloneElements() {
+	let cloneShift = Math.max(metadata.cabinetWidth, metadata.cabinetLength) + (2 * metadata.borderSpace);
+
+	cloneElement(model.models.firstElement, "clonedFirstElement", cloneShift);
+
+	cloneElement(model.models.secondElement, "clonedSecondElement", cloneShift);
+}
+
+function cloneElement(toCloneElement, cloneElementName, cloneShift) {
+	let clone = makerjs.model.clone(toCloneElement);
+	makerjs.model.move(clone, [cloneShift, 0]);
+	model.models[cloneElementName] = clone;
+}
+
+function combine(...args) {
+	if (args.length === 0) {
+		throw "Invalid empty Argument!";
+	}
+
+	if (args.length === 1) {
+		return args[0];
+	}
+
+	let combination = makerjs.model.combine(args[0], args[1], true, true, true, true, createOpts());
+
+	if (args.length === 2) {
+		return combination;
+	}
+
+	for (var i = 2; i < arguments.length; i++) {
+		combination = makerjs.model.combine(combination, args[i], true, true, true, true, createOpts());
+	}
+
+	return combination;
+}
+
+
+function createOpts() {
+	return  {
+		trimDeadEnds: false,
+		pointMatchingDistance: 2,
+		out_deleted: [{ paths: {} }, { paths: {} }]
+	};
+}
+
+
+function fillDebugInfoArea() {
+	document.getElementById('debugInfosInner').innerHTML =
+			"<pre style='margin-top: 5px'>metaData: " + JSON.stringify(metadata, null, 2) + "\n\n</pre>";
+}
+
+function createRectangle(deterministicName, width, height, startx, starty) {
+	model.paths[deterministicName + "_1"] = new makerjs.paths.Line([startx, starty], [startx + width, starty]);
+	model.paths[deterministicName + "_2"] = new makerjs.paths.Line([startx, starty + height], [startx + width, starty + height]);
+	model.paths[deterministicName + "_3"] = new makerjs.paths.Line([startx, starty], [startx, starty + height]);
+	model.paths[deterministicName + "_4"] = new makerjs.paths.Line([startx + width, starty], [startx + width, starty + height]);
+}
+
+function calculateMetadata() {
+
+}
+
+function drawPreview() {
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : metadata.totalWidth + "px", "height" : metadata.totalHeight + "px", "id" : "preViewSvg" } });
+		
+	document.getElementById('clickCabinetPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>";
+	
+	document.getElementById('backgroundDiv').innerHTML = "<div id='contentDiv' style='margin-left: 10px; margin-top: 10px;padding-top:12px; padding-left:12px; border-width: 1px; border-style: solid; border-color: #cdcdcd; width: fit-content;'></div>";
+	
+	document.getElementById('contentDiv').innerHTML = svg;
+	document.getElementById('contentDiv').style.position = "relative";
+
+	let viewBoxAttrib = "-1 -1 " + (metadata.totalWidth + 2) + " " + (metadata.totalHeight + 2) ;
+	document.getElementById('preViewSvg').setAttribute("viewBox", viewBoxAttrib);
+
+	let g = document.querySelector('#preViewSvg>g');
+	g.style="stroke-width:0.05mm";
+
+	document.getElementById('downloadDXF').style.visibility = "";
+	document.getElementById('downloadSVG').style.visibility = "";
+
+	document.getElementById("cabinetLength").value = parseInt(metadata.cabinetLength - (2 * metadata.diffInnenAussen));
+	document.getElementById("cabinetWidth").value = parseInt(metadata.cabinetWidth - (2 * metadata.diffInnenAussen));
+	document.getElementById("cabinetHeight").value = parseInt(metadata.cabinetHeight - (2 * metadata.diffInnenAussen));
+	document.getElementById("processAlsoFloor").checked = metadata.processAlsoFloor;
+	document.getElementById("helperLines").checked = metadata.helperLines;
+
+	checkMaterialThicknessRadioButton(metadata.materialThickness);
+
+	document.getElementById("modellength").innerHTML = " " + metadata.modellength.toFixed(2);
+
+
+	document.getElementById("surfaceArea").innerHTML = (calculateSurfaceArea() / (1000 * 1000)).toFixed(4);
+}
+
+function initModel() {
+	model = {
+		paths: {},
+		models: {}
+	};
+}
+
+function calculateSurfaceArea() {
+	return (2 * metadata.cabinetHeight * metadata.cabinetWidth) +
+			(2 * metadata.cabinetHeight * metadata.cabinetLength) +
+			((metadata.processAlsoFloor ? 2 : 1) * metadata.cabinetWidth * metadata.cabinetLength);
+}
+
+function checkMaterialThicknessRadioButton(materialThickness) {
+	switch (materialThickness) {
+		case (1.5):
+			document.getElementById("ratio1dot5mm").checked = true;
+			break;
+		case (2):
+			document.getElementById("ratio2mm").checked = true;
+			break;
+		default:
+			alert("MaterialdickeError");
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*********************************************** GUI Event Handler BEGIN **********************************************/
+
+function cabinetLengthChanged(callCReateModelAndDrawPreview = true) {
+	if (genericChanged("cabinetLength", "cabinetLength", checkNumberRange, 2 * metadata.diffInnenAussen)) {
+		if (callCReateModelAndDrawPreview) {
+			createModel();
+			drawPreview();
+		}
+	}
+}
+
+function cabinetWidthChanged(callCReateModelAndDrawPreview = true) {
+	if (genericChanged("cabinetWidth", "cabinetWidth", checkNumberRange, 2 * metadata.diffInnenAussen)) {
+		if (callCReateModelAndDrawPreview) {
+			createModel();
+			drawPreview();
+		}
+	}
+}
+
+function cabinetHeightChanged(callCReateModelAndDrawPreview = true) {
+	if (genericChanged("cabinetHeight", "cabinetHeight", checkNumberRange, 2 * metadata.diffInnenAussen)) {
+		if (callCReateModelAndDrawPreview) {
+			createModel();
+			drawPreview();
+		}
+	}
+}
+
+function materialThicknessChanged() {
+	let materialThickness = parseFloat(document.querySelector('input[name="materialThicknessRadio"]:checked').value);
+	metadata.materialThickness = materialThickness;
+	calculateMetadata();
+	checkMaterialThicknessRadioButton(materialThickness);
+	createModel();
+	drawPreview();
+}
+
+function genericChanged(elementId, metaDataFieldName, checkFkt, addNumericValue) {
+	if (document.getElementById(elementId + "OutsideDimension")) {
+		document.getElementById(elementId + "OutsideDimension").innerHTML = "";
+	}
+	let intValue = parseInt(document.getElementById(elementId).value);
+	if (!isNaN(intValue)) {
+		document.getElementById(elementId).value = intValue;
+		intValue += addNumericValue;
+	}
+	let checkFktResult = true;
+	if (checkFkt) {
+		let checkFktReturn = checkFkt(intValue);
+		checkFktResult = checkFktReturn.checkResult;
+		if (!checkFktResult && document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = checkFktReturn.errorMessage;
+		}
+	}
+	if (!isNaN(intValue) && checkFktResult) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		if (document.getElementById(elementId + "ErrorMsg")) {
+			document.getElementById(elementId + "ErrorMsg").innerHTML = "";
+		}
+		metadata[metaDataFieldName] = intValue;
+		if (document.getElementById(elementId + "OutsideDimension")) {
+			document.getElementById(elementId + "OutsideDimension").innerHTML = intValue.toString();
+		}
+		return true;
+	} else {
+		document.getElementById(elementId).style.backgroundColor = "#d87979";
+		return false;
+	}
+}
+
+function checkNumberRange(toCheck) {
+	let toCheckInt = parseInt(toCheck);
+
+	if (isNaN(toCheckInt)) {
+		return {
+			checkResult: false,
+			errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+		};
+	}
+
+	let checkResultBool = toCheckInt >= metadata.minSideLength && toCheckInt <= metadata.maxSideLength;
+	return {
+		checkResult: checkResultBool,
+		errorMessage: "natürliche Zahl zwischen " + metadata.minSideLength + " und " + metadata.maxSideLength + "."
+	};
+}
+
+function download(data, filename, type) {
+	var file = new Blob([data], {type: type});
+	if (window.navigator.msSaveOrOpenBlob) // IE10+
+		window.navigator.msSaveOrOpenBlob(file, filename);
+	else { // Others
+		var a = document.createElement("a"),
+				url = URL.createObjectURL(file);
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		setTimeout(function() {
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		}, 0);
+	}
+}
+
+function downloadDXF() {
+	let helperLines = metadata.helperLines;
+
+	if (helperLines) {
+		metadata.helperLines = false;
+		createModel();
+	}
+
+	let dxfExp = makerjs.exporter.toDXF(model, {
+			usePOLYLINE: true,
+			units: makerjs.unitType.Millimeter,
+		});
+	download(dxfExp, getDateStringForFilename() + "_Sammler_Vitrine.dxf", "dxf")
+
+	if (helperLines) {
+		metadata.helperLines = true;
+		createModel();
+		drawPreview();
+	}
+}
+
+function downloadSVG() {
+	let helperLines = metadata.helperLines;
+
+	if (helperLines) {
+		metadata.helperLines = false;
+		createModel();
+	}
+
+	download(convertSVG(), getDateStringForFilename() + "_Sammler_Vitrine.svg", "svg")
+
+	if (helperLines) {
+		metadata.helperLines = true;
+		createModel();
+		drawPreview();
+	}
+}
+
+function convertSVG() {
+	return '<?xml version="1.0" encoding="UTF-8"?>' +
+			makerjs.exporter.toSVG(model, {
+				units: makerjs.unitType.Millimeter,
+				svgAttrs: {
+					"width": (metadata.totalWidth + "mm"),
+					"height": (metadata.totalHeight + "mm"),
+					"xmlns": "http://www.w3.org/2000/svg",
+					"xmlns:xlink": "http://www.w3.org/1999/xlink",
+					"version": "1.1",
+					"baseProfile": "full"
+				}
+			}) + "\n";
+}
+
+/*********************************************** GUI Event Handler END ************************************************/
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*********************************************** Helper BEGIN *********************************************************/
+
+function getDateStringForFilename() {
+	let currentdate = new Date();
+	return getYears(currentdate) + "-" + getMonths(currentdate) + "-" + getDays(currentdate);
+}
+
+function getYears(date) {
+	return date.getFullYear();
+}
+
+function getMonths(date) {
+	return (((date.getMonth()+1) < 10) ? "0" : "") + (date.getMonth()+1);
+}
+
+function getDays(date) {
+	return ((date.getDate() < 10) ? "0" : "") + date.getDate();
+}
+
+/*********************************************** Helper END ***********************************************************/
+
+</script>
+</body>
+</html>

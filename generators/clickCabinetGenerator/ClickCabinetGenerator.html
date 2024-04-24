@@ -3,7 +3,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<link id="favicon" rel="shortcut icon" href="favicon.png" type="image/png">
 	<link rel="apple-touch-icon" sizes="194x194" href="apple-touch-icon.png" type="image/png">
-	<title>Click Vitrinen Generator</title>
+	<title>Klick Vitrinen Generator</title>
 	<script src="lib/browser.maker.js"></script>
 	<script type="text/javascript">
 		var makerjs = require('makerjs');
@@ -13,7 +13,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
 	<div style="display: flex; flex-flow: column;">
 		<h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">Click Vitrinen Generator</h1>
-		<div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.1.2 &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;22.11.2022 by Gassi</div>
+		<div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.1.3 &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.11.2022 by Gassi</div>
 	</div>
 	<img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -956,7 +956,7 @@ function downloadDXF() {
 			usePOLYLINE: true,
 			units: makerjs.unitType.Millimeter,
 		});
-	download(dxfExp, getDateStringForFilename() + "_Click_Vitrine__im_" + (metadata.cabinetLength - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetWidth - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetHeight - (2 * metadata.diffInnenAussen)) + "_" + metadata.materialThickness + "mm_" + (metadata.processAlsoFloor ? "mit_Boden" : "ohne_Boden") + "_PathLength" + metadata.modellength.toFixed(0) + "mm.dxf", "dxf")
+	download(dxfExp, getDateStringForFilename() + "_Click_Vitrine__im_" + (metadata.cabinetLength - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetWidth - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetHeight - (2 * metadata.diffInnenAussen)) + "_" + metadata.materialThickness + "mm_" + (metadata.processAlsoFloor ? "mit_Boden" : "ohne_Boden") + "_PathLength" + metadata.modellength.toFixed(0) + "mm_SurfaceArea_" + (calculateSurfaceArea() / (10 * 10)).toFixed(0) + "cmq.dxf", "dxf")
 
 	if (helperLines) {
 		metadata.helperLines = true;
@@ -973,7 +973,7 @@ function downloadSVG() {
 		createModel();
 	}
 
-	download(convertSVG(), getDateStringForFilename() + "_Click_Vitrine__im_" + (metadata.cabinetLength - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetWidth - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetHeight - (2 * metadata.diffInnenAussen)) + "_" + metadata.materialThickness + "mm_" + (metadata.processAlsoFloor ? "mit_Boden" : "ohne_Boden") + ".svg", "svg")
+	download(convertSVG(), getDateStringForFilename() + "_Click_Vitrine__im_" + (metadata.cabinetLength - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetWidth - (2 * metadata.diffInnenAussen)) + "x" + (metadata.cabinetHeight - (2 * metadata.diffInnenAussen)) + "_" + metadata.materialThickness + "mm_" + (metadata.processAlsoFloor ? "mit_Boden" : "ohne_Boden") + "_PathLength" + metadata.modellength.toFixed(0) + "mm_SurfaceArea_" + (calculateSurfaceArea() / (10 * 10)).toFixed(0) + "cmq.svg", "svg")
 
 	if (helperLines) {
 		metadata.helperLines = true;
