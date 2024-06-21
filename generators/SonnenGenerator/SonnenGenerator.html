@@ -1,0 +1,284 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>Sonnen Generator</title>
+
+	<script src="lib/browser.maker.js"></script>
+	<script src="lib/bezier.js"></script>
+	<script src="lib/opentype.js"></script>
+
+	<link rel="icon" href="img/favicon114.png" sizes="32x32" />
+	<link rel="icon" href="img/favicon114.png" sizes="192x192" />
+	<link rel="apple-touch-icon" href="img/favicon114.png" />
+	<meta name="msapplication-TileImage" content="img/favicon114.png" />
+
+<script type="text/javascript">
+	var makerjs = require('makerjs');
+</script>
+</head>
+
+<body style="margin: 0px; ">
+<div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
+	<div style="display: flex; flex-flow: column;">
+		<h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">Sonnen Generator</h1>
+		<div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;21.06.2024 by Gassi</div>
+	</div>
+	<img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
+</div>
+
+<div id="inleyPreviewDiv" name="inleyPreviewDiv"></div>
+
+<br><br>
+<div id="guiElements" style="width: fit-content;">
+	<div id="settings" >
+		<div style="background-color: aliceblue;height: fit-content;clear: both; width: 100%;display: table;">
+			<div style="float: left; padding-top: 15px; padding-bottom: 5px; display:table-cell">
+				<div style='font-weight: bold; margin-left: 15px; margin-bottom: 8px;'>Maße</div>
+				<div style="float: left; width:150px; margin:7px; margin-left: 35px; ">Aussendurchmesser: </div>
+						<input type="number" id="outerDiameter" name="outerDiameter" onchange="outerDiameterChanged()" style="width: 60px;margin:5px">mm<br>
+				<div style="float: left; width:150px; margin:6px; margin-left: 35px; clear:left;">Innendurchmesser </div>
+						<input type="number" id="innerDiameter"  name="innerDiameter"  onchange="innerDiameterChanged()"  style="width: 60px;margin:5px">mm<br>
+				<div style="float: left; width:150px; margin:6px; margin-left: 35px; clear:left;">Anzahl Sonnenstrahlen </div>
+						<input type="number" id="numberOfSunbeams"  name="numberOfSunbeams"  onchange="numberOfSunbeamsChanged()"  style="width: 60px;margin:5px">mm<br>
+				<input type='checkbox' id='useAddditionalCircle' name='useAddditionalCircle' value='' onChange='useAddditionalCircleChanged()' style='width: 15px'>
+				<div style="float: left; width:150px; margin:7px; margin-left: 35px; clear:left;">Zusätzlicher Kreis: </div>
+					<div id="additionalDiameterDiv" name="additionalDiameterDiv">
+					<input type="number" id="additionalDiameter" name="additionalDiameter" onchange="additionalDiameterChanged()" style="width: 60px;margin:5px">mm
+					</div>
+			</div>
+
+			<div style="width:45%;float: left;display:table-cell">
+				<div id="infoMessage" style="padding:10px;"></div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="exportButtons" style="background-color: cornsilk; width: 100%; margin-top:10px">
+		<div style="padding: 15px;">
+			<button id="downloadDXF" onclick="downloadDXF()" title="Generiere und download eine DXF Datei."> DXF Download</button>
+			<button id="downloadSVG" onclick="downloadSVG()" title="Generiere und download eine SVG Datei"> SVG Download</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var makerjs = require('makerjs');
+var font;
+var model;
+
+var metadata = {
+	outerDiameter: 500,
+	innerDiameter: 400,
+	useAddditionalCircle: false,
+	additionalDiameter: 100,
+	numberOfSunbeams: 200,
+}
+
+function determinetotalLength() {
+	return Math.max(metadata.outerDiameter, metadata.innerDiameter, metadata.additionalDiameter);
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+	opentype.load("fonts/Lovelo-Black.woff", function(err, fontParam) {
+		if (err) {
+			alert("Error: " + err);
+		} else {
+			font = fontParam;
+			model = createModel();
+			drawPreview();
+			document.getElementById('outerDiameter').focus();
+		}
+	});
+});
+
+function createModel() {
+	var modelLocal = {
+	  paths: {
+		  //spikes_line1 : new makerjs.paths.Line([100, 10], [100, 100]),
+	  },
+	  models: {
+
+	  }
+	};
+
+	let deltaRadius = (metadata.outerDiameter - metadata.innerDiameter) / 2;
+	let center = determinetotalLength() / 2;
+
+	//modelLocal.models.square = new makerjs.models.Square(determinetotalLength());
+
+	let spoke = new makerjs.paths.Line([center, center], [center - deltaRadius, center]);
+
+	if (metadata.outerDiameter >= metadata.innerDiameter) {
+		makerjs.path.move(spoke, [center, 0]);
+	} else {
+		makerjs.path.move(spoke, [center + deltaRadius, 0]);
+	}
+
+	let spokes = makerjs.layout.cloneToRadial(spoke, metadata.numberOfSunbeams, 360 / metadata.numberOfSunbeams);
+	makerjs.model.move(spokes, [center, center]);
+	modelLocal.models.spokes = spokes;
+
+	modelLocal.paths.outherCircle = new makerjs.paths.Circle([center, center], metadata.outerDiameter / 2);
+	//modelLocal.paths.innerCircle = new makerjs.paths.Circle([center, center], metadata.innerDiameter / 2);
+	if (metadata.useAddditionalCircle && metadata.additionalDiameter > 0) {
+		modelLocal.paths.additionalCircle = new makerjs.paths.Circle([center, center], metadata.additionalDiameter / 2);
+	}
+
+	modelLocal.units = makerjs.unitType.Millimeter;
+
+	return modelLocal;
+}
+
+function drawPreview() {
+	var svg = makerjs.exporter.toSVG(model, {svgAttrs : {"width" : determinetotalLength() + "px", "height" : determinetotalLength() + "px", "id" : "preViewSvg" } });
+		
+	document.getElementById('inleyPreviewDiv').innerHTML = "<div id='backgroundDiv'></div>";
+	
+	document.getElementById('backgroundDiv').innerHTML = "<div id='contentDiv' style='margin-left: 10px; margin-top: 10px;padding-top:12px; padding-left:12px;'></div>";
+	
+	document.getElementById('contentDiv').innerHTML = svg;
+	document.getElementById('contentDiv').style.position = "relative";
+
+	let viewBoxAttrib = "-1 -1 " + (determinetotalLength() + 2) + " " + (determinetotalLength() + 2) ;
+	document.getElementById('preViewSvg').setAttribute("viewBox", viewBoxAttrib);
+
+	document.getElementById('downloadDXF').style.visibility = "";
+	document.getElementById('downloadSVG').style.visibility = "";
+
+	document.getElementById("outerDiameter").value = metadata.outerDiameter;
+	document.getElementById("innerDiameter").value = metadata.innerDiameter;
+	document.getElementById("additionalDiameter").value = metadata.additionalDiameter;
+	document.getElementById("useAddditionalCircle").checked = metadata.useAddditionalCircle;
+	document.getElementById("numberOfSunbeams").value = metadata.numberOfSunbeams;
+
+
+	document.getElementById("useAddditionalCircle").checked = metadata.useAddditionalCircle;
+	if (metadata.useAddditionalCircle) {
+		document.getElementById("additionalDiameterDiv").style.display = "";
+	} else {
+		document.getElementById("additionalDiameterDiv").style.display = "none";
+	}
+
+}
+	
+function download(data, filename, type) {
+        var file = new Blob([data], {type: type});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        else { // Others
+            var a = document.createElement("a"),
+                    url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
+        }
+    }
+
+function downloadDXF() {
+	var dxfExp = makerjs.exporter.toDXF(model, {
+		fontSize: 4,
+		usePOLYLINE: true,
+		units: makerjs.unitType.Millimeter,
+		pointMatchingDistance : 0.1,
+	});
+	download(dxfExp, determineFilename("dxf"), "dxf");
+}
+
+function determineFilename(extension) {
+	let filename = "Sonne - ";
+	filename += " Durchmesser=" + determinetotalLength()  + "mm" +  "." + extension;
+	return filename;
+}
+
+function downloadSVG() {
+   var svgExp = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
+		makerjs.exporter.toSVG(model, { 
+			units: makerjs.unitType.Millimeter, 
+			svgAttrs : {
+				"width" : (determinetotalLength() + "mm"),
+				"height" : (determinetotalLength() + "mm"),
+				"xmlns" : "http://www.w3.org/2000/svg",
+				"xmlns:xlink" : "http://www.w3.org/1999/xlink",
+				"version" : "1.1",
+				"baseProfile" : "full"
+						}
+		});
+	download(svgExp, determineFilename("svg"), "svg")
+}
+
+function genericChanged(elementId, metaDataFieldName) {
+	var widthInt = parseInt(document.getElementById(elementId).value);
+	if (!isNaN(widthInt)) {
+		document.getElementById(elementId).style.backgroundColor = "";
+		metadata[metaDataFieldName] = parseInt(widthInt);
+		return true;
+	} else {
+	    document.getElementById(elementId).style.backgroundColor = "#d87979";
+		return false;
+	}
+}
+
+function outerDiameterChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+	if (genericChanged("outerDiameter", "outerDiameter")) {
+		model = createModel();
+		drawPreview();
+	}
+}
+
+function innerDiameterChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+	if (genericChanged("innerDiameter", "innerDiameter")) {
+		model = createModel();
+		drawPreview();
+	}
+}
+
+function numberOfSunbeamsChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+	if (genericChanged("numberOfSunbeams", "numberOfSunbeams")) {
+		model = createModel();
+		drawPreview();
+	}
+}
+
+function useAddditionalCircleChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+	metadata.useAddditionalCircle = document.getElementById("useAddditionalCircle").checked;
+
+	if (metadata.useAddditionalCircle) {
+		document.getElementById("additionalDiameterDiv").style.display = "";
+	} else {
+		document.getElementById("additionalDiameterDiv").style.display = "none";
+	}
+
+	model = createModel();
+	drawPreview();
+
+}
+
+function additionalDiameterChanged() {
+	document.getElementById("infoMessage").innerHTML = "";
+	document.getElementById("infoMessage").style.backgroundColor = "";
+
+	if (genericChanged("additionalDiameter", "additionalDiameter")) {
+		model = createModel();
+		drawPreview();
+	}
+}
+
+</script>
+</body>
+</html>
