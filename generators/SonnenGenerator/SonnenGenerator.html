@@ -39,7 +39,8 @@
 				<div style="float: left; width:150px; margin:6px; margin-left: 35px; clear:left;">Innendurchmesser </div>
 						<input type="number" id="innerDiameter"  name="innerDiameter"  onchange="innerDiameterChanged()"  style="width: 60px;margin:5px">mm<br>
 				<div style="float: left; width:150px; margin:6px; margin-left: 35px; clear:left;">Anzahl Sonnenstrahlen </div>
-						<input type="number" id="numberOfSunbeams"  name="numberOfSunbeams"  onchange="numberOfSunbeamsChanged()"  style="width: 60px;margin:5px">mm<br>
+						<input type="number" id="numberOfSunbeams"  name="numberOfSunbeams"  onchange="numberOfSunbeamsChanged()"  style="width: 60px;margin:5px">mm
+						<span id="SonnenstrahlenInfo"></span><br>
 				<input type='checkbox' id='useAddditionalCircle' name='useAddditionalCircle' value='' onChange='useAddditionalCircleChanged()' style='width: 15px'>
 				<div style="float: left; width:150px; margin:7px; margin-left: 35px; clear:left;">Zusätzlicher Kreis: </div>
 					<div id="additionalDiameterDiv" name="additionalDiameterDiv">
@@ -150,6 +151,9 @@ function drawPreview() {
 	document.getElementById("useAddditionalCircle").checked = metadata.useAddditionalCircle;
 	document.getElementById("numberOfSunbeams").value = metadata.numberOfSunbeams;
 
+	let strahlenInfo = metadata.outerDiameter * 3.1415 / metadata.numberOfSunbeams;
+	strahlenInfo = Math.round((strahlenInfo + Number.EPSILON) * 100) / 100
+	document.getElementById("SonnenstrahlenInfo").innerText = " => " + strahlenInfo + " mm breite Strahlen (am Außendurchmesser)";
 
 	document.getElementById("useAddditionalCircle").checked = metadata.useAddditionalCircle;
 	if (metadata.useAddditionalCircle) {
