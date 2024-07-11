@@ -1,64 +1,104 @@
 {
     "employees": [{
             "id": 123,
-            "name": "Aigner Max"
+            "firstname": "Maximilian",
+            "surname": "Aigner",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Antunovic David"
+            "firstname": "David",
+            "surname": "Antunovic",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Artner Anna"
+            "firstname": "Anna",
+            "surname": "Artner",
+            "sex": "F"
         }, {
             "id": 123,
-            "name": "Gaigg Luca"
+            "firstname": "Luca",
+            "surname": "Gaigg",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Gassner Karl"
+            "firstname": "Karl",
+            "surname": "Gassner",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Gassner Thomas"
+            "firstname": "Thomas",
+            "surname": "Gassner",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Hassani Sharif"
+            "firstname": "Sharif",
+            "surname": "Hassani",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Herzog Werner"
+            "firstname": "Werner",
+            "surname": "Herzog",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Jiqa Nabil"
+            "firstname": "Nabil",
+            "surname": "Jiqa",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Mader Johann"
+            "firstname": "Johann",
+            "surname": "Mader",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Mückstein Martina"
+            "firstname": "Martina",
+            "surname": "Mückstein",
+            "sex": "F"
         }, {
             "id": 123,
-            "name": "Perkmann Alexander"
+            "firstname": "Alexander",
+            "surname": "Perkmann",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Puchas Wolfgang"
+            "firstname": "Wolfgang",
+            "surname": "Puchas",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Recker Mathias"
+            "firstname": "Mathias",
+            "surname": "Recker",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Recker Hanna"
+            "firstname": "Hanna",
+            "surname": "Recker",
+            "sex": "F"
         }, {
             "id": 123,
-            "name": "Rippl Richard"
+            "firstname": "Richard",
+            "surname": "Rippl",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Schkuljak Silvia"
+            "firstname": "Silvia",
+            "surname": "Schkuljak",
+            "sex": "F"
         }, {
             "id": 123,
-            "name": "Steiner Johann"
+            "firstname": "Johann",
+            "surname": "Steiner",
+            "sex": "M"
         }, {
             "id": 123,
-            "name": "Steiner Silvia"
+            "firstname": "Silvia",
+            "surname": "Steiner",
+            "sex": "F"
         }, {
             "id": 123,
-            "name": "Steininger"
+            "firstname": "Alexander",
+            "surname": "Steininger",
+            "sex": "M"
         }
     ]
 }
