@@ -1,0 +1,239 @@
+<html lang="de">
+<head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link id="favicon" rel="shortcut icon" href="favicon.png" type="image/png">
+    <link rel="apple-touch-icon" sizes="194x194" href="apple-touch-icon.png" type="image/png">
+
+    <title>Urlaubsantrag Generator</title>
+    <script src="lib/pdfkit.standalone.js"></script>
+    <script src="lib/blob-stream.js"></script>
+    <script type="text/javascript">
+        var employees;
+
+        async function loadNames() {
+            const response = await fetch('./employees.json');
+            employees = await response.json();
+
+            let select = document.getElementById('employees');
+
+            for (const employee of employees["employees"]) {
+                let opt = document.createElement('option');
+                opt.value = employee["id"];
+                opt.innerHTML = employee["name"];
+                select.appendChild(opt);
+            }
+        }
+        loadNames();
+
+    </script>
+</head>
+<body style="margin: 0px; ">
+
+<div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
+    <div style="display: flex; flex-flow: column;">
+        <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">Urlaubsschein Generator</h1>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.0.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;11.07.2024 by Gassi</div>
+    </div>
+    <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
+</div>
+
+<div id="guiMainDiv" style="display: flex; flex-direction: column; margin-left: auto; margin-right: auto; width: 280px; margin-top: 30px">
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            <label for="employees">Scheinart:</label>
+        </div>
+        <div style="display: flex; width: 150px; justify-content: flex-start">
+            <select id="formKind" name="formKind" style="width: 150px">
+                <option value="U">Urlaub</option>
+                <option value="ZA">Zeitausgleich</option>
+                <option value="SO">Sonderurlaub</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            <label for="employees">Mitarbeiter:</label>
+        </div>
+        <div style="display: flex; width: 150px">
+            <select id="employees" name="employees" style="width: 150px"></select>
+        </div>
+    </div>
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            <label for="dateFrom">Datum von:</label>
+        </div>
+        <div style="display: flex; width: 150px;">
+            <input type="date" id="dateFrom" style="width: 150px">
+        </div>
+    </div>
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            <label for="dateTo">Datum bis:</label>
+        </div>
+        <div style="display: flex; width: 150px;">
+            <input type="date" id="dateTo" style="width: 150px">
+        </div>
+    </div>
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            <label for="daysHolidays">Tage Urlaub:</label>
+        </div>
+        <div style="display: flex; width: 150px;">
+            <input type="number" id="daysHolidays" style="width: 150px">
+        </div>
+    </div>
+
+    <div style="display: flex; margin:5px">
+        <div style="display: flex; width: 120px">
+            &nbsp;
+        </div>
+        <div style="display: flex; width: 150px;">
+            <button onclick="download()" style="width: 150px">
+                Generate
+            </button>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+
+    const doc = new PDFDocument();
+
+    // pipe the document to a blob
+    const stream = doc.pipe(blobStream());
+
+    // add your content to the document here, as usual
+
+
+    doc.fontSize(25).text("URLAUBSANTRAG", 100, 100);
+
+    // Add another page
+    doc
+        .addPage()
+        .fontSize(25)
+        .text("Here is some vector graphics...", 100, 100);
+
+    // Draw a triangle
+    doc
+        .save()
+        .moveTo(100, 150)
+        .lineTo(100, 250)
+        .lineTo(200, 250)
+        .fill("#FF3300");
+
+    // Apply some transforms and render an SVG path with the 'even-odd' fill rule
+    doc
+        .scale(0.6)
+        .translate(470, -380)
+        .path("M 250,75 L 323,301 131,161 369,161 177,301 z")
+        .fill("red", "even-odd")
+        .restore();
+
+    // Add some text with annotations
+    doc
+        .addPage()
+        .fillColor("blue")
+        .text("Here is a link!", 100, 100)
+        .underline(100, 100, 160, 27, { color: "#0000FF" })
+        .link(100, 100, 160, 27, "http://google.com/");
+
+    doc.end();
+
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+
+    let blob;
+
+    function download() {
+        console.log(document.getElementById("dateFrom").style.background);
+        var formKind = document.getElementById("formKind").value;
+
+        let employees = document.getElementById('employees');
+        let employeeId = employees.value;
+        let employeeName = employees.options[employees.selectedIndex].text;
+
+        if (isEmpty(document.getElementById("dateFrom").value)) {
+            document.getElementById("dateFrom").style.background = "#F7C7AC"
+            return;
+        }
+
+        document.getElementById("dateFrom").style.background = "#FFFFFF"
+        let dateFrom = document.getElementById("dateFrom").valueAsDate;
+        let dateFromString = getDays(dateFrom) + " " + getMonthName(dateFrom) + " " + getYear(dateFrom);
+
+        if (isEmpty(document.getElementById("dateTo").value)) {
+            document.getElementById("dateTo").style.background = "#F7C7AC"
+            return;
+        }
+        document.getElementById("dateTo").style.background = "#FFFFFF"
+        let dateTo = document.getElementById("dateTo").valueAsDate;
+        let dateToString = getDays(dateTo) + " " + getMonthName(dateTo) + " " + getYear(dateTo);
+
+        if (isEmpty(document.getElementById("daysHolidays").value)) {
+            document.getElementById("daysHolidays").style.background = "#F7C7AC"
+            return;
+        }
+        document.getElementById("daysHolidays").style.background = "#FFFFFF"
+        let daysHolidays = document.getElementById("daysHolidays").value
+
+        return;
+
+
+
+        if (!blob) return;
+        var url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'test.pdf';
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
+    stream.on("finish", function() {
+        blob = stream.toBlob("application/pdf");
+        const url = stream.toBlobURL("application/pdf");
+        document.href = url;
+    });
+
+    function isEmpty(str) {
+        return !str.trim().length;
+    }
+
+    function getYear(date) {
+        return date.getFullYear();
+    }
+
+    function getMonths(date) {
+        return (((date.getMonth()+1) < 10) ? "0" : "") + (date.getMonth()+1);
+    }
+
+    function getMonthName(date) {
+        return date.toLocaleString('default', { month: 'long' });
+    }
+
+    function getDays(date) {
+        return ((date.getDate() < 10) ? "0" : "") + date.getDate();
+    }
+
+    function getHours(date) {
+        return ((date.getHours() < 10) ? "0" : "") + date.getHours();
+    }
+
+    function getMinutes(date) {
+        return ((date.getMinutes() < 10) ? "0" : "") + date.getMinutes();
+    }
+
+    function getSeconds(date) {
+        return ((date.getSeconds() < 10) ? "0" : "") + date.getSeconds();
+    }
+</script>
+</body>
