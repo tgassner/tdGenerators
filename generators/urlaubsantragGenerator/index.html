@@ -129,7 +129,7 @@
         doc.moveTo(30, 94).lineTo(250, 94).stroke();
         doc.fontSize(16).font('Helvetica-Bold').text(employee["firstname"] + " " + employee["surname"], 30, 80).font("Helvetica");
 
-        doc.moveTo(450, 94).lineTo(480, 94).stroke();
+        doc.moveTo(450, 94).lineTo(490, 94).stroke();
         doc.fontSize(14).text("Pers.Nr ", 400, 80);
         doc.fontSize(16).font('Helvetica-Bold').text(employee["id"], 450, 80).font("Helvetica");
 
@@ -142,22 +142,17 @@
         doc.moveTo(355, 174).lineTo(485, 174).stroke();
         doc.fontSize(16).font('Helvetica-Bold').text(data["dateToString"], 355, 160).font("Helvetica");
 
-
         doc.moveTo(218, 224).lineTo(265, 224).stroke();
-        doc.fontSize(16).font('Helvetica-Bold').text(data["daysHolidays"], 240, 210).font("Helvetica");
+        doc.fontSize(16).font('Helvetica-Bold').text(data["daysHolidays"], 235, 210).font("Helvetica");
         doc.fontSize(14).text("Tage Urlaub (Angabe in Arbeitstagen)", 270, 210);
 
-
         doc.moveTo(218, 249).lineTo(302, 249).stroke();
+        doc.fontSize(14).text("Resturlaub", 140, 235);
         doc.fontSize(14).text("Tage vor diesem Urlaubskonsum", 270, 235);
-
 
         doc.moveTo(218, 274).lineTo(348, 274).stroke();
         doc.fontSize(14).text("verbleiben", 140, 260);
         doc.fontSize(14).text("Urlaubstage", 270, 260);
-
-        //doc.fontSize(14).text(data["daysHolidays"], 240, 25);
-
 
         doc.moveTo(30, 325).lineTo(150, 325).stroke();
         doc.fontSize(14).text("Dienstnehmer", 50, 330);
@@ -200,7 +195,7 @@
         data["formKind"] = formKind;
 
         let employees = document.getElementById('employees');
-        let employeeId = parseInt(employees.value);
+        let employeeId = employees.value;
 
         for (const employee of employeesJson["employees"]) {
             console.log(typeof employeeId + " " + typeof employee["id"])
