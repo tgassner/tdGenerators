@@ -39,7 +39,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">Urlaubsschein Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.1.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;15.07.2024 by Gassi</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 1.2.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;17.07.2024 by Gassi</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -139,13 +139,6 @@
         doc.fontSize(16).font('Helvetica-Bold').text(data["daysHolidays"], 235, 210).font("Helvetica");
         if (formKind === "U") {
             doc.fontSize(14).text("Tage Urlaub (Angabe in Arbeitstagen)", 270, 210);
-            doc.moveTo(218, 249).lineTo(302, 249).stroke();
-            doc.fontSize(14).text("Resturlaub", 140, 235);
-            doc.fontSize(14).text("Tage vor diesem Urlaubskonsum", 270, 235);
-
-            doc.moveTo(218, 274).lineTo(348, 274).stroke();
-            doc.fontSize(14).text("verbleiben", 140, 260);
-            doc.fontSize(14).text("Urlaubstage", 270, 260);
         } else if (formKind === "ZA") {
             doc.fontSize(14).text("Tage Zeitausgleich", 270, 210);
         } else if (formKind === "SU") {
