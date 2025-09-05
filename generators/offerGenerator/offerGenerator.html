@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Transparentdesign Offer Generator</title>
+
+    <script>
+
+        function doCreateOffer() {
+            var xmlOfferDoc = document.implementation.createDocument("", "", null);
+            var businessobjectsRootElement = xmlOfferDoc.createElement("businessobjects");
+
+            var objectElem1 = xmlOfferDoc.createElement("object");
+            objectElem1.setAttribute("name", "Angebot");
+            objectElem1.setAttribute("id", "33");
+
+            var fieldAuftragArtElem1 = xmlOfferDoc.createElement("field");
+            fieldAuftragArtElem1.setAttribute("name", "AuftragArt");
+            fieldAuftragArtElem1.innerHTML = "0";
+            objectElem1.appendChild(fieldAuftragArtElem1);
+
+            var fieldMitarbeiterNr1 = xmlOfferDoc.createElement("field");
+            fieldMitarbeiterNr1.setAttribute("name", "MitarbeiterNr");
+            fieldMitarbeiterNr1.innerHTML = "MMU";
+            objectElem1.appendChild(fieldMitarbeiterNr1);
+
+            var fieldAuftragTyp1 = xmlOfferDoc.createElement("field");
+            fieldAuftragTyp1.setAttribute("name", "AuftragTyp");
+            fieldAuftragTyp1.innerHTML = "Web";
+            objectElem1.appendChild(fieldAuftragTyp1);
+
+            var fieldDatum1 = xmlOfferDoc.createElement("field");
+            fieldDatum1.setAttribute("name", "Datum");
+            fieldDatum1.innerHTML = "2025.08.29 18:24:19";
+            objectElem1.appendChild(fieldDatum1);
+
+            var fieldGpartnerNr1 = xmlOfferDoc.createElement("field");
+            fieldGpartnerNr1.setAttribute("name", "GpartnerNr");
+            fieldGpartnerNr1.innerHTML = "20";
+            objectElem1.appendChild(fieldGpartnerNr1);
+
+            var fieldSachkontoNr1 = xmlOfferDoc.createElement("field");
+            fieldSachkontoNr1.setAttribute("name", "SachkontoNr");
+            fieldSachkontoNr1.innerHTML = "4022";
+            objectElem1.appendChild(fieldSachkontoNr1);
+
+            var fieldMwStNr1 = xmlOfferDoc.createElement("field");
+            fieldMwStNr1.setAttribute("name", "MwStNr");
+            fieldMwStNr1.innerHTML = "20";
+            objectElem1.appendChild(fieldMwStNr1);
+
+            var fieldLiefBedText1 = xmlOfferDoc.createElement("field");
+            fieldLiefBedText1.setAttribute("name", "LiefBedText");
+            fieldLiefBedText1.innerHTML = "frei Haus";
+            objectElem1.appendChild(fieldLiefBedText1);
+
+            var fieldNr1 = xmlOfferDoc.createElement("field");
+            fieldNr1.setAttribute("name", "Nr");
+            fieldNr1.innerHTML = "A259999 TODO";
+            objectElem1.appendChild(fieldNr1);
+
+            var fieldUstKZ1 = xmlOfferDoc.createElement("field");
+            fieldUstKZ1.setAttribute("name", "UstKZ");
+            fieldUstKZ1.innerHTML = "IN";
+            objectElem1.appendChild(fieldUstKZ1);
+
+            var fieldVersandart1 = xmlOfferDoc.createElement("field");
+            fieldVersandart1.setAttribute("name", "Versandart");
+            fieldVersandart1.innerHTML = "Post";
+            objectElem1.appendChild(fieldVersandart1);
+
+            var fieldZahlBedText1 = xmlOfferDoc.createElement("field");
+            fieldZahlBedText1.setAttribute("name", "ZahlBedText");
+            fieldZahlBedText1.innerHTML = "????";
+            objectElem1.appendChild(fieldZahlBedText1);
+
+            // Adresse BEGIN
+            var objectAdresse1 = xmlOfferDoc.createElement("object");
+            objectAdresse1.setAttribute("name", "Adresse");
+
+            var objectAdresse1FieldApartnerName1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldApartnerName1.setAttribute("name", "ApartnerName");
+            objectAdresse1FieldApartnerName1.innerHTML = "";
+            objectAdresse1.appendChild(objectAdresse1FieldApartnerName1);
+
+            var objectAdresse1FieldEmail1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldEmail1.setAttribute("name", "Email");
+            objectAdresse1FieldEmail1.innerHTML = "a@b.c";
+            objectAdresse1.appendChild(objectAdresse1FieldEmail1);
+
+            var objectAdresse1FieldFirma11 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldFirma11.setAttribute("name", "Firma1");
+            objectAdresse1FieldFirma11.innerHTML = "";
+            objectAdresse1.appendChild(objectAdresse1FieldFirma11);
+
+            var objectAdresse1FieldFirma21 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldFirma21.setAttribute("name", "Firma2");
+            objectAdresse1FieldFirma21.innerHTML = "";
+            objectAdresse1.appendChild(objectAdresse1FieldFirma21);
+
+            var objectAdresse1FieldFirma31 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldFirma31.setAttribute("name", "Firma3");
+            objectAdresse1FieldFirma31.innerHTML = "";
+            objectAdresse1.appendChild(objectAdresse1FieldFirma31);
+
+            var objectAdresse1FieldLkz1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldLkz1.setAttribute("name", "Lkz");
+            objectAdresse1FieldLkz1.innerHTML = "AT";
+            objectAdresse1.appendChild(objectAdresse1FieldLkz1);
+
+            var objectAdresse1FieldOrt1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldOrt1.setAttribute("name", "Ort");
+            objectAdresse1FieldOrt1.innerHTML = "Linz";
+            objectAdresse1.appendChild(objectAdresse1FieldOrt1);
+
+            var objectAdresse1FieldPlz1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldPlz1.setAttribute("name", "Plz");
+            objectAdresse1FieldPlz1.innerHTML = "4030";
+            objectAdresse1.appendChild(objectAdresse1FieldPlz1);
+
+            var objectAdresse1FieldStrasse1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldStrasse1.setAttribute("name", "Strasse");
+            objectAdresse1FieldStrasse1.innerHTML = "Ist Nicht Strasse";
+            objectAdresse1.appendChild(objectAdresse1FieldStrasse1);
+
+            var objectAdresse1FieldTelefon1 = xmlOfferDoc.createElement("field");
+            objectAdresse1FieldTelefon1.setAttribute("name", "Telefon");
+            objectAdresse1FieldTelefon1.innerHTML = "0190 ";
+            objectAdresse1.appendChild(objectAdresse1FieldTelefon1);
+
+            objectElem1.appendChild(objectAdresse1);
+            // Adresse END
+
+            // Zuschlag BEGIN
+            var objectZuschlag1 = xmlOfferDoc.createElement("object");
+            objectZuschlag1.setAttribute("name", "Zuschlag");
+            objectZuschlag1.innerHTML = "Versandkosten";
+
+            var objectZuschlag1FieldBaustein1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldBaustein1.setAttribute("name", "Baustein");
+            objectZuschlag1FieldBaustein1.innerHTML = "D";
+            objectZuschlag1.appendChild(objectZuschlag1FieldBaustein1);
+
+            var objectZuschlag1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldBezeichnung1.setAttribute("name", "Bezeichnung");
+            objectZuschlag1FieldBezeichnung1.innerHTML = "Versandkosten Ö";
+            objectZuschlag1.appendChild(objectZuschlag1FieldBezeichnung1);
+
+            var objectZuschlag1FieldMwStNr1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldMwStNr1.setAttribute("name", "MwStNr");
+            objectZuschlag1FieldMwStNr1.innerHTML = "20";
+            objectZuschlag1.appendChild(objectZuschlag1FieldMwStNr1);
+
+            var objectZuschlag1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldMwStSatz1.setAttribute("name", "MwStSatz");
+            objectZuschlag1FieldMwStSatz1.innerHTML = "20";
+            objectZuschlag1.appendChild(objectZuschlag1FieldMwStSatz1);
+
+            var objectZuschlag1FieldPosNr1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldPosNr1.setAttribute("name", "PosNr");
+            objectZuschlag1FieldPosNr1.innerHTML = "10";
+            objectZuschlag1.appendChild(objectZuschlag1FieldPosNr1);
+
+            var objectZuschlag1FieldPreis1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldPreis1.setAttribute("name", "Preis");
+            objectZuschlag1FieldPreis1.innerHTML = "0.00";
+            objectZuschlag1.appendChild(objectZuschlag1FieldPreis1);
+
+            var objectZuschlag1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldSachkontoNr1.setAttribute("name", "SachkontoNr");
+            objectZuschlag1FieldSachkontoNr1.innerHTML = "4202";
+            objectZuschlag1.appendChild(objectZuschlag1FieldSachkontoNr1);
+
+            var objectZuschlag1FieldZuschlagNr1 = xmlOfferDoc.createElement("field");
+            objectZuschlag1FieldZuschlagNr1.setAttribute("name", "ZuschlagNr");
+            objectZuschlag1FieldZuschlagNr1.innerHTML = "VK-WEB FH";
+            objectZuschlag1.appendChild(objectZuschlag1FieldZuschlagNr1);
+
+            objectElem1.appendChild(objectZuschlag1);
+            // Zuschlag BEGIN
+
+
+
+            // Position BEGIN
+            var objectPosition1 = xmlOfferDoc.createElement("object");
+            objectPosition1.setAttribute("name", "Position");
+            objectPosition1.innerHTML = "";
+
+            var objectPosition1FieldArtikelNr1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldArtikelNr1.setAttribute("name", "ArtikelNr");
+            objectPosition1FieldArtikelNr1.innerHTML = "PLATTEN NACH MASS";
+            objectPosition1.appendChild(objectPosition1FieldArtikelNr1);
+
+            var objectPosition1FieldBaustein1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldBaustein1.setAttribute("name", "Baustein");
+            objectPosition1FieldBaustein1.innerHTML = "D";
+            objectPosition1.appendChild(objectPosition1FieldBaustein1);
+
+            var objectPosition1FieldBestellDatum1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldBestellDatum1.setAttribute("name", "BestellDatum");
+            objectPosition1FieldBestellDatum1.innerHTML = "TODO Datum";
+            objectPosition1.appendChild(objectPosition1FieldBestellDatum1);
+
+            var objectPosition1FieldBestellNr1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldBestellNr1.setAttribute("name", "BestellNr");
+            objectPosition1FieldBestellNr1.innerHTML = "4711";
+            objectPosition1.appendChild(objectPosition1FieldBestellNr1);
+
+            var objectPosition1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldBezeichnung1.setAttribute("name", "Bezeichnung");
+            objectPosition1FieldBezeichnung1.innerHTML = "durchsichtiges Plastik";
+            objectPosition1.appendChild(objectPosition1FieldBezeichnung1);
+
+            var objectPosition1FieldLangtextHtml1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldLangtextHtml1.setAttribute("name", "LangtextHtml");
+            objectPosition1FieldLangtextHtml1.innerHTML = "Trallala";
+            objectPosition1.appendChild(objectPosition1FieldLangtextHtml1);
+
+            var objectPosition1FieldKommission1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldKommission1.setAttribute("name", "Kommission");
+            objectPosition1FieldKommission1.innerHTML = "A259999";
+            objectPosition1.appendChild(objectPosition1FieldKommission1);
+
+            var objectPosition1FieldLiefertermin1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldLiefertermin1.setAttribute("name", "Liefertermin");
+            objectPosition1FieldLiefertermin1.innerHTML = "TODO Datum";
+            objectPosition1.appendChild(objectPosition1FieldLiefertermin1);
+
+            var objectPosition1FieldMenge1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldMenge1.setAttribute("name", "Menge");
+            objectPosition1FieldMenge1.innerHTML = "10";
+            objectPosition1.appendChild(objectPosition1FieldMenge1);
+
+            var objectPosition1FieldPosNr1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldPosNr1.setAttribute("name", "PosNr");
+            objectPosition1FieldPosNr1.innerHTML = "10";
+            objectPosition1.appendChild(objectPosition1FieldPosNr1);
+
+            var objectPosition1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldSachkontoNr1.setAttribute("name", "SachkontoNr");
+            objectPosition1FieldSachkontoNr1.innerHTML = "4022";
+            objectPosition1.appendChild(objectPosition1FieldSachkontoNr1);
+
+            var objectPosition1FieldPreis1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldPreis1.setAttribute("name", "Preis");
+            objectPosition1FieldPreis1.innerHTML = "9.8";
+            objectPosition1.appendChild(objectPosition1FieldPreis1);
+
+            var objectPosition1FieldMwStNr1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldMwStNr1.setAttribute("name", "MwStNr");
+            objectPosition1FieldMwStNr1.innerHTML = "20";
+            objectPosition1.appendChild(objectPosition1FieldMwStNr1);
+
+            var objectPosition1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldMwStSatz1.setAttribute("name", "MwStSatz");
+            objectPosition1FieldMwStSatz1.innerHTML = "20";
+            objectPosition1.appendChild(objectPosition1FieldMwStSatz1);
+
+            var objectPosition1FieldEinheit1 = xmlOfferDoc.createElement("field");
+            objectPosition1FieldEinheit1.setAttribute("name", "Einheit");
+            objectPosition1FieldEinheit1.innerHTML = "Stück";
+            objectPosition1.appendChild(objectPosition1FieldEinheit1);
+
+            objectElem1.appendChild(objectPosition1);
+            // Position BEGIN
+
+            businessobjectsRootElement.appendChild(objectElem1);
+            xmlOfferDoc.appendChild(businessobjectsRootElement);
+
+            var serializer = new XMLSerializer();
+            var xmlOfferDocString = serializer.serializeToString(xmlOfferDoc);
+
+            xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + formatXml(xmlOfferDocString, "  ");
+
+            document.getElementById("offerXml").innerHTML = xmlOfferDocString;
+        }
+
+        /**
+         * thx to arcturus on Stackoverflow
+         * https://stackoverflow.com/questions/376373/pretty-printing-xml-with-javascript
+         * @param xml the XML String
+         * @param tab intent optional indent value, default is tab (\t)
+         * @returns formated XML
+         */
+        function formatXml(xml, tab) {
+            var formatted = '', indent= '';
+            tab = tab || '\t';
+            xml.split(/>\s*</).forEach(function(node) {
+                if (node.match( /^\/\w/ )) indent = indent.substring(tab.length); // decrease indent by one 'tab'
+                formatted += indent + '<' + node + '>\r\n';
+                if (node.match( /^<?\w[^>]*[^\/]$/ )) indent += tab;              // increase indent
+            });
+            return formatted.substring(1, formatted.length-3);
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h1> TD Offer Generator</h1>
+
+<button onclick="doCreateOffer()">Erstelle Angebotsdatei</button>
+<br>
+<textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
+
+</body>
+</html>
