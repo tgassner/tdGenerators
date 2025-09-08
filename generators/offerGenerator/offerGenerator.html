@@ -17,256 +17,231 @@
     <script>
 
         function doCreateOffer() {
-            var xmlOfferDoc = document.implementation.createDocument("", "", null);
-            var businessobjectsRootElement = xmlOfferDoc.createElement("businessobjects");
+            let xmlOfferDoc = document.implementation.createDocument("", "", null);
+            let businessobjectsRootElement = xmlOfferDoc.createElement("businessobjects");
 
-            var objectElem1 = xmlOfferDoc.createElement("object");
+            let objectElem1 = xmlOfferDoc.createElement("object");
             objectElem1.setAttribute("name", "Angebot");
-            objectElem1.setAttribute("id", "33");
+            objectElem1.setAttribute("id", "32");
 
-            var fieldAuftragArtElem1 = xmlOfferDoc.createElement("field");
-            fieldAuftragArtElem1.setAttribute("name", "AuftragArt");
+            // AngebotArt
+            let fieldAuftragArtElem1 = xmlOfferDoc.createElement("field");
+            fieldAuftragArtElem1.setAttribute("name", "AngebotArt");
             fieldAuftragArtElem1.innerHTML = "0";
             objectElem1.appendChild(fieldAuftragArtElem1);
 
-            var fieldMitarbeiterNr1 = xmlOfferDoc.createElement("field");
+            // AngebotTyp
+            let fieldAngebotTyp1 = xmlOfferDoc.createElement("field");
+            fieldAngebotTyp1.setAttribute("name", "AngebotTyp");
+            fieldAngebotTyp1.innerHTML = "";
+            objectElem1.appendChild(fieldAngebotTyp1);
+
+            // <field name="Bemerkung1"/>
+            // <field name="Bemerkung2"/>
+            // <field name="Bezeichnung"/>
+            // <field name="ErstelltVon">LST</field>
+            // <field name="Lieferzeit">1-2 Wochen</field>
+            // <field name="MwStBetrag">28.80</field>
+            // <field name="MwStBetragPos">28.80</field>
+            // <field name="Nr">A251907</field>
+            // <field name="SachkontoNr">4022</field>
+            // <field name="Versandart">Zust</field>
+            // <field name="Versandvermerk">##### nimmt Gassi mit!</field>
+
+            let fieldMitarbeiterNr1 = xmlOfferDoc.createElement("field");
             fieldMitarbeiterNr1.setAttribute("name", "MitarbeiterNr");
-            fieldMitarbeiterNr1.innerHTML = "MMU";
+            fieldMitarbeiterNr1.innerHTML = document.getElementById("MitarbeiterNr").value;
             objectElem1.appendChild(fieldMitarbeiterNr1);
 
-            var fieldAuftragTyp1 = xmlOfferDoc.createElement("field");
-            fieldAuftragTyp1.setAttribute("name", "AuftragTyp");
-            fieldAuftragTyp1.innerHTML = "Web";
-            objectElem1.appendChild(fieldAuftragTyp1);
+            let fieldIhreZeichen1 = xmlOfferDoc.createElement("field");
+            fieldIhreZeichen1.setAttribute("name", "IhreZeichen");
+            fieldIhreZeichen1.innerHTML = document.getElementById("IhreZeichen").value;
+            objectElem1.appendChild(fieldIhreZeichen1);
 
-            var fieldDatum1 = xmlOfferDoc.createElement("field");
-            fieldDatum1.setAttribute("name", "Datum");
-            fieldDatum1.innerHTML = "2025.08.29 18:24:19";
-            objectElem1.appendChild(fieldDatum1);
+            let fieldLieferzeit1 = xmlOfferDoc.createElement("field");
+            fieldLieferzeit1.setAttribute("name", "Lieferzeit");
+            fieldLieferzeit1.innerHTML = document.getElementById("Lieferzeit").value;
+            objectElem1.appendChild(fieldLieferzeit1);
 
-            var fieldGpartnerNr1 = xmlOfferDoc.createElement("field");
-            fieldGpartnerNr1.setAttribute("name", "GpartnerNr");
-            fieldGpartnerNr1.innerHTML = "20";
-            objectElem1.appendChild(fieldGpartnerNr1);
 
-            var fieldSachkontoNr1 = xmlOfferDoc.createElement("field");
+            //let fieldDatum1 = xmlOfferDoc.createElement("field");
+            //fieldDatum1.setAttribute("name", "Datum");
+            //fieldDatum1.innerHTML = "2025.08.29 18:24:19";
+            //objectElem1.appendChild(fieldDatum1);
+
+            //let fieldGpartnerNr1 = xmlOfferDoc.createElement("field");
+            //fieldGpartnerNr1.setAttribute("name", "GpartnerNr");
+            //fieldGpartnerNr1.innerHTML = "20";
+            //objectElem1.appendChild(fieldGpartnerNr1);
+
+            let fieldSachkontoNr1 = xmlOfferDoc.createElement("field");
             fieldSachkontoNr1.setAttribute("name", "SachkontoNr");
             fieldSachkontoNr1.innerHTML = "4022";
             objectElem1.appendChild(fieldSachkontoNr1);
 
-            var fieldMwStNr1 = xmlOfferDoc.createElement("field");
-            fieldMwStNr1.setAttribute("name", "MwStNr");
-            fieldMwStNr1.innerHTML = "20";
-            objectElem1.appendChild(fieldMwStNr1);
+            //let fieldMwStNr1 = xmlOfferDoc.createElement("field");
+            //fieldMwStNr1.setAttribute("name", "MwStNr");
+            //fieldMwStNr1.innerHTML = "20";
+            //objectElem1.appendChild(fieldMwStNr1);
 
-            var fieldLiefBedText1 = xmlOfferDoc.createElement("field");
-            fieldLiefBedText1.setAttribute("name", "LiefBedText");
-            fieldLiefBedText1.innerHTML = "frei Haus";
-            objectElem1.appendChild(fieldLiefBedText1);
+            //let fieldLiefBedText1 = xmlOfferDoc.createElement("field");
+            //fieldLiefBedText1.setAttribute("name", "LiefBedText");
+            //fieldLiefBedText1.innerHTML = "frei Haus";
+            //objectElem1.appendChild(fieldLiefBedText1);
 
-            var fieldNr1 = xmlOfferDoc.createElement("field");
-            fieldNr1.setAttribute("name", "Nr");
-            fieldNr1.innerHTML = "K259397";
-            objectElem1.appendChild(fieldNr1);
+            //let fieldNr1 = xmlOfferDoc.createElement("field");
+            //fieldNr1.setAttribute("name", "Nr");
+            //fieldNr1.innerHTML = "K259397";
+            //objectElem1.appendChild(fieldNr1);
 
-            var fieldUstKZ1 = xmlOfferDoc.createElement("field");
-            fieldUstKZ1.setAttribute("name", "UstKZ");
-            fieldUstKZ1.innerHTML = "IN";
-            objectElem1.appendChild(fieldUstKZ1);
+            //let fieldUstKZ1 = xmlOfferDoc.createElement("field");
+            //fieldUstKZ1.setAttribute("name", "UstKZ");
+            //fieldUstKZ1.innerHTML = "IN";
+            //objectElem1.appendChild(fieldUstKZ1);
 
-            var fieldVersandart1 = xmlOfferDoc.createElement("field");
+            let fieldVersandart1 = xmlOfferDoc.createElement("field");
             fieldVersandart1.setAttribute("name", "Versandart");
-            fieldVersandart1.innerHTML = "Post";
+            fieldVersandart1.innerHTML = document.getElementById("Versandart").value;
             objectElem1.appendChild(fieldVersandart1);
 
-            var fieldZahlBedText1 = xmlOfferDoc.createElement("field");
-            fieldZahlBedText1.setAttribute("name", "ZahlBedText");
-            fieldZahlBedText1.innerHTML = "ConCardis - MASTER";
-            objectElem1.appendChild(fieldZahlBedText1);
+            let fieldVersandvermerk1 = xmlOfferDoc.createElement("field");
+            fieldVersandvermerk1.setAttribute("name", "Versandvermerk");
+            fieldVersandvermerk1.innerHTML = document.getElementById("Versandvermerk").value;
+            objectElem1.appendChild(fieldVersandvermerk1);
+
+            //let fieldZahlBedText1 = xmlOfferDoc.createElement("field");
+            //fieldZahlBedText1.setAttribute("name", "ZahlBedText");
+            //fieldZahlBedText1.innerHTML = "ConCardis - MASTER";
+            //objectElem1.appendChild(fieldZahlBedText1);
 
             // Adresse BEGIN
-            var objectAdresse1 = xmlOfferDoc.createElement("object");
+            let objectAdresse1 = xmlOfferDoc.createElement("object");
             objectAdresse1.setAttribute("name", "Adresse");
 
-            var objectAdresse1FieldApartnerName1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldApartnerName1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldApartnerName1.setAttribute("name", "ApartnerName");
-            objectAdresse1FieldApartnerName1.innerHTML = "";
+            objectAdresse1FieldApartnerName1.innerHTML = document.getElementById("adresseApartnerName").value;
             objectAdresse1.appendChild(objectAdresse1FieldApartnerName1);
 
-            var objectAdresse1FieldEmail1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldEmail1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldEmail1.setAttribute("name", "Email");
-            objectAdresse1FieldEmail1.innerHTML = "karl.manschein@chello.at";
+            objectAdresse1FieldEmail1.innerHTML = document.getElementById("adresseemail").value;
             objectAdresse1.appendChild(objectAdresse1FieldEmail1);
 
-            var objectAdresse1FieldFirma11 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldFirma11 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldFirma11.setAttribute("name", "Firma1");
-            objectAdresse1FieldFirma11.innerHTML = "karl manschein";
+            objectAdresse1FieldFirma11.innerHTML = document.getElementById("adresseFirma1").value;
             objectAdresse1.appendChild(objectAdresse1FieldFirma11);
 
-            var objectAdresse1FieldFirma21 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldFirma21 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldFirma21.setAttribute("name", "Firma2");
-            objectAdresse1FieldFirma21.innerHTML = "";
+            objectAdresse1FieldFirma21.innerHTML = document.getElementById("adresseFirma2").value;
             objectAdresse1.appendChild(objectAdresse1FieldFirma21);
 
-            var objectAdresse1FieldFirma31 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldFirma31.setAttribute("name", "Firma3");
-            objectAdresse1FieldFirma31.innerHTML = "";
-            objectAdresse1.appendChild(objectAdresse1FieldFirma31);
-
-            var objectAdresse1FieldLkz1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldLkz1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldLkz1.setAttribute("name", "Lkz");
-            objectAdresse1FieldLkz1.innerHTML = "AT";
+            objectAdresse1FieldLkz1.innerHTML = document.getElementById("adresseLkz").value;
             objectAdresse1.appendChild(objectAdresse1FieldLkz1);
 
-            var objectAdresse1FieldOrt1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldOrt1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldOrt1.setAttribute("name", "Ort");
-            objectAdresse1FieldOrt1.innerHTML = "Wien";
+            objectAdresse1FieldOrt1.innerHTML = document.getElementById("adresseOrt").value;
             objectAdresse1.appendChild(objectAdresse1FieldOrt1);
 
-            var objectAdresse1FieldPlz1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldPlz1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldPlz1.setAttribute("name", "Plz");
-            objectAdresse1FieldPlz1.innerHTML = "1210";
+            objectAdresse1FieldPlz1.innerHTML = document.getElementById("adressePlz").value;
             objectAdresse1.appendChild(objectAdresse1FieldPlz1);
 
-            var objectAdresse1FieldStrasse1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldStrasse1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldStrasse1.setAttribute("name", "Strasse");
-            objectAdresse1FieldStrasse1.innerHTML = "Pilzgasse 19-21/24 ";
+            objectAdresse1FieldStrasse1.innerHTML = document.getElementById("adresseStrasse").value;
             objectAdresse1.appendChild(objectAdresse1FieldStrasse1);
 
-            var objectAdresse1FieldTelefon1 = xmlOfferDoc.createElement("field");
+            let objectAdresse1FieldTelefon1 = xmlOfferDoc.createElement("field");
             objectAdresse1FieldTelefon1.setAttribute("name", "Telefon");
-            objectAdresse1FieldTelefon1.innerHTML = "069911633549";
+            objectAdresse1FieldTelefon1.innerHTML = document.getElementById("adresseTel").value;
             objectAdresse1.appendChild(objectAdresse1FieldTelefon1);
 
             objectElem1.appendChild(objectAdresse1);
             // Adresse END
 
-            // Zuschlag BEGIN
-            var objectZuschlag1 = xmlOfferDoc.createElement("object");
-            objectZuschlag1.setAttribute("name", "Zuschlag");
-            objectZuschlag1.innerHTML = "Versandkosten";
-
-            var objectZuschlag1FieldBaustein1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldBaustein1.setAttribute("name", "Baustein");
-            objectZuschlag1FieldBaustein1.innerHTML = "D";
-            objectZuschlag1.appendChild(objectZuschlag1FieldBaustein1);
-
-            var objectZuschlag1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldBezeichnung1.setAttribute("name", "Bezeichnung");
-            objectZuschlag1FieldBezeichnung1.innerHTML = "Versandkosten Ö";
-            objectZuschlag1.appendChild(objectZuschlag1FieldBezeichnung1);
-
-            var objectZuschlag1FieldMwStNr1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldMwStNr1.setAttribute("name", "MwStNr");
-            objectZuschlag1FieldMwStNr1.innerHTML = "20";
-            objectZuschlag1.appendChild(objectZuschlag1FieldMwStNr1);
-
-            var objectZuschlag1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldMwStSatz1.setAttribute("name", "MwStSatz");
-            objectZuschlag1FieldMwStSatz1.innerHTML = "20";
-            objectZuschlag1.appendChild(objectZuschlag1FieldMwStSatz1);
-
-            var objectZuschlag1FieldPosNr1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldPosNr1.setAttribute("name", "PosNr");
-            objectZuschlag1FieldPosNr1.innerHTML = "10";
-            objectZuschlag1.appendChild(objectZuschlag1FieldPosNr1);
-
-            var objectZuschlag1FieldPreis1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldPreis1.setAttribute("name", "Preis");
-            objectZuschlag1FieldPreis1.innerHTML = "0.00";
-            objectZuschlag1.appendChild(objectZuschlag1FieldPreis1);
-
-            var objectZuschlag1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldSachkontoNr1.setAttribute("name", "SachkontoNr");
-            objectZuschlag1FieldSachkontoNr1.innerHTML = "4202";
-            objectZuschlag1.appendChild(objectZuschlag1FieldSachkontoNr1);
-
-            var objectZuschlag1FieldZuschlagNr1 = xmlOfferDoc.createElement("field");
-            objectZuschlag1FieldZuschlagNr1.setAttribute("name", "ZuschlagNr");
-            objectZuschlag1FieldZuschlagNr1.innerHTML = "VK-WEB FH";
-            objectZuschlag1.appendChild(objectZuschlag1FieldZuschlagNr1);
-
-            objectElem1.appendChild(objectZuschlag1);
-            // Zuschlag BEGIN
-
-
-
             // Position BEGIN
-            var objectPosition1 = xmlOfferDoc.createElement("object");
+            let objectPosition1 = xmlOfferDoc.createElement("object");
             objectPosition1.setAttribute("name", "Position");
             objectPosition1.innerHTML = "";
 
-            var objectPosition1FieldArtikelNr1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldArtikelNr1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldArtikelNr1.setAttribute("name", "ArtikelNr");
             objectPosition1FieldArtikelNr1.innerHTML = "PLATTEN NACH MASS";
             objectPosition1.appendChild(objectPosition1FieldArtikelNr1);
 
-            var objectPosition1FieldBaustein1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldBaustein1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldBaustein1.setAttribute("name", "Baustein");
             objectPosition1FieldBaustein1.innerHTML = "D";
             objectPosition1.appendChild(objectPosition1FieldBaustein1);
 
-            var objectPosition1FieldBestellDatum1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldBestellDatum1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldBestellDatum1.setAttribute("name", "BestellDatum");
             objectPosition1FieldBestellDatum1.innerHTML = "2025.08.29 18:24:19";
             objectPosition1.appendChild(objectPosition1FieldBestellDatum1);
 
-            var objectPosition1FieldBestellNr1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldBestellNr1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldBestellNr1.setAttribute("name", "BestellNr");
             objectPosition1FieldBestellNr1.innerHTML = "43785403";
             objectPosition1.appendChild(objectPosition1FieldBestellNr1);
 
-            var objectPosition1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldBezeichnung1.setAttribute("name", "Bezeichnung");
             objectPosition1FieldBezeichnung1.innerHTML = "5mm PLEXIGLAS® XT farblos";
             objectPosition1.appendChild(objectPosition1FieldBezeichnung1);
 
-            var objectPosition1FieldLangtextHtml1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldLangtextHtml1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldLangtextHtml1.setAttribute("name", "LangtextHtml");
             objectPosition1FieldLangtextHtml1.innerHTML = "195mm x 535mm, Kanten entgratet";
             objectPosition1.appendChild(objectPosition1FieldLangtextHtml1);
 
-            var objectPosition1FieldKommission1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldKommission1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldKommission1.setAttribute("name", "Kommission");
             objectPosition1FieldKommission1.innerHTML = "K259397";
             objectPosition1.appendChild(objectPosition1FieldKommission1);
 
-            var objectPosition1FieldLiefertermin1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldLiefertermin1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldLiefertermin1.setAttribute("name", "Liefertermin");
             objectPosition1FieldLiefertermin1.innerHTML = "";
             objectPosition1.appendChild(objectPosition1FieldLiefertermin1);
 
-            var objectPosition1FieldMenge1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldMenge1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldMenge1.setAttribute("name", "Menge");
             objectPosition1FieldMenge1.innerHTML = "10";
             objectPosition1.appendChild(objectPosition1FieldMenge1);
 
-            var objectPosition1FieldPosNr1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldPosNr1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldPosNr1.setAttribute("name", "PosNr");
             objectPosition1FieldPosNr1.innerHTML = "10";
             objectPosition1.appendChild(objectPosition1FieldPosNr1);
 
-            var objectPosition1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldSachkontoNr1.setAttribute("name", "SachkontoNr");
             objectPosition1FieldSachkontoNr1.innerHTML = "4022";
             objectPosition1.appendChild(objectPosition1FieldSachkontoNr1);
 
-            var objectPosition1FieldPreis1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldPreis1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldPreis1.setAttribute("name", "Preis");
             objectPosition1FieldPreis1.innerHTML = "9.8";
             objectPosition1.appendChild(objectPosition1FieldPreis1);
 
-            var objectPosition1FieldMwStNr1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldMwStNr1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldMwStNr1.setAttribute("name", "MwStNr");
             objectPosition1FieldMwStNr1.innerHTML = "20";
             objectPosition1.appendChild(objectPosition1FieldMwStNr1);
 
-            var objectPosition1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldMwStSatz1.setAttribute("name", "MwStSatz");
             objectPosition1FieldMwStSatz1.innerHTML = "20";
             objectPosition1.appendChild(objectPosition1FieldMwStSatz1);
 
-            var objectPosition1FieldEinheit1 = xmlOfferDoc.createElement("field");
+            let objectPosition1FieldEinheit1 = xmlOfferDoc.createElement("field");
             objectPosition1FieldEinheit1.setAttribute("name", "Einheit");
             objectPosition1FieldEinheit1.innerHTML = "Stück";
             objectPosition1.appendChild(objectPosition1FieldEinheit1);
@@ -277,8 +252,8 @@
             businessobjectsRootElement.appendChild(objectElem1);
             xmlOfferDoc.appendChild(businessobjectsRootElement);
 
-            var serializer = new XMLSerializer();
-            var xmlOfferDocString = serializer.serializeToString(xmlOfferDoc);
+            let serializer = new XMLSerializer();
+            let xmlOfferDocString = serializer.serializeToString(xmlOfferDoc);
 
             xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + formatXml(xmlOfferDocString, "  ");
 
@@ -293,7 +268,7 @@
          * @returns formated XML
          */
         function formatXml(xml, tab) {
-            var formatted = '', indent= '';
+            let formatted = '', indent= '';
             tab = tab || '\t';
             xml.split(/>\s*</).forEach(function(node) {
                 if (node.match( /^\/\w/ )) indent = indent.substring(tab.length); // decrease indent by one 'tab'
@@ -302,6 +277,32 @@
             });
             return formatted.substring(1, formatted.length-3);
         }
+
+        function onClickAdresseReiter() {
+            console.log("Click Adresse");
+        }
+
+        function onClickLieferanschriftReiter() {
+            alert("ToDo!");
+        }
+
+        function onClickRechnungsanschriftReiter() {
+            alert("ToDo!");
+        }
+
+        function selectReiter(reiterId) {
+            document.getElementById(reiterId).style.borderTopWidth = "2px";
+            document.getElementById(reiterId).style.borderLeftWidth = "2px";
+            document.getElementById(reiterId).style.borderBottomWidth = "1px";
+            document.getElementById(reiterId).style.borderRightWidth = "1px";
+            document.getElementById(reiterId).style.background = "#cdcdcd";
+
+            //alert("Döner macht schöner");
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            selectReiter("reiterAdresse");
+        })
 
     </script>
 
@@ -325,63 +326,262 @@
 
     .labelFormElementDiv {
         display: flex;
-        width: 100px;
+        width: 150px;
     }
 
     .inputFormElementDiv {
         display: flex;
-        width: 300px;
+        width: 500px;
     }
 
     .formAtAllDiv {
         display: flex;
         flex-direction: column;
-        margin: 10px;
+        margin-top: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 800px;
     }
 
     .inputElement {
         display: flex;
         width: 100%;
     }
+
+    .adressContainerDiv {
+        display: flex;
+        flex-direction: column;
+        margin: 5px;
+        padding-top: 0px;
+        padding-left: 0px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        border : solid 1px #565656;
+    }
+
+    .adressReiterDiv {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .reiterButtonContainerDiv {
+        display: flex;
+        flex-direction: row;
+    }
+    .reiterElementDiv {
+        width: 150px;
+        display: flex;
+        margin-top: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        border-top: solid 1px #565656;
+        border-left: solid 1px #565656;
+        border-bottom: solid 2px #565656;
+        border-right: solid 2px #565656;
+        background: #ffffff;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        justify-content: center;
+    }
 </style>
 
 <div style="" class="formAtAllDiv">
+
+    <!-- MitarbeiterNr -->
     <div style="" class="fullFormElementDiv">
         <div style="" class="labelFormElementDiv">
-            <label for="name">Name:</label>
+            <label for="MitarbeiterNr">Mitarbeiter:</label>
         </div>
         <div style="" class="inputFormElementDiv">
-            <input type="text" id="name" name="name" required minlength="4" class="inputElement"/>
-        </div>
-    </div>
-    <div style="" class="fullFormElementDiv">
-        <div style="" class="labelFormElementDiv">
-            <label for="email">E-Mail:</label>
-        </div>
-        <div style="" class="inputFormElementDiv">
-            <input type="email" id="email" name="email" class="inputElement"/>
-        </div>
-    </div>
-    <div style="" class="fullFormElementDiv">
-        <div style="" class="labelFormElementDiv">
-            <label for="tel">Tel:</label>
-        </div>
-        <div style="" class="inputFormElementDiv">
-            <input type="tel" id="tel" name="tel" class="inputElement"/>
+            <select id="MitarbeiterNr" name="MitarbeiterNr" class="inputElement">
+                <option value=""></option>
+                <option value="LST">Ludwig</option>
+                <option value="RRI">Richard</option>
+                <option value="SSC">Silvia</option>
+                <option value="MMU">Martina</option>
+            </select>
         </div>
     </div>
 
+    <!-- Versandart -->
     <div style="" class="fullFormElementDiv">
         <div style="" class="labelFormElementDiv">
-            <label for="versandArt">Versandart:</label>
+            <label for="Versandart">Versandart:</label>
         </div>
         <div style="" class="inputFormElementDiv">
-            <select id="versandArt" name="versandArt" class="inputElement">
-                <option value="AA">Abholung</option>
+            <select id="Versandart" name="Versandart" class="inputElement">
+                <option value=""></option>
+                <option value="AA">Abholung Aviso</option>
                 <option value="Post">Post</option>
+                <option value="o">Bis datto undefiniert ob Abholung oder Versand</option>
+                <option value="AB">Zahlung bei Abholung</option>
+                <option value="u">Unfrei</option>
+                <option value="Zust">Zustellung</option>
+                <option value="Sped">Spedition</option>
                 <option value="BO">Botendienst</option>
-                <option value="SPED">Spedition</option>
+                <option value="uu">Unfrei Unverzollt</option>
+                <option value="M">Montage</option>
             </select>
+        </div>
+    </div>
+
+    <!-- IhreZeichen -->
+    <div style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="IhreZeichen">IhreZeichen:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <input type="text" id="IhreZeichen" name="IhreZeichen" class="inputElement"/>
+        </div>
+    </div>
+
+    <!-- Lieferzeit -->
+    <div style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="Lieferzeit">Lieferzeit:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <input type="text" id="Lieferzeit" name="Lieferzeit" class="inputElement"/>
+        </div>
+    </div>
+
+    <!-- Versandvermerk -->
+    <div style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="Versandvermerk">Versandvermerk:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <input type="text" id="Versandvermerk" name="Versandvermerk" class="inputElement"/>
+        </div>
+    </div>
+
+    <!-- Adress Reiter Container -->
+    <div style="" class="adressContainerDiv">
+        <div style="" class="reiterButtonContainerDiv">
+            <div id="reiterAdresse" style="" class="reiterElementDiv" onclick="onClickAdresseReiter()">
+                Adresse
+            </div>
+            <div id="reiterLieferanschrift" style="" class="reiterElementDiv" onclick="onClickLieferanschriftReiter()">
+                Lieferanschrift
+            </div>
+            <div id="reiterRechnungsanschrift" style="" class="reiterElementDiv" onclick="onClickRechnungsanschriftReiter()">
+                Rechnungsanschrift
+            </div>
+        </div>
+        <!-- Adresse Reiter -->
+        <div style="" class="adressReiterDiv">
+
+            <!-- Aasprech Partner Name -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseApartnerName">Name:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adresseApartnerName" name="adresseApartnerName" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- email -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseemail">E-Mail:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="email" id="adresseemail" name="adresseemail" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma1 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseFirma1">Firma1:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adresseFirma1" name="adresseFirma1" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma2 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseFirma2">Firma2:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adresseFirma2" name="adresseFirma2" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Lkz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseLkz">Land:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <select id="adresseLkz" name="adresseLkz" class="inputElement">
+                        <option value=""></option>
+                        <option value="AT">Österreich</option>
+                        <option value="DE">Deutschland</option>
+                        <option value="CH">Schweiz</option>
+                        <option value="IT">Italien</option>
+                        <option value="SI">Slowenien</option>
+                        <option value="NL">Holland</option>
+                        <option value="LU">Luxenburg</option>
+                        <option value="HU">Ungarn</option>
+                        <option value="SK">Slowakei</option>
+                        <option value="ES">Spanien</option>
+                        <option value="FR">Frankreich</option>
+                        <option value="CZ">Tschechien</option>
+                        <option value="LI">Liechtenstein</option>
+                        <option value="PL">Polen</option>
+                        <option value="HR">Kroatien</option>
+                        <option value="RO">Rumänien</option>
+                        <option value="GB">Großbritannien</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ort -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseOrt">Ort:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adresseOrt" name="adresseOrt" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Plz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adressePlz">Postleitzahl:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adressePlz" name="adressePlz" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Strasse -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseStrasse">Strasse:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="adresseStrasse" name="adresseStrasse" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Tel -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="adresseTel">Tel:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="tel" id="adresseTel" name="adresseTel" class="inputElement"/>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
