@@ -16,7 +16,213 @@
 
     <script>
 
-        function doCreateOffer() {
+        var deleteButton = "<svg width=\"28\" height=\"28\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+            "    <defs>\n" +
+            "      <!-- Farbverlauf Rot -->\n" +
+            "      <linearGradient id=\"deleteGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
+            "        <stop offset=\"0\" stop-color=\"#e35b5b\"/>\n" +
+            "        <stop offset=\"1\" stop-color=\"#c94040\"/>\n" +
+            "      </linearGradient>\n" +
+            //"      <filter id=\"shadow-del\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n" +
+            //"        <feDropShadow dx=\"0\" dy=\"4\" stdDeviation=\"6\" flood-opacity=\"0.18\"/>\n" +
+            //"      </filter>\n" +
+            "    </defs>\n" +
+            "\n" +
+            "    <!-- Hintergrund -->\n" +
+            "    <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"url(#deleteGradient)\" filter=\"url(#shadow-del)\"/>\n" +
+            "\n" +
+            "    <!-- Weißes Minus -->\n" +
+            "    <line x1=\"17.5\" y1=\"28\" x2=\"38.5\" y2=\"28\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n" +
+            "  </svg>";
+
+        function deletePosition(posId) {
+            alert("ToDo: Delete " + posId);
+        }
+
+        function addPosition() {
+
+            let posContainer = document.getElementById("positionenContainer");
+            let posCountInternal = posContainer.childElementCount;
+            let newPosNumber = ((posContainer.childElementCount + 1) * 10) + "";
+
+
+            let singlePositionContainerDiv = document.createElement('div');
+            singlePositionContainerDiv.id = "positionenContainerDiv" + posCountInternal;
+            singlePositionContainerDiv.classList.add('singlePositionContainerDivClass');
+
+            let positionDeleteButtonDiv = document.createElement('div');
+            positionDeleteButtonDiv.classList.add('positionDeleteButtonDivClass');
+            positionDeleteButtonDiv.innerHTML = deleteButton;
+            positionDeleteButtonDiv.addEventListener('click', () => deletePosition(singlePositionContainerDiv.id));
+            singlePositionContainerDiv.appendChild(positionDeleteButtonDiv);
+
+            let positionPosDiv = document.createElement('div');
+            positionPosDiv.innerHTML = newPosNumber;
+            positionPosDiv.classList.add('positionPosDivClass');
+            singlePositionContainerDiv.appendChild(positionPosDiv);
+
+
+            let positionBausteinDiv = document.createElement('div');
+            positionBausteinDiv.classList.add('positionBausteinDivClass');
+            let positionBausteinList = document.createElement('select');
+
+            let BausteinOptD = document.createElement('option');
+            BausteinOptD.value = "D";
+            BausteinOptD.innerHTML = "D";
+            positionBausteinList.appendChild(BausteinOptD);
+
+            let BausteinOptF = document.createElement('option');
+            BausteinOptF.value = "F";
+            BausteinOptF.innerHTML = "F";
+            positionBausteinList.appendChild(BausteinOptF);
+
+            let BausteinOptT = document.createElement('option');
+            BausteinOptT.value = "T";
+            BausteinOptT.innerHTML = "T";
+            positionBausteinList.appendChild(BausteinOptT);
+
+            let BausteinOptZ = document.createElement('option');
+            BausteinOptZ.value = "Z";
+            BausteinOptZ.innerHTML = "Z";
+            positionBausteinList.appendChild(BausteinOptZ);
+
+            positionBausteinDiv.appendChild(positionBausteinList);
+            singlePositionContainerDiv.appendChild(positionBausteinDiv);
+
+
+            let positionArtikelNrDiv = document.createElement('div');
+            positionArtikelNrDiv.classList.add('positionArtikelNrDivClass');
+            let positionArtikelNrInput = document.createElement('input');
+            positionArtikelNrInput.type = "text";
+            positionArtikelNrInput.id = "positionArtikelNrInput" + posCountInternal;
+            positionArtikelNrDiv.appendChild(positionArtikelNrInput);
+            singlePositionContainerDiv.appendChild(positionArtikelNrDiv);
+
+            let positionBezeichnungDiv = document.createElement('div');
+            positionBezeichnungDiv.classList.add('positionBezeichnungDivClass');
+            let positionBezeichnungInput = document.createElement('input');
+            positionBezeichnungInput.type = "text";
+            positionBezeichnungInput.id = "positionBezeichnungInput" + posCountInternal;
+            positionBezeichnungDiv.appendChild(positionBezeichnungInput);
+            singlePositionContainerDiv.appendChild(positionBezeichnungDiv);
+
+            let positionLengthDiv = document.createElement('div');
+            positionLengthDiv.classList.add('positionLengthDivClass');
+            let positionLengthInput = document.createElement('input');
+            positionLengthInput.type = "number";
+            positionLengthInput.id = "positionLengthInput" + posCountInternal;
+            positionLengthDiv.appendChild(positionLengthInput);
+            singlePositionContainerDiv.appendChild(positionLengthDiv);
+
+            let positionWidthDiv = document.createElement('div');
+            positionWidthDiv.classList.add('positionWidthDivClass');
+            let positionWidthInput = document.createElement('input');
+            positionWidthInput.type = "number";
+            positionWidthInput.id = "positionWidthInput" + posCountInternal;
+            positionWidthDiv.appendChild(positionWidthInput);
+            singlePositionContainerDiv.appendChild(positionWidthDiv);
+
+            let positionAnzahlDiv = document.createElement('div');
+            positionAnzahlDiv.classList.add('positionAnzahlDivClass');
+            let positionAnzahlInput = document.createElement('input');
+            positionAnzahlInput.type = "number";
+            positionAnzahlInput.id = "positionAnzahlInput" + posCountInternal;
+            positionAnzahlDiv.appendChild(positionAnzahlInput);
+            singlePositionContainerDiv.appendChild(positionAnzahlDiv);
+
+            let positionMengeDiv = document.createElement('div');
+            positionMengeDiv.classList.add('positionMengeDivClass');
+            let positionMengeInput = document.createElement('input');
+            positionMengeInput.type = "number";
+            positionMengeInput.id = "positionMengeInput" + posCountInternal;
+            positionMengeDiv.appendChild(positionMengeInput);
+            singlePositionContainerDiv.appendChild(positionMengeDiv);
+
+
+
+
+
+
+
+
+
+
+
+
+            let positionEinheitDiv = document.createElement('div');
+            positionEinheitDiv.classList.add('positionEinheitDivClass');
+            let positionEinheitList = document.createElement('select');
+
+            let einheitLeer = document.createElement('option');
+            einheitLeer.value = "";
+            einheitLeer.innerHTML = "";
+            positionEinheitList.appendChild(einheitLeer);
+
+            let einheitStueck = document.createElement('option');
+            einheitStueck.value = "Stück";
+            einheitStueck.innerHTML = "Stück";
+            positionEinheitList.appendChild(einheitStueck);
+
+            let einheitQuadratmeter = document.createElement('option');
+            einheitQuadratmeter.value = "m²";
+            einheitQuadratmeter.innerHTML = "m²";
+            positionEinheitList.appendChild(einheitQuadratmeter);
+
+            let einheitMeter = document.createElement('option');
+            einheitMeter.value = "m";
+            einheitMeter.innerHTML = "m";
+            positionEinheitList.appendChild(einheitMeter);
+
+            let einheitSet = document.createElement('option');
+            einheitSet.value = "Set";
+            einheitSet.innerHTML = "Set";
+            positionEinheitList.appendChild(einheitSet);
+
+            let einheitPau = document.createElement('option');
+            einheitPau.value = "Pau";
+            einheitPau.innerHTML = "Pau";
+            positionEinheitList.appendChild(einheitPau);
+
+            let einheitStk = document.createElement('option');
+            einheitStk.value = "Stk";
+            einheitStk.innerHTML = "Stk";
+            positionEinheitList.appendChild(einheitStk);
+
+            let einheitStd = document.createElement('option');
+            einheitStd.value = "Std";
+            einheitStd.innerHTML = "Std";
+            positionEinheitList.appendChild(einheitStd);
+
+            let einheitLfm = document.createElement('option');
+            einheitLfm.value = "lfm";
+            einheitLfm.innerHTML = "lfm";
+            positionEinheitList.appendChild(einheitLfm);
+
+            let einheitPaar = document.createElement('option');
+            einheitPaar.value = "Paar";
+            einheitPaar.innerHTML = "Paar";
+            positionEinheitList.appendChild(einheitPaar);
+
+            let einheitMin = document.createElement('option');
+            einheitMin.value = "min";
+            einheitMin.innerHTML = "min";
+            positionEinheitList.appendChild(einheitMin);
+
+            let einheitKm = document.createElement('option');
+            einheitKm.value = "km";
+            einheitKm.innerHTML = "km";
+            positionEinheitList.appendChild(einheitKm);
+
+            positionEinheitDiv.appendChild(positionEinheitList);
+            singlePositionContainerDiv.appendChild(positionEinheitDiv);
+
+
+            posContainer.appendChild(singlePositionContainerDiv);
+
+    }
+
+
+    function doCreateOffer() {
             let xmlOfferDoc = document.implementation.createDocument("", "", null);
             let businessobjectsRootElement = xmlOfferDoc.createElement("businessobjects");
 
@@ -319,7 +525,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;10.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;11.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -391,6 +597,73 @@
         padding-top: 10px;
         padding-bottom: 10px;
         justify-content: center;
+    }
+
+    .positionenTextHeadlineDiv {
+        display: flex;
+    }
+
+    .positionenHeadlineContainerDiv {
+        display: flex;
+        align-items: center;
+    }
+
+    .addPositionenButtonDiv {
+        display: flex;
+        cursor: pointer;
+        width:28px;
+        height: 28px
+    }
+
+    .positionenContainerDiv {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .singlePositionContainerDivClass {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .positionDeleteButtonDivClass {
+        display: flex;
+        cursor: pointer;
+        width:28px;
+        height: 28px
+    }
+
+    .positionPosDivClass {
+        display: flex;
+        margin-top: auto;
+        margin-bottom: auto;
+    }
+
+    .positionBausteinDivClass {
+        display: flex;
+    }
+
+    .positionArtikelNrDivClass {
+        display: flex;
+    }
+
+    .positionBezeichnungDivClass {
+        display: flex;
+    }
+
+    .positionLengthDivClass {
+        display: flex;
+    }
+
+    .positionWidthDivClass {
+        display: flex;
+    }
+
+    .positionAnzahlDivClass {
+        display: flex;
+    }
+
+    .positionEinheitDivClass {
+        display: flex;
     }
 </style>
 
@@ -534,7 +807,7 @@
     </div>
 
 
-    <!-- Adress Reiter Container -->
+    <!-- BEGIN Adress Reiter Container -->
     <div style="" class="adressContainerDiv">
         <div style="" class="reiterButtonContainerDiv">
             <div id="reiterAdresse" style="" class="reiterElementDiv" onclick="onClickAdresseReiter()">
@@ -547,7 +820,7 @@
                 Rechnungsanschrift
             </div>
         </div>
-        <!-- Adresse Reiter -->
+        <!-- BEGIN Adresse Reiter -->
         <div style="" class="adressReiterDiv">
 
             <!-- Aasprech Partner Name -->
@@ -658,9 +931,32 @@
                     <input type="tel" id="adresseTel" name="adresseTel" class="inputElement"/>
                 </div>
             </div>
+        </div> <!-- END Adresse Reiter -->
+    </div> <!-- END Adress Reiter Container -->
 
+    <div class="positionenHeadlineContainerDiv">
+        <div class="addPositionenButtonDiv" onclick="addPosition()">
+            <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <defs>
+                    <linearGradient id="addGradient" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#00aac8"/>
+                        <stop offset="1" stop-color="#0096be"/>
+                    </linearGradient>
+                </defs>
+                <rect x="0.5" y="0.5" width="55" height="55" rx="12" fill="url(#addGradient)" filter="url(#shadow)"/>
+                <g stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M28 17.5 L28 38.5" />
+                    <path d="M17.5 28 L38.5 28" />
+                </g>
+            </svg>
         </div>
+        <div class="positionenTextHeadlineDiv"> Positionen </div>
     </div>
+    <!-- BEGIN POSITIONEN DIV -->
+    <div id="positionenContainer" class="positionenContainerDiv">
+
+    </div>
+
 </div>
 
 <button onclick="doCreateOffer()">Erstelle Angebotsdatei</button>
