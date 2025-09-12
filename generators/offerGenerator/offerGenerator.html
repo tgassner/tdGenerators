@@ -39,6 +39,28 @@
             alert("ToDo: Delete " + posId);
         }
 
+        function createDivWithClassname(classname) {
+            let positionArtikelNrDiv = document.createElement('div');
+            positionArtikelNrDiv.classList.add(classname);
+            return positionArtikelNrDiv;
+        }
+
+        function createInputWithTypeAndId(type, id) {
+            let positionArtikelNrInput = document.createElement('input');
+            positionArtikelNrInput.type = type;
+            positionArtikelNrInput.id = id;
+            return positionArtikelNrInput;
+        }
+
+        function createSelectOptionAndAddToList(value, text, selectElement, selected = false) {
+            let optionElement = document.createElement('option');
+            optionElement.value = value;
+            optionElement.innerHTML = text;
+            optionElement.selected = selected;
+            selectElement.appendChild(optionElement);
+            return optionElement;
+        }
+
         function addPosition() {
 
             let posContainer = document.getElementById("positionenContainer");
@@ -46,176 +68,94 @@
             let newPosNumber = ((posContainer.childElementCount + 1) * 10) + "";
 
 
-            let singlePositionContainerDiv = document.createElement('div');
+            let singlePositionContainerDiv = createDivWithClassname('singlePositionContainerDivClass');
             singlePositionContainerDiv.id = "positionenContainerDiv" + posCountInternal;
-            singlePositionContainerDiv.classList.add('singlePositionContainerDivClass');
 
-            let positionDeleteButtonDiv = document.createElement('div');
-            positionDeleteButtonDiv.classList.add('positionDeleteButtonDivClass');
+            let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
             positionDeleteButtonDiv.innerHTML = deleteButton;
             positionDeleteButtonDiv.addEventListener('click', () => deletePosition(singlePositionContainerDiv.id));
             singlePositionContainerDiv.appendChild(positionDeleteButtonDiv);
 
-            let positionPosDiv = document.createElement('div');
+            // Position - Pos
+            let positionPosDiv = createDivWithClassname('positionPosDivClass');
             positionPosDiv.innerHTML = newPosNumber;
-            positionPosDiv.classList.add('positionPosDivClass');
             singlePositionContainerDiv.appendChild(positionPosDiv);
 
-
-            let positionBausteinDiv = document.createElement('div');
-            positionBausteinDiv.classList.add('positionBausteinDivClass');
+            // Baustein
+            let positionBausteinDiv = createDivWithClassname('positionBausteinDivClass');
             let positionBausteinList = document.createElement('select');
-
-            let BausteinOptD = document.createElement('option');
-            BausteinOptD.value = "D";
-            BausteinOptD.innerHTML = "D";
-            positionBausteinList.appendChild(BausteinOptD);
-
-            let BausteinOptF = document.createElement('option');
-            BausteinOptF.value = "F";
-            BausteinOptF.innerHTML = "F";
-            positionBausteinList.appendChild(BausteinOptF);
-
-            let BausteinOptT = document.createElement('option');
-            BausteinOptT.value = "T";
-            BausteinOptT.innerHTML = "T";
-            positionBausteinList.appendChild(BausteinOptT);
-
-            let BausteinOptZ = document.createElement('option');
-            BausteinOptZ.value = "Z";
-            BausteinOptZ.innerHTML = "Z";
-            positionBausteinList.appendChild(BausteinOptZ);
-
+            createSelectOptionAndAddToList("D", "D", positionBausteinList);
+            createSelectOptionAndAddToList("F", "F", positionBausteinList);
+            createSelectOptionAndAddToList("T", "T", positionBausteinList);
+            createSelectOptionAndAddToList("Z", "Z", positionBausteinList);
             positionBausteinDiv.appendChild(positionBausteinList);
             singlePositionContainerDiv.appendChild(positionBausteinDiv);
 
-
-            let positionArtikelNrDiv = document.createElement('div');
-            positionArtikelNrDiv.classList.add('positionArtikelNrDivClass');
-            let positionArtikelNrInput = document.createElement('input');
-            positionArtikelNrInput.type = "text";
-            positionArtikelNrInput.id = "positionArtikelNrInput" + posCountInternal;
+            // Artikel Nr
+            let positionArtikelNrDiv = createDivWithClassname("positionArtikelNrDivClass");
+            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + posCountInternal);
             positionArtikelNrDiv.appendChild(positionArtikelNrInput);
             singlePositionContainerDiv.appendChild(positionArtikelNrDiv);
 
-            let positionBezeichnungDiv = document.createElement('div');
-            positionBezeichnungDiv.classList.add('positionBezeichnungDivClass');
-            let positionBezeichnungInput = document.createElement('input');
-            positionBezeichnungInput.type = "text";
-            positionBezeichnungInput.id = "positionBezeichnungInput" + posCountInternal;
+            // Bezeichnung
+            let positionBezeichnungDiv = createDivWithClassname('positionBezeichnungDivClass');
+            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + posCountInternal);
             positionBezeichnungDiv.appendChild(positionBezeichnungInput);
             singlePositionContainerDiv.appendChild(positionBezeichnungDiv);
 
-            let positionLengthDiv = document.createElement('div');
-            positionLengthDiv.classList.add('positionLengthDivClass');
-            let positionLengthInput = document.createElement('input');
-            positionLengthInput.type = "number";
-            positionLengthInput.id = "positionLengthInput" + posCountInternal;
+            // Länge
+            let positionLengthDiv = createDivWithClassname('positionLengthDivClass');
+            let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + posCountInternal);
             positionLengthDiv.appendChild(positionLengthInput);
             singlePositionContainerDiv.appendChild(positionLengthDiv);
 
-            let positionWidthDiv = document.createElement('div');
-            positionWidthDiv.classList.add('positionWidthDivClass');
-            let positionWidthInput = document.createElement('input');
-            positionWidthInput.type = "number";
-            positionWidthInput.id = "positionWidthInput" + posCountInternal;
+            // Breite
+            let positionWidthDiv = createDivWithClassname('positionWidthDivClass');
+            let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + posCountInternal);
             positionWidthDiv.appendChild(positionWidthInput);
             singlePositionContainerDiv.appendChild(positionWidthDiv);
 
-            let positionAnzahlDiv = document.createElement('div');
-            positionAnzahlDiv.classList.add('positionAnzahlDivClass');
-            let positionAnzahlInput = document.createElement('input');
-            positionAnzahlInput.type = "number";
-            positionAnzahlInput.id = "positionAnzahlInput" + posCountInternal;
+            // Anzahl
+            let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
+            let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + posCountInternal);
             positionAnzahlDiv.appendChild(positionAnzahlInput);
             singlePositionContainerDiv.appendChild(positionAnzahlDiv);
 
-            let positionMengeDiv = document.createElement('div');
-            positionMengeDiv.classList.add('positionMengeDivClass');
-            let positionMengeInput = document.createElement('input');
-            positionMengeInput.type = "number";
-            positionMengeInput.id = "positionMengeInput" + posCountInternal;
+            // Menge
+            let positionMengeDiv = createDivWithClassname('positionMengeDivClass');
+            let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + posCountInternal);
             positionMengeDiv.appendChild(positionMengeInput);
             singlePositionContainerDiv.appendChild(positionMengeDiv);
 
-
-
-
-
-
-
-
-
-
-
-
-            let positionEinheitDiv = document.createElement('div');
-            positionEinheitDiv.classList.add('positionEinheitDivClass');
+            // Einheit
+            let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
             let positionEinheitList = document.createElement('select');
-
-            let einheitLeer = document.createElement('option');
-            einheitLeer.value = "";
-            einheitLeer.innerHTML = "";
-            positionEinheitList.appendChild(einheitLeer);
-
-            let einheitStueck = document.createElement('option');
-            einheitStueck.value = "Stück";
-            einheitStueck.innerHTML = "Stück";
-            positionEinheitList.appendChild(einheitStueck);
-
-            let einheitQuadratmeter = document.createElement('option');
-            einheitQuadratmeter.value = "m²";
-            einheitQuadratmeter.innerHTML = "m²";
-            positionEinheitList.appendChild(einheitQuadratmeter);
-
-            let einheitMeter = document.createElement('option');
-            einheitMeter.value = "m";
-            einheitMeter.innerHTML = "m";
-            positionEinheitList.appendChild(einheitMeter);
-
-            let einheitSet = document.createElement('option');
-            einheitSet.value = "Set";
-            einheitSet.innerHTML = "Set";
-            positionEinheitList.appendChild(einheitSet);
-
-            let einheitPau = document.createElement('option');
-            einheitPau.value = "Pau";
-            einheitPau.innerHTML = "Pau";
-            positionEinheitList.appendChild(einheitPau);
-
-            let einheitStk = document.createElement('option');
-            einheitStk.value = "Stk";
-            einheitStk.innerHTML = "Stk";
-            positionEinheitList.appendChild(einheitStk);
-
-            let einheitStd = document.createElement('option');
-            einheitStd.value = "Std";
-            einheitStd.innerHTML = "Std";
-            positionEinheitList.appendChild(einheitStd);
-
-            let einheitLfm = document.createElement('option');
-            einheitLfm.value = "lfm";
-            einheitLfm.innerHTML = "lfm";
-            positionEinheitList.appendChild(einheitLfm);
-
-            let einheitPaar = document.createElement('option');
-            einheitPaar.value = "Paar";
-            einheitPaar.innerHTML = "Paar";
-            positionEinheitList.appendChild(einheitPaar);
-
-            let einheitMin = document.createElement('option');
-            einheitMin.value = "min";
-            einheitMin.innerHTML = "min";
-            positionEinheitList.appendChild(einheitMin);
-
-            let einheitKm = document.createElement('option');
-            einheitKm.value = "km";
-            einheitKm.innerHTML = "km";
-            positionEinheitList.appendChild(einheitKm);
-
+            createSelectOptionAndAddToList("", "", positionEinheitList);
+            createSelectOptionAndAddToList("Stück", "Stück", positionEinheitList);
+            createSelectOptionAndAddToList("m²", "m²", positionEinheitList);
+            createSelectOptionAndAddToList("m", "m", positionEinheitList);
+            createSelectOptionAndAddToList("Set", "Set", positionEinheitList);
+            createSelectOptionAndAddToList("Pau", "Pau", positionEinheitList);
+            createSelectOptionAndAddToList("Stk", "Stk", positionEinheitList);
+            createSelectOptionAndAddToList("Std", "Std", positionEinheitList);
+            createSelectOptionAndAddToList("lfm", "lfm", positionEinheitList);
+            createSelectOptionAndAddToList("Paar", "Paar", positionEinheitList);
+            createSelectOptionAndAddToList("min", "min", positionEinheitList);
+            createSelectOptionAndAddToList("km", "km", positionEinheitList);
             positionEinheitDiv.appendChild(positionEinheitList);
             singlePositionContainerDiv.appendChild(positionEinheitDiv);
 
+            // Preis
+            let positionPreisDiv = createDivWithClassname('positionPreisDivClass');
+            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + posCountInternal);
+            positionPreisDiv.appendChild(positionPreisInput);
+            singlePositionContainerDiv.appendChild(positionPreisDiv);
+
+            // Bezeichnung
+            let positionRabattDiv = createDivWithClassname('positionRabattDivClass');
+            let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + posCountInternal);
+            positionRabattDiv.appendChild(positionRabattInput);
+            singlePositionContainerDiv.appendChild(positionRabattDiv);
 
             posContainer.appendChild(singlePositionContainerDiv);
 
@@ -491,30 +431,32 @@
             return formatted.substring(1, formatted.length-3);
         }
 
+        function switchReiterAdresse(idOfEnabledButtons, idOfEnabledContent) {
+            document.getElementById("reiterAdresse").classList.remove("reiterSelectedElementDiv");
+            document.getElementById("reiterLieferanschrift").classList.remove("reiterSelectedElementDiv");
+            document.getElementById("reiterRechnungsanschrift").classList.remove("reiterSelectedElementDiv");
+            document.getElementById(idOfEnabledButtons).classList.add("reiterSelectedElementDiv");
+
+            document.getElementById("reiterContentAdresse").style.display = "none";
+            document.getElementById("reiterContentLieferanschrift").style.display = "none";
+            document.getElementById("reiterContentRechnungsanschrift").style.display = "none";
+            document.getElementById(idOfEnabledContent).style.display = "";
+        }
+
         function onClickAdresseReiter() {
-            console.log("Click Adresse");
+            switchReiterAdresse("reiterAdresse", "reiterContentAdresse");
         }
 
         function onClickLieferanschriftReiter() {
-            alert("ToDo!");
+            switchReiterAdresse("reiterLieferanschrift", "reiterContentLieferanschrift");
         }
 
         function onClickRechnungsanschriftReiter() {
-            alert("ToDo!");
-        }
-
-        function selectReiter(reiterId) {
-            document.getElementById(reiterId).style.borderTopWidth = "2px";
-            document.getElementById(reiterId).style.borderLeftWidth = "2px";
-            document.getElementById(reiterId).style.borderBottomWidth = "1px";
-            document.getElementById(reiterId).style.borderRightWidth = "1px";
-            document.getElementById(reiterId).style.background = "#cdcdcd";
-
-            //alert("Döner macht schöner");
+            switchReiterAdresse("reiterRechnungsanschrift", "reiterContentRechnungsanschrift");
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            selectReiter("reiterAdresse");
+
         })
 
     </script>
@@ -599,6 +541,14 @@
         justify-content: center;
     }
 
+    .reiterSelectedElementDiv {
+        border-top-width: 2px;
+        border-left-width: 2px;
+        border-bottom-width: 1px;
+        border-right-width: 1px;
+        background: #cdcdcd;
+    }
+
     .positionenTextHeadlineDiv {
         display: flex;
     }
@@ -662,7 +612,19 @@
         display: flex;
     }
 
+    .positionMengeDivClass {
+        display: flex;
+    }
+
     .positionEinheitDivClass {
+        display: flex;
+    }
+
+    .positionPreisDivClass {
+        display: flex;
+    }
+
+    .positionRabattDivClass {
         display: flex;
     }
 </style>
@@ -810,7 +772,7 @@
     <!-- BEGIN Adress Reiter Container -->
     <div style="" class="adressContainerDiv">
         <div style="" class="reiterButtonContainerDiv">
-            <div id="reiterAdresse" style="" class="reiterElementDiv" onclick="onClickAdresseReiter()">
+            <div id="reiterAdresse" style="" class="reiterElementDiv reiterSelectedElementDiv" onclick="onClickAdresseReiter()">
                 Adresse
             </div>
             <div id="reiterLieferanschrift" style="" class="reiterElementDiv" onclick="onClickLieferanschriftReiter()">
@@ -821,7 +783,7 @@
             </div>
         </div>
         <!-- BEGIN Adresse Reiter -->
-        <div style="" class="adressReiterDiv">
+        <div id="reiterContentAdresse" style="" class="adressReiterDiv">
 
             <!-- Aasprech Partner Name -->
             <div style="" class="fullFormElementDiv">
@@ -932,6 +894,15 @@
                 </div>
             </div>
         </div> <!-- END Adresse Reiter -->
+
+        <div id="reiterContentLieferanschrift" style="display: none" class="adressReiterDiv">
+            TODO Lieferanschrift!!
+        </div>
+
+        <div id="reiterContentRechnungsanschrift" style="display: none" class="adressReiterDiv">
+            TODO Rechnungsanschrift!!
+        </div>
+
     </div> <!-- END Adress Reiter Container -->
 
     <div class="positionenHeadlineContainerDiv">
