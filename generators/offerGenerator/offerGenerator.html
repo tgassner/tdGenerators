@@ -36,20 +36,26 @@
             "  </svg>";
 
         function deletePosition(posId) {
-            alert("ToDo: Delete " + posId);
+            document.getElementById(posId).remove();
         }
 
         function createDivWithClassname(classname) {
-            let positionArtikelNrDiv = document.createElement('div');
-            positionArtikelNrDiv.classList.add(classname);
-            return positionArtikelNrDiv;
+            let divElement = document.createElement('div');
+            divElement.classList.add(classname);
+            return divElement;
         }
 
-        function createInputWithTypeAndId(type, id) {
-            let positionArtikelNrInput = document.createElement('input');
-            positionArtikelNrInput.type = type;
-            positionArtikelNrInput.id = id;
-            return positionArtikelNrInput;
+        function createInputWithTypeAndId(type, id, name = "", value = "") {
+            let InputElement = document.createElement('input');
+            InputElement.type = type;
+            InputElement.id = id;
+            if (name) {
+                InputElement.name = name;
+            }
+            if (value) {
+                InputElement.value = value;
+            }
+            return InputElement;
         }
 
         function createSelectOptionAndAddToList(value, text, selectElement, selected = false) {
@@ -61,15 +67,26 @@
             return optionElement;
         }
 
+        function calculateNewPosNr() {
+            let posElements = document.getElementsByName("positionHiddenPos");
+
+            let maxPos = posElements.length * 10;
+            if (posElements) {
+                posElements.forEach(pos => {
+                    let intValue =  parseInt(pos.value, 10);
+                    maxPos = (intValue > maxPos) ? intValue : maxPos;
+                })
+            }
+
+            return maxPos + 10;
+        }
+
         function addPosition() {
-
             let posContainer = document.getElementById("positionenContainer");
-            let posCountInternal = posContainer.childElementCount;
-            let newPosNumber = ((posContainer.childElementCount + 1) * 10) + "";
-
+            let newPosNumber = calculateNewPosNr();
 
             let singlePositionContainerDiv = createDivWithClassname('singlePositionContainerDivClass');
-            singlePositionContainerDiv.id = "positionenContainerDiv" + posCountInternal;
+            singlePositionContainerDiv.id = "positionenContainerDiv" + newPosNumber;
 
             let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
             positionDeleteButtonDiv.innerHTML = deleteButton;
@@ -79,57 +96,61 @@
             // Position - Pos
             let positionPosDiv = createDivWithClassname('positionPosDivClass');
             positionPosDiv.innerHTML = newPosNumber;
+            let positionHiddenPosIdInput = createInputWithTypeAndId("hidden", "positionHiddenPosId" + newPosNumber, "positionHiddenPos", newPosNumber + "");
+            positionPosDiv.appendChild(positionHiddenPosIdInput);
             singlePositionContainerDiv.appendChild(positionPosDiv);
 
             // Baustein
             let positionBausteinDiv = createDivWithClassname('positionBausteinDivClass');
-            let positionBausteinList = document.createElement('select');
-            createSelectOptionAndAddToList("D", "D", positionBausteinList);
-            createSelectOptionAndAddToList("F", "F", positionBausteinList);
-            createSelectOptionAndAddToList("T", "T", positionBausteinList);
-            createSelectOptionAndAddToList("Z", "Z", positionBausteinList);
-            positionBausteinDiv.appendChild(positionBausteinList);
+            let positionBausteinSelect = document.createElement('select');
+            positionBausteinSelect.id = "positionBausteinSelect" + newPosNumber;
+            createSelectOptionAndAddToList("D", "D", positionBausteinSelect);
+            createSelectOptionAndAddToList("F", "F", positionBausteinSelect);
+            createSelectOptionAndAddToList("T", "T", positionBausteinSelect);
+            createSelectOptionAndAddToList("Z", "Z", positionBausteinSelect);
+            positionBausteinDiv.appendChild(positionBausteinSelect);
             singlePositionContainerDiv.appendChild(positionBausteinDiv);
 
             // Artikel Nr
             let positionArtikelNrDiv = createDivWithClassname("positionArtikelNrDivClass");
-            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + posCountInternal);
+            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + newPosNumber);
             positionArtikelNrDiv.appendChild(positionArtikelNrInput);
             singlePositionContainerDiv.appendChild(positionArtikelNrDiv);
 
             // Bezeichnung
             let positionBezeichnungDiv = createDivWithClassname('positionBezeichnungDivClass');
-            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + posCountInternal);
+            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + newPosNumber);
             positionBezeichnungDiv.appendChild(positionBezeichnungInput);
             singlePositionContainerDiv.appendChild(positionBezeichnungDiv);
 
             // Länge
             let positionLengthDiv = createDivWithClassname('positionLengthDivClass');
-            let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + posCountInternal);
+            let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + newPosNumber);
             positionLengthDiv.appendChild(positionLengthInput);
             singlePositionContainerDiv.appendChild(positionLengthDiv);
 
             // Breite
             let positionWidthDiv = createDivWithClassname('positionWidthDivClass');
-            let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + posCountInternal);
+            let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + newPosNumber);
             positionWidthDiv.appendChild(positionWidthInput);
             singlePositionContainerDiv.appendChild(positionWidthDiv);
 
             // Anzahl
             let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
-            let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + posCountInternal);
+            let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber);
             positionAnzahlDiv.appendChild(positionAnzahlInput);
             singlePositionContainerDiv.appendChild(positionAnzahlDiv);
 
             // Menge
             let positionMengeDiv = createDivWithClassname('positionMengeDivClass');
-            let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + posCountInternal);
+            let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + newPosNumber);
             positionMengeDiv.appendChild(positionMengeInput);
             singlePositionContainerDiv.appendChild(positionMengeDiv);
 
             // Einheit
             let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
             let positionEinheitList = document.createElement('select');
+            positionEinheitList.id = "positionEinheitSelect" + newPosNumber;
             createSelectOptionAndAddToList("", "", positionEinheitList);
             createSelectOptionAndAddToList("Stück", "Stück", positionEinheitList);
             createSelectOptionAndAddToList("m²", "m²", positionEinheitList);
@@ -147,13 +168,13 @@
 
             // Preis
             let positionPreisDiv = createDivWithClassname('positionPreisDivClass');
-            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + posCountInternal);
+            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + newPosNumber);
             positionPreisDiv.appendChild(positionPreisInput);
             singlePositionContainerDiv.appendChild(positionPreisDiv);
 
             // Bezeichnung
             let positionRabattDiv = createDivWithClassname('positionRabattDivClass');
-            let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + posCountInternal);
+            let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + newPosNumber);
             positionRabattDiv.appendChild(positionRabattInput);
             singlePositionContainerDiv.appendChild(positionRabattDiv);
 
@@ -161,252 +182,196 @@
 
     }
 
+    function createXmlElement(document, parentElement, name, innerHtml = "", id, tag) {
+        let element = document.createElement(tag);
+
+        if (name) {
+            element.setAttribute("name", name);
+        }
+
+        if (id) {
+            element.setAttribute("id", id);
+        }
+
+        if (innerHtml) {
+            element.innerHTML = innerHtml;
+        }
+
+        parentElement.appendChild(element);
+        
+        return element;
+    }
+
+    function createXmlField(document, parentElement, name, innerHtml = "") {
+        return createXmlElement(document, parentElement, name, innerHtml, "", "field");
+    }
+
+    function createXmlObject(document, parentElement, name, innerHtml = "", id) {
+        return createXmlElement(document, parentElement, name, innerHtml, id, "object");
+    }
 
     function doCreateOffer() {
-            let xmlOfferDoc = document.implementation.createDocument("", "", null);
-            let businessobjectsRootElement = xmlOfferDoc.createElement("businessobjects");
+            let xmlOffDoc = document.implementation.createDocument("", "", null);
 
-            let objectElem1 = xmlOfferDoc.createElement("object");
-            objectElem1.setAttribute("name", "Angebot");
-            objectElem1.setAttribute("id", "32");
+            let businessobjectsRootElement = createXmlElement(xmlOffDoc, xmlOffDoc, "", "", "", "businessobjects");
+
+            // Offer / Angebot Object
+            let objOfferElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Angebot", "", "32");
 
             // AngebotArt
-            let fieldAuftragArtElem1 = xmlOfferDoc.createElement("field");
-            fieldAuftragArtElem1.setAttribute("name", "AngebotArt");
-            fieldAuftragArtElem1.innerHTML = "0";
-            objectElem1.appendChild(fieldAuftragArtElem1);
+            createXmlField(xmlOffDoc, objOfferElem, "AngebotArt", "0");
 
             // AngebotTyp
-            let fieldAngebotTyp1 = xmlOfferDoc.createElement("field");
-            fieldAngebotTyp1.setAttribute("name", "AngebotTyp");
-            fieldAngebotTyp1.innerHTML = "";
-            objectElem1.appendChild(fieldAngebotTyp1);
+            createXmlField(xmlOffDoc, objOfferElem, "AngebotTyp", "");
 
-            // <field name="Bemerkung1"/>
-            // <field name="Bemerkung2"/>
-            // <field name="Bezeichnung"/>
-            // <field name="ErstelltVon">LST</field>
-            // <field name="Lieferzeit">1-2 Wochen</field>
-            // <field name="MwStBetrag">28.80</field>
-            // <field name="MwStBetragPos">28.80</field>
-            // <field name="Nr">A251907</field>
-            // <field name="SachkontoNr">4022</field>
-            // <field name="Versandart">Zust</field>
-            // <field name="Versandvermerk">##### nimmt Gassi mit!</field>
+            // MitarbeiterNr
+            createXmlField(xmlOffDoc, objOfferElem, "MitarbeiterNr", document.getElementById("MitarbeiterNr").value);
 
-            let fieldMitarbeiterNr1 = xmlOfferDoc.createElement("field");
-            fieldMitarbeiterNr1.setAttribute("name", "MitarbeiterNr");
-            fieldMitarbeiterNr1.innerHTML = document.getElementById("MitarbeiterNr").value;
-            objectElem1.appendChild(fieldMitarbeiterNr1);
+            // IhreZeichen
+            createXmlField(xmlOffDoc, objOfferElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
 
-            let fieldIhreZeichen1 = xmlOfferDoc.createElement("field");
-            fieldIhreZeichen1.setAttribute("name", "IhreZeichen");
-            fieldIhreZeichen1.innerHTML = document.getElementById("IhreZeichen").value;
-            objectElem1.appendChild(fieldIhreZeichen1);
+            // Lieferzeit
+            createXmlField(xmlOffDoc, objOfferElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
 
-            let fieldLieferzeit1 = xmlOfferDoc.createElement("field");
-            fieldLieferzeit1.setAttribute("name", "Lieferzeit");
-            fieldLieferzeit1.innerHTML = document.getElementById("Lieferzeit").value;
-            objectElem1.appendChild(fieldLieferzeit1);
-
-
-            //let fieldDatum1 = xmlOfferDoc.createElement("field");
+            //let fieldDatum1 = xmlOffDoc.createElement("field");
             //fieldDatum1.setAttribute("name", "Datum");
             //fieldDatum1.innerHTML = "2025.08.29 18:24:19";
-            //objectElem1.appendChild(fieldDatum1);
+            //objOfferElem.appendChild(fieldDatum1);
 
-            //let fieldGpartnerNr1 = xmlOfferDoc.createElement("field");
-            //fieldGpartnerNr1.setAttribute("name", "GpartnerNr");
-            //fieldGpartnerNr1.innerHTML = "20";
-            //objectElem1.appendChild(fieldGpartnerNr1);
+            // SachkontoNr
+            createXmlField(xmlOffDoc, objOfferElem, "SachkontoNr", "4022");
 
-            let fieldSachkontoNr1 = xmlOfferDoc.createElement("field");
-            fieldSachkontoNr1.setAttribute("name", "SachkontoNr");
-            fieldSachkontoNr1.innerHTML = "4022";
-            objectElem1.appendChild(fieldSachkontoNr1);
+            // MwStNr
+            createXmlField(xmlOffDoc, objOfferElem, "MwStNr", "20");
 
-            //let fieldMwStNr1 = xmlOfferDoc.createElement("field");
-            //fieldMwStNr1.setAttribute("name", "MwStNr");
-            //fieldMwStNr1.innerHTML = "20";
-            //objectElem1.appendChild(fieldMwStNr1);
+            // LiefBedText
+            createXmlField(xmlOffDoc, objOfferElem, "LiefBedText", document.getElementById("LiefBedText").value);
 
-            let fieldLiefBedText1 = xmlOfferDoc.createElement("field");
-            fieldLiefBedText1.setAttribute("name", "LiefBedText");
-            fieldLiefBedText1.innerHTML = document.getElementById("LiefBedText").value;
-            objectElem1.appendChild(fieldLiefBedText1);
-
-            //let fieldNr1 = xmlOfferDoc.createElement("field");
+            //let fieldNr1 = xmlOffDoc.createElement("field");
             //fieldNr1.setAttribute("name", "Nr");
             //fieldNr1.innerHTML = "K259397";
-            //objectElem1.appendChild(fieldNr1);
+            //objOfferElem.appendChild(fieldNr1);
 
-            //let fieldUstKZ1 = xmlOfferDoc.createElement("field");
-            //fieldUstKZ1.setAttribute("name", "UstKZ");
-            //fieldUstKZ1.innerHTML = "IN";
-            //objectElem1.appendChild(fieldUstKZ1);
+            // Versandart
+            createXmlField(xmlOffDoc, objOfferElem, "Versandart", document.getElementById("Versandart").value);
+    
+            // Versandvermerk
+            createXmlField(xmlOffDoc, objOfferElem, "Versandvermerk", document.getElementById("Versandvermerk").value);
 
-            let fieldVersandart1 = xmlOfferDoc.createElement("field");
-            fieldVersandart1.setAttribute("name", "Versandart");
-            fieldVersandart1.innerHTML = document.getElementById("Versandart").value;
-            objectElem1.appendChild(fieldVersandart1);
+            // ZahlBedText
+            createXmlField(xmlOffDoc, objOfferElem, "ZahlBedText", document.getElementById("ZahlBedText").value);
 
-            let fieldVersandvermerk1 = xmlOfferDoc.createElement("field");
-            fieldVersandvermerk1.setAttribute("name", "Versandvermerk");
-            fieldVersandvermerk1.innerHTML = document.getElementById("Versandvermerk").value;
-            objectElem1.appendChild(fieldVersandvermerk1);
-
-            let fieldZahlBedText1 = xmlOfferDoc.createElement("field");
-            fieldZahlBedText1.setAttribute("name", "ZahlBedText");
-            fieldZahlBedText1.innerHTML = document.getElementById("ZahlBedText").value;
-            objectElem1.appendChild(fieldZahlBedText1);
-
+            // ZahlTage
             let zahlBedTextSelectElement = document.getElementById("ZahlBedText")
             let option = zahlBedTextSelectElement.options[zahlBedTextSelectElement.selectedIndex];
-            let fieldZahlTage1 = xmlOfferDoc.createElement("field");
-            fieldZahlTage1.setAttribute("name", "ZahlTage");
-            fieldZahlTage1.innerHTML = option.getAttribute("zahlTage");
-            objectElem1.appendChild(fieldZahlTage1);
+            let fieldZahlTage1 = xmlOffDoc.createElement("field");
+            createXmlField(xmlOffDoc, objOfferElem, "ZahlTage", option.getAttribute("zahlTage"));
 
             // Adresse BEGIN
-            let objectAdresse1 = xmlOfferDoc.createElement("object");
-            objectAdresse1.setAttribute("name", "Adresse");
+            let adresseElement = createXmlObject(xmlOffDoc, objOfferElem, "Adresse", "", "")
 
-            let objectAdresse1FieldApartnerName1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldApartnerName1.setAttribute("name", "ApartnerName");
-            objectAdresse1FieldApartnerName1.innerHTML = document.getElementById("adresseApartnerName").value;
-            objectAdresse1.appendChild(objectAdresse1FieldApartnerName1);
 
-            let objectAdresse1FieldEmail1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldEmail1.setAttribute("name", "Email");
-            objectAdresse1FieldEmail1.innerHTML = document.getElementById("adresseemail").value;
-            objectAdresse1.appendChild(objectAdresse1FieldEmail1);
+            // ApartnerName
+            createXmlField(xmlOffDoc, adresseElement, "ApartnerName", document.getElementById("adresseApartnerName").value);
 
-            let objectAdresse1FieldFirma11 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldFirma11.setAttribute("name", "Firma1");
-            objectAdresse1FieldFirma11.innerHTML = document.getElementById("adresseFirma1").value;
-            objectAdresse1.appendChild(objectAdresse1FieldFirma11);
+            // Email
+            createXmlField(xmlOffDoc, adresseElement, "Email", document.getElementById("adresseemail").value);
 
-            let objectAdresse1FieldFirma21 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldFirma21.setAttribute("name", "Firma2");
-            objectAdresse1FieldFirma21.innerHTML = document.getElementById("adresseFirma2").value;
-            objectAdresse1.appendChild(objectAdresse1FieldFirma21);
+            // Firma1
+            createXmlField(xmlOffDoc, adresseElement, "Firma1", document.getElementById("adresseFirma1").value);
 
-            let objectAdresse1FieldLkz1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldLkz1.setAttribute("name", "Lkz");
-            objectAdresse1FieldLkz1.innerHTML = document.getElementById("adresseLkz").value;
-            objectAdresse1.appendChild(objectAdresse1FieldLkz1);
+            // Firma2
+            createXmlField(xmlOffDoc, adresseElement, "Firma2", document.getElementById("adresseFirma2").value);
 
-            let objectAdresse1FieldOrt1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldOrt1.setAttribute("name", "Ort");
-            objectAdresse1FieldOrt1.innerHTML = document.getElementById("adresseOrt").value;
-            objectAdresse1.appendChild(objectAdresse1FieldOrt1);
+            // Lkz
+            createXmlField(xmlOffDoc, adresseElement, "Lkz", document.getElementById("adresseLkz").value);
 
-            let objectAdresse1FieldPlz1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldPlz1.setAttribute("name", "Plz");
-            objectAdresse1FieldPlz1.innerHTML = document.getElementById("adressePlz").value;
-            objectAdresse1.appendChild(objectAdresse1FieldPlz1);
+            // Ort
+            createXmlField(xmlOffDoc, adresseElement, "Ort", document.getElementById("adresseOrt").value);
 
-            let objectAdresse1FieldStrasse1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldStrasse1.setAttribute("name", "Strasse");
-            objectAdresse1FieldStrasse1.innerHTML = document.getElementById("adresseStrasse").value;
-            objectAdresse1.appendChild(objectAdresse1FieldStrasse1);
+            // Plz
+            createXmlField(xmlOffDoc, adresseElement, "Plz", document.getElementById("adressePlz").value);
 
-            let objectAdresse1FieldTelefon1 = xmlOfferDoc.createElement("field");
-            objectAdresse1FieldTelefon1.setAttribute("name", "Telefon");
-            objectAdresse1FieldTelefon1.innerHTML = document.getElementById("adresseTel").value;
-            objectAdresse1.appendChild(objectAdresse1FieldTelefon1);
+            // Strasse
+            createXmlField(xmlOffDoc, adresseElement, "Strasse", document.getElementById("adresseStrasse").value);
 
-            objectElem1.appendChild(objectAdresse1);
+            // Telefon
+            createXmlField(xmlOffDoc, adresseElement, "Telefon", document.getElementById("adresseTel").value);
+
             // Adresse END
 
-            // Position BEGIN
-            let objectPosition1 = xmlOfferDoc.createElement("object");
-            objectPosition1.setAttribute("name", "Position");
-            objectPosition1.innerHTML = "";
+            // Positionen BEGIN
+            let posElements = document.getElementsByName("positionHiddenPos");
+            if (posElements) {
+                posElements.forEach(pos => {
+                    let posNumber = pos.value;
 
-            let objectPosition1FieldArtikelNr1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldArtikelNr1.setAttribute("name", "ArtikelNr");
-            objectPosition1FieldArtikelNr1.innerHTML = "PLATTEN NACH MASS";
-            objectPosition1.appendChild(objectPosition1FieldArtikelNr1);
+                    // object position
+                    let posElement = createXmlObject(xmlOffDoc, objOfferElem, "Position", "", "");
 
-            let objectPosition1FieldBaustein1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldBaustein1.setAttribute("name", "Baustein");
-            objectPosition1FieldBaustein1.innerHTML = "D";
-            objectPosition1.appendChild(objectPosition1FieldBaustein1);
+                    // PosNr
+                    createXmlField(xmlOffDoc, posElement, "PosNr", posNumber);
 
-            let objectPosition1FieldBestellDatum1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldBestellDatum1.setAttribute("name", "BestellDatum");
-            objectPosition1FieldBestellDatum1.innerHTML = "2025.08.29 18:24:19";
-            objectPosition1.appendChild(objectPosition1FieldBestellDatum1);
+                    // Baustein
+                    createXmlField(xmlOffDoc, posElement, "Baustein", document.getElementById("positionBausteinSelect" + posNumber).value);
 
-            let objectPosition1FieldBestellNr1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldBestellNr1.setAttribute("name", "BestellNr");
-            objectPosition1FieldBestellNr1.innerHTML = "43785403";
-            objectPosition1.appendChild(objectPosition1FieldBestellNr1);
+                    // ArtikelNr
+                    createXmlField(xmlOffDoc, posElement, "ArtikelNr", document.getElementById("positionArtikelNrInput" + posNumber).value);
 
-            let objectPosition1FieldBezeichnung1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldBezeichnung1.setAttribute("name", "Bezeichnung");
-            objectPosition1FieldBezeichnung1.innerHTML = "5mm PLEXIGLAS® XT farblos";
-            objectPosition1.appendChild(objectPosition1FieldBezeichnung1);
+                    // Bezeichnung
+                    createXmlField(xmlOffDoc, posElement, "Bezeichnung", document.getElementById("positionBezeichnungInput" + posNumber).value);
 
-            let objectPosition1FieldLangtextHtml1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldLangtextHtml1.setAttribute("name", "LangtextHtml");
-            objectPosition1FieldLangtextHtml1.innerHTML = "195mm x 535mm, Kanten entgratet";
-            objectPosition1.appendChild(objectPosition1FieldLangtextHtml1);
+                    freieFelderElement = createXmlObject(xmlOffDoc, posElement, "FreieFelder", "")
 
-            let objectPosition1FieldKommission1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldKommission1.setAttribute("name", "Kommission");
-            objectPosition1FieldKommission1.innerHTML = "K259397";
-            objectPosition1.appendChild(objectPosition1FieldKommission1);
+                    freiesFeldePosLaengeElement = createXmlObject(xmlOffDoc, freieFelderElement, "FreiesFeld", "")
+                    createXmlField(xmlOffDoc, freiesFeldePosLaengeElement, "Name", "PosLaenge");
+                    createXmlField(xmlOffDoc, freiesFeldePosLaengeElement, "Wert", document.getElementById("positionLengthInput" + posNumber).value);
 
-            let objectPosition1FieldLiefertermin1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldLiefertermin1.setAttribute("name", "Liefertermin");
-            objectPosition1FieldLiefertermin1.innerHTML = "";
-            objectPosition1.appendChild(objectPosition1FieldLiefertermin1);
+                    freiesFeldePosLaengeEinheitElement = createXmlObject(xmlOffDoc, freieFelderElement, "FreiesFeld", "")
+                    createXmlField(xmlOffDoc, freiesFeldePosLaengeEinheitElement, "Name", "PosLaengeEinheit");
+                    createXmlField(xmlOffDoc, freiesFeldePosLaengeEinheitElement, "Wert", "mm");
 
-            let objectPosition1FieldMenge1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldMenge1.setAttribute("name", "Menge");
-            objectPosition1FieldMenge1.innerHTML = "10";
-            objectPosition1.appendChild(objectPosition1FieldMenge1);
+                    freiesFeldePosBreiteElement = createXmlObject(xmlOffDoc, freieFelderElement, "FreiesFeld", "")
+                    createXmlField(xmlOffDoc, freiesFeldePosBreiteElement, "Name", "PosBreite");
+                    createXmlField(xmlOffDoc, freiesFeldePosBreiteElement, "Wert", document.getElementById("positionWidthInput" + posNumber).value);
 
-            let objectPosition1FieldPosNr1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldPosNr1.setAttribute("name", "PosNr");
-            objectPosition1FieldPosNr1.innerHTML = "10";
-            objectPosition1.appendChild(objectPosition1FieldPosNr1);
+                    freiesFeldePosBreiteEinheitElement = createXmlObject(xmlOffDoc, freieFelderElement, "FreiesFeld", "")
+                    createXmlField(xmlOffDoc, freiesFeldePosBreiteEinheitElement, "Name", "PosBreiteEinheit");
+                    createXmlField(xmlOffDoc, freiesFeldePosBreiteEinheitElement, "Wert", "mm");
 
-            let objectPosition1FieldSachkontoNr1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldSachkontoNr1.setAttribute("name", "SachkontoNr");
-            objectPosition1FieldSachkontoNr1.innerHTML = "4022";
-            objectPosition1.appendChild(objectPosition1FieldSachkontoNr1);
+                    freiesFeldePosAnzahlEinheitElement = createXmlObject(xmlOffDoc, freieFelderElement, "FreiesFeld", "")
+                    createXmlField(xmlOffDoc, freiesFeldePosAnzahlEinheitElement, "Name", "PosAnzahl");
+                    createXmlField(xmlOffDoc, freiesFeldePosAnzahlEinheitElement, "Wert", document.getElementById("positionAnzahlInput" + posNumber).value);
 
-            let objectPosition1FieldPreis1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldPreis1.setAttribute("name", "Preis");
-            objectPosition1FieldPreis1.innerHTML = "9.8";
-            objectPosition1.appendChild(objectPosition1FieldPreis1);
+                    // Menge
+                    createXmlField(xmlOffDoc, posElement, "Menge", document.getElementById("positionMengeInput" + posNumber).value);
 
-            let objectPosition1FieldMwStNr1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldMwStNr1.setAttribute("name", "MwStNr");
-            objectPosition1FieldMwStNr1.innerHTML = "20";
-            objectPosition1.appendChild(objectPosition1FieldMwStNr1);
+                    // Einheit
+                    createXmlField(xmlOffDoc, posElement, "Einheit", document.getElementById("positionEinheitSelect" + posNumber).value);
 
-            let objectPosition1FieldMwStSatz1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldMwStSatz1.setAttribute("name", "MwStSatz");
-            objectPosition1FieldMwStSatz1.innerHTML = "20";
-            objectPosition1.appendChild(objectPosition1FieldMwStSatz1);
+                    // Preis
+                    createXmlField(xmlOffDoc, posElement, "Preis", document.getElementById("positionPreisInput" + posNumber).value);
 
-            let objectPosition1FieldEinheit1 = xmlOfferDoc.createElement("field");
-            objectPosition1FieldEinheit1.setAttribute("name", "Einheit");
-            objectPosition1FieldEinheit1.innerHTML = "Stück";
-            objectPosition1.appendChild(objectPosition1FieldEinheit1);
+                    // Rabatt
+                    createXmlField(xmlOffDoc, posElement, "Rabatt", document.getElementById("positionRabattInput" + posNumber).value);
 
-            objectElem1.appendChild(objectPosition1);
-            // Position BEGIN
+                    // LangtextHtml
+                    createXmlField(xmlOffDoc, posElement, "LangtextHtml", "TODO Langer Text HTML");
 
-            businessobjectsRootElement.appendChild(objectElem1);
-            xmlOfferDoc.appendChild(businessobjectsRootElement);
+                    // MwStNr
+                    createXmlField(xmlOffDoc, posElement, "MwStNr", "20");
+
+                    // MwStSatz
+                    createXmlField(xmlOffDoc, posElement, "MwStSatz", "20");
+
+                    // SachkontoNr
+                    createXmlField(xmlOffDoc, posElement, "SachkontoNr", "4022");
+                })
+            }
+            // Positionen BEGIN
 
             let serializer = new XMLSerializer();
-            let xmlOfferDocString = serializer.serializeToString(xmlOfferDoc);
+            let xmlOfferDocString = serializer.serializeToString(xmlOffDoc);
 
             xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + formatXml(xmlOfferDocString, "  ");
 
