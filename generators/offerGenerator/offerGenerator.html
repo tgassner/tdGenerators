@@ -16,6 +16,20 @@
 
     <script>
 
+        var addButton = "<svg width=\"28\" height=\"28\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+            "                <defs>\n" +
+            "                    <linearGradient id=\"addGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
+            "                        <stop offset=\"0\" stop-color=\"#00aac8\"/>\n" +
+            "                        <stop offset=\"1\" stop-color=\"#0096be\"/>\n" +
+            "                    </linearGradient>\n" +
+            "                </defs>\n" +
+            "                <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"url(#addGradient)\" filter=\"url(#shadow)\"/>\n" +
+            "                <g stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n" +
+            "                    <path d=\"M28 17.5 L28 38.5\" />\n" +
+            "                    <path d=\"M17.5 28 L38.5 28\" />\n" +
+            "                </g>\n" +
+            "            </svg>";
+
         var deleteButton = "<svg width=\"28\" height=\"28\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
             "    <defs>\n" +
             "      <!-- Farbverlauf Rot -->\n" +
@@ -81,12 +95,49 @@
             return maxPos + 10;
         }
 
+        function isNumeric(str) {
+            if (typeof str != "string") return false // we only process strings!
+            return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+        }
+
+        function calcGesamtPreis(posNumber) {
+            console.log("PosNumber= " + posNumber);
+            let mengeElement = document.getElementById('positionMengeInput' + posNumber);
+            let preisElement = document.getElementById('positionPreisInput' + posNumber);
+
+
+            if (!mengeElement || ! preisElement) {
+                document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
+                return;
+            }
+
+            let mengeValueString = mengeElement.value;
+            let preisValueString = preisElement.value;
+            console.log("mengeValueString= " + mengeValueString);
+            console.log("preisValueString= " + preisValueString);
+            console.log("-------------------------");
+
+            if (!isNumeric(mengeValueString) || !isNumeric(preisValueString)) {
+                document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
+                return;
+            }
+
+            mengeValueNumber = parseFloat(mengeValueString);
+            preisValueNumber = parseFloat(preisValueString);
+
+            let gesamtPreisNumber = mengeValueNumber * preisValueNumber;
+
+            document.getElementById("positionGesamtpreisInput" + posNumber).value = gesamtPreisNumber;
+        }
+
         function addPosition() {
             let posContainer = document.getElementById("positionenContainer");
             let newPosNumber = calculateNewPosNr();
 
             let singlePositionContainerDiv = createDivWithClassname('singlePositionContainerDivClass');
             singlePositionContainerDiv.id = "positionenContainerDiv" + newPosNumber;
+            posContainer.appendChild(singlePositionContainerDiv);
 
             let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
             positionDeleteButtonDiv.innerHTML = deleteButton;
@@ -144,6 +195,7 @@
             // Menge
             let positionMengeDiv = createDivWithClassname('positionMengeDivClass');
             let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + newPosNumber);
+            positionMengeInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
             positionMengeDiv.appendChild(positionMengeInput);
             singlePositionContainerDiv.appendChild(positionMengeDiv);
 
@@ -169,17 +221,21 @@
             // Preis
             let positionPreisDiv = createDivWithClassname('positionPreisDivClass');
             let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + newPosNumber);
+            positionPreisInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
             positionPreisDiv.appendChild(positionPreisInput);
             singlePositionContainerDiv.appendChild(positionPreisDiv);
 
-            // Bezeichnung
+            // Rabatt
             let positionRabattDiv = createDivWithClassname('positionRabattDivClass');
             let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + newPosNumber);
             positionRabattDiv.appendChild(positionRabattInput);
             singlePositionContainerDiv.appendChild(positionRabattDiv);
 
-            posContainer.appendChild(singlePositionContainerDiv);
-
+            // Gesamtpreis  = Preis * Menge
+            let positionGesamtpreisDiv = createDivWithClassname('positionGesamtpreisDivClass');
+            let positionGesamtpreisInput = createInputWithTypeAndId("number", "positionGesamtpreisInput" + newPosNumber);
+            positionGesamtpreisDiv.appendChild(positionGesamtpreisInput);
+            singlePositionContainerDiv.appendChild(positionGesamtpreisDiv);
     }
 
     function createXmlElement(document, parentElement, name, innerHtml = "", id, tag) {
@@ -232,11 +288,6 @@
 
             // Lieferzeit
             createXmlField(xmlOffDoc, objOfferElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
-
-            //let fieldDatum1 = xmlOffDoc.createElement("field");
-            //fieldDatum1.setAttribute("name", "Datum");
-            //fieldDatum1.innerHTML = "2025.08.29 18:24:19";
-            //objOfferElem.appendChild(fieldDatum1);
 
             // SachkontoNr
             createXmlField(xmlOffDoc, objOfferElem, "SachkontoNr", "4022");
@@ -355,6 +406,9 @@
                     // Rabatt
                     createXmlField(xmlOffDoc, posElement, "Rabatt", document.getElementById("positionRabattInput" + posNumber).value);
 
+                    // Gesamtpreis
+                    createXmlField(xmlOffDoc, posElement, "Gesamtpreis", document.getElementById("positionGesamtpreisInput" + posNumber).value);
+
                     // LangtextHtml
                     createXmlField(xmlOffDoc, posElement, "LangtextHtml", "TODO Langer Text HTML");
 
@@ -432,7 +486,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;11.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;12.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -590,6 +644,10 @@
     }
 
     .positionRabattDivClass {
+        display: flex;
+    }
+
+    .positionGesamtpreisDivClass {
         display: flex;
     }
 </style>
@@ -886,7 +944,18 @@
                 </g>
             </svg>
         </div>
-        <div class="positionenTextHeadlineDiv"> Positionen </div>
+        <div class="positionenTextHeadlineDiv">Pos</div>
+        <div class="positionenTextHeadlineDiv">B</div>
+        <div class="positionenTextHeadlineDiv">ArtikelNr</div>
+        <div class="positionenTextHeadlineDiv">Bezeichnung</div>
+        <div class="positionenTextHeadlineDiv">Länge</div>
+        <div class="positionenTextHeadlineDiv">Breite</div>
+        <div class="positionenTextHeadlineDiv">Anzahl</div>
+        <div class="positionenTextHeadlineDiv">Menge</div>
+        <div class="positionenTextHeadlineDiv">Einheit</div>
+        <div class="positionenTextHeadlineDiv">Preis</div>
+        <div class="positionenTextHeadlineDiv">Rabatt</div>
+        <div class="positionenTextHeadlineDiv">Gesamtpreis</div>
     </div>
     <!-- BEGIN POSITIONEN DIV -->
     <div id="positionenContainer" class="positionenContainerDiv">
