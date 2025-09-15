@@ -49,14 +49,56 @@
             "    <line x1=\"17.5\" y1=\"28\" x2=\"38.5\" y2=\"28\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n" +
             "  </svg>";
 
-        function deletePosition(posId) {
-            document.getElementById(posId).remove();
+        var expandButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+            "    <defs>\n" +
+            "      <linearGradient id=\"expandGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
+            "        <stop offset=\"0\" stop-color=\"#d0d0d0\"/>\n" +
+            "        <stop offset=\"1\" stop-color=\"#a0a0a0\"/>\n" +
+            "      </linearGradient>\n" +
+            //"      <filter id=\"shadow-gray\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n" +
+            //"        <feDropShadow dx=\"0\" dy=\"4\" stdDeviation=\"6\" flood-opacity=\"0.15\"/>\n" +
+            //"      </filter>\n" +
+            "    </defs>\n" +
+            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"url(#expandGradient)\" filter=\"url(#shadow-gray)\"/>\n" +
+            "    \n" +
+            "    <!-- Pfeil nach unten -->\n" +
+            "    <polyline points=\"18,24 28,34 38,24\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
+            "  </svg>";
+
+        var collapseButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+            "    <defs>\n" +
+            "      <linearGradient id=\"collapseGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
+            "        <stop offset=\"0\" stop-color=\"#d0d0d0\"/>\n" +
+            "        <stop offset=\"1\" stop-color=\"#a0a0a0\"/>\n" +
+            "      </linearGradient>\n" +
+            "    </defs>\n" +
+            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"url(#collapseGradient)\" filter=\"url(#shadow-gray)\"/>\n" +
+            "    \n" +
+            "    <!-- Pfeil nach oben -->\n" +
+            "    <polyline points=\"18,32 28,22 38,32\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
+            "  </svg>";
+
+        function deletePosition(posNumber) {
+            document.getElementById("singlePositionenContainerDiv" + posNumber).remove();
+            document.getElementById("posLangTextDiv" + posNumber).remove();
             let posElements = document.getElementsByName("positionHiddenPos");
             if (posElements.length <= 0) {
                 Array.from(document.getElementsByClassName("posHeader")).forEach(element => {
                     element.classList.add("hideAtStartup");
                 })
             }
+        }
+
+        function expandLangtextPosition(posNumber) {
+            document.getElementById("posLangTextDiv" + posNumber).classList.remove("hiddenClass");
+            document.getElementById("positionCollapseLangTextButtonDiv" + posNumber).classList.remove("hiddenClass");
+            document.getElementById("positionExpandLangTextButtonDiv" + posNumber).classList.add("hiddenClass");
+        }
+
+        function collapseLangtextPosition(posNumber) {
+            document.getElementById("posLangTextDiv" + posNumber).classList.add("hiddenClass");
+            document.getElementById("positionCollapseLangTextButtonDiv" + posNumber).classList.add("hiddenClass");
+            document.getElementById("positionExpandLangTextButtonDiv" + posNumber).classList.remove("hiddenClass");
         }
 
         function createDivWithClassname(classname) {
@@ -160,7 +202,7 @@
 
             let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
             positionDeleteButtonDiv.innerHTML = deleteButton;
-            positionDeleteButtonDiv.addEventListener('click', () => deletePosition(singlePositionContainerDiv.id));
+            positionDeleteButtonDiv.addEventListener('click', () => deletePosition(newPosNumber));
             singlePositionContainerDiv.appendChild(positionDeleteButtonDiv);
 
             // Position - Pos
@@ -257,6 +299,34 @@
             let positionGesamtpreisInput = createInputWithTypeAndId("number", "positionGesamtpreisInput" + newPosNumber, null, null, "positionGesamtpreisInputClass");
             positionGesamtpreisDiv.appendChild(positionGesamtpreisInput);
             singlePositionContainerDiv.appendChild(positionGesamtpreisDiv);
+
+            let positionExpandAndCollapseLangTextButtonDiv = createDivWithClassname('positionExpandAndCollapseLangTextButtonDivClass');
+            singlePositionContainerDiv.appendChild(positionExpandAndCollapseLangTextButtonDiv);
+
+            // expand Langtext
+            let positionExpandLangTextButtonDiv = createDivWithClassname('positionExpandLangTextButtonDivClass');
+            positionExpandLangTextButtonDiv.id = "positionExpandLangTextButtonDiv" + newPosNumber;
+            positionExpandLangTextButtonDiv.innerHTML = expandButton;
+            positionExpandLangTextButtonDiv.addEventListener('click', () => expandLangtextPosition(newPosNumber));
+            positionExpandAndCollapseLangTextButtonDiv.appendChild(positionExpandLangTextButtonDiv);
+
+            // collapse Langtext
+            let positionCollapseLangTextButtonDiv = createDivWithClassname('positionCollapseLangTextButtonDivClass');
+            positionCollapseLangTextButtonDiv.id = "positionCollapseLangTextButtonDiv" + newPosNumber;
+            positionCollapseLangTextButtonDiv.innerHTML = collapseButton;
+            positionCollapseLangTextButtonDiv.addEventListener('click', () => collapseLangtextPosition(newPosNumber));
+            positionCollapseLangTextButtonDiv.classList.add("hiddenClass");
+            positionExpandAndCollapseLangTextButtonDiv.appendChild(positionCollapseLangTextButtonDiv);
+
+            // LangText
+            let posLangTextDiv = createDivWithClassname('posLangTextDivClass');
+            posLangTextDiv.classList.add("hiddenClass");
+            posLangTextDiv.id = "posLangTextDiv" + newPosNumber;
+            let posLangTextTextArea = document.createElement('textarea');
+            posLangTextTextArea.id = "posLangTextTextArea" + newPosNumber;
+            posLangTextTextArea.classList.add("posLangTextTextAreaClass");
+            posLangTextDiv.appendChild(posLangTextTextArea);
+            posContainer.appendChild(posLangTextDiv);
     }
 
     function createXmlElement(document, parentElement, name, innerHtml = "", id, tag) {
@@ -465,7 +535,7 @@
                     createXmlField(xmlOffDoc, posElement, "Gesamtpreis", document.getElementById("positionGesamtpreisInput" + posNumber).value);
 
                     // LangtextHtml
-                    createXmlField(xmlOffDoc, posElement, "LangtextHtml", "TODO Langer Text HTML");
+                    createXmlField(xmlOffDoc, posElement, "LangtextHtml", document.getElementById("posLangTextTextArea" + posNumber).value);
 
                     // MwStNr
                     createXmlField(xmlOffDoc, posElement, "MwStNr", "20");
@@ -633,6 +703,8 @@
         font-size: 80%;
     }
 
+
+    .hiddenClass,
     .hideAtStartup {
         display: none;
     }
@@ -670,6 +742,14 @@
 
     .singlePositionContainerDivClass {
         display: contents;
+    }
+
+    .positionExpandAndCollapseLangTextButtonDivClass {
+        grid-column: 2 ;
+    }
+
+    .posLangTextDivClass {
+        grid-column: 3 / 14;
     }
 
     .positionBausteinSelectClass,
@@ -780,7 +860,8 @@
     .positionEinheitListSelectClass,
     .positionPreisInputClass,
     .positionRabattInputClass,
-    .positionGesamtpreisInputClass {
+    .positionGesamtpreisInputClass,
+    .posLangTextTextAreaClass {
         font-size: 80%;
     }
 
@@ -828,6 +909,11 @@
         width: 60px;
     }
 
+    .posLangTextTextAreaClass {
+        width: 750px;
+        resize: none;
+        height: 50px;
+    }
 
 </style>
 
