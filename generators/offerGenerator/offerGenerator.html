@@ -341,36 +341,70 @@
 
             // Adresse BEGIN
             let adresseElement = createXmlObject(xmlOffDoc, objOfferElem, "Adresse", "", "")
-
-
             // ApartnerName
             createXmlField(xmlOffDoc, adresseElement, "ApartnerName", document.getElementById("adresseApartnerName").value);
-
             // Email
             createXmlField(xmlOffDoc, adresseElement, "Email", document.getElementById("adresseemail").value);
-
             // Firma1
             createXmlField(xmlOffDoc, adresseElement, "Firma1", document.getElementById("adresseFirma1").value);
-
             // Firma2
             createXmlField(xmlOffDoc, adresseElement, "Firma2", document.getElementById("adresseFirma2").value);
-
             // Lkz
             createXmlField(xmlOffDoc, adresseElement, "Lkz", document.getElementById("adresseLkz").value);
-
             // Ort
             createXmlField(xmlOffDoc, adresseElement, "Ort", document.getElementById("adresseOrt").value);
-
             // Plz
             createXmlField(xmlOffDoc, adresseElement, "Plz", document.getElementById("adressePlz").value);
-
             // Strasse
             createXmlField(xmlOffDoc, adresseElement, "Strasse", document.getElementById("adresseStrasse").value);
-
             // Telefon
             createXmlField(xmlOffDoc, adresseElement, "Telefon", document.getElementById("adresseTel").value);
-
             // Adresse END
+
+            // Lieferanschrift BEGIN
+            let lieferAnschriftElement = createXmlObject(xmlOffDoc, objOfferElem, "Lieferanschrift", "", "")
+            // ApartnerName
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "ApartnerName", document.getElementById("lieferanschriftApartnerName").value);
+            // Email
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Email", document.getElementById("lieferanschriftemail").value);
+            // Firma1
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Firma1", document.getElementById("lieferanschriftFirma1").value);
+            // Firma2
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Firma2", document.getElementById("lieferanschriftFirma2").value);
+            // Lkz
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Lkz", document.getElementById("lieferanschriftLkz").value);
+            // Ort
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Ort", document.getElementById("lieferanschriftOrt").value);
+            // Plz
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Plz", document.getElementById("lieferanschriftPlz").value);
+            // Strasse
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Strasse", document.getElementById("lieferanschriftStrasse").value);
+            // Telefon
+            createXmlField(xmlOffDoc, lieferAnschriftElement, "Telefon", document.getElementById("lieferanschriftTel").value);
+            // Lieferanschrift END
+
+            // Rechnungsanschrift BEGIN
+            let rechnungsAnschriftElement = createXmlObject(xmlOffDoc, objOfferElem, "Rechnungsanschrift", "", "")
+            // ApartnerName
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "ApartnerName", document.getElementById("rechnungsanschriftApartnerName").value);
+            // Email
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Email", document.getElementById("rechnungsanschriftemail").value);
+            // Firma1
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Firma1", document.getElementById("rechnungsanschriftFirma1").value);
+            // Firma2
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Firma2", document.getElementById("rechnungsanschriftFirma2").value);
+            // Lkz
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Lkz", document.getElementById("rechnungsanschriftLkz").value);
+            // Ort
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Ort", document.getElementById("rechnungsanschriftOrt").value);
+            // Plz
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Plz", document.getElementById("rechnungsanschriftPlz").value);
+            // Strasse
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Strasse", document.getElementById("rechnungsanschriftStrasse").value);
+            // Telefon
+            createXmlField(xmlOffDoc, rechnungsAnschriftElement, "Telefon", document.getElementById("rechnungsanschriftTel").value);
+            // Rechnungsanschrift END
+
 
             // Positionen BEGIN
             let posElements = document.getElementsByName("positionHiddenPos");
@@ -507,7 +541,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;15.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;15.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -552,7 +586,6 @@
         padding-right: 10px;
         padding-bottom: 5px;
         border-top: #cdcdcd 1px solid;
-        /* border : solid 1px #565656; */
     }
 
     .adressReiterDiv {
@@ -569,20 +602,7 @@
         width: 150px;
         white-space: nowrap;
         display: flex;
-        /*
-        margin-top: 0px;
-        margin-left: 0px;
-        margin-right: 0px;
-        margin-bottom: 10px;
-        */
         cursor: pointer;
-         /*
-        border: 0;
-        /*
-        border-top: solid 1px #565656;
-        border-left: solid 1px #565656;
-        border-bottom: solid 2px #565656;
-        border-right: solid 2px #565656;*/
         background: #ffffff;
         padding-top: 10px;
         padding-bottom: 10px;
@@ -1077,13 +1097,231 @@
             </div>
         </div> <!-- END Adresse Reiter -->
 
+        <!-- BEGIN Lieferanschrift -->
         <div id="reiterContentLieferanschrift" style="display: none" class="adressReiterDiv">
-            TODO Lieferanschrift!!
-        </div>
+            <!-- Aasprech Partner Name -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftApartnerName">Name:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftApartnerName" name="lieferanschriftApartnerName" class="inputElement"/>
+                </div>
+            </div>
 
-        <div id="reiterContentRechnungsanschrift" style="display: none" class="adressReiterDiv">
-            TODO Rechnungsanschrift!!
+            <!-- email -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftemail">E-Mail:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="email" id="lieferanschriftemail" name="lieferanschriftemail" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma1 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftFirma1">Firma1:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftFirma1" name="lieferanschriftFirma1" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma2 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftFirma2">Firma2:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftFirma2" name="lieferanschriftFirma2" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Lkz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftLkz">Land:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <select id="lieferanschriftLkz" name="lieferanschriftLkz" class="inputElement">
+                        <option value=""></option>
+                        <option value="AT">Österreich</option>
+                        <option value="DE">Deutschland</option>
+                        <option value="CH">Schweiz</option>
+                        <option value="IT">Italien</option>
+                        <option value="SI">Slowenien</option>
+                        <option value="NL">Holland</option>
+                        <option value="LU">Luxenburg</option>
+                        <option value="HU">Ungarn</option>
+                        <option value="SK">Slowakei</option>
+                        <option value="ES">Spanien</option>
+                        <option value="FR">Frankreich</option>
+                        <option value="CZ">Tschechien</option>
+                        <option value="LI">Liechtenstein</option>
+                        <option value="PL">Polen</option>
+                        <option value="HR">Kroatien</option>
+                        <option value="RO">Rumänien</option>
+                        <option value="GB">Großbritannien</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ort -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftOrt">Ort:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftOrt" name="lieferanschriftOrt" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Plz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftPlz">Postleitzahl:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftPlz" name="lieferanschriftPlz" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Strasse -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftStrasse">Strasse:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="lieferanschriftStrasse" name="lieferanschriftStrasse" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Tel -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="lieferanschriftTel">Tel:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="tel" id="lieferanschriftTel" name="lieferanschriftTel" class="inputElement"/>
+                </div>
+            </div>
         </div>
+        <!-- END Lieferanschrift -->
+
+        <!-- BEGIN Rechnungsanschrift -->
+        <div id="reiterContentRechnungsanschrift" style="display: none" class="adressReiterDiv">
+            <!-- Aasprech Partner Name -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftApartnerName">Name:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftApartnerName" name="rechnungsanschriftApartnerName" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- email -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftemail">E-Mail:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="email" id="rechnungsanschriftemail" name="rechnungsanschriftemail" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma1 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftFirma1">Firma1:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftFirma1" name="rechnungsanschriftFirma1" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Firma2 -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftFirma2">Firma2:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftFirma2" name="rechnungsanschriftFirma2" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Lkz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftLkz">Land:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <select id="rechnungsanschriftLkz" name="rechnungsanschriftLkz" class="inputElement">
+                        <option value=""></option>
+                        <option value="AT">Österreich</option>
+                        <option value="DE">Deutschland</option>
+                        <option value="CH">Schweiz</option>
+                        <option value="IT">Italien</option>
+                        <option value="SI">Slowenien</option>
+                        <option value="NL">Holland</option>
+                        <option value="LU">Luxenburg</option>
+                        <option value="HU">Ungarn</option>
+                        <option value="SK">Slowakei</option>
+                        <option value="ES">Spanien</option>
+                        <option value="FR">Frankreich</option>
+                        <option value="CZ">Tschechien</option>
+                        <option value="LI">Liechtenstein</option>
+                        <option value="PL">Polen</option>
+                        <option value="HR">Kroatien</option>
+                        <option value="RO">Rumänien</option>
+                        <option value="GB">Großbritannien</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Ort -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftOrt">Ort:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftOrt" name="rechnungsanschriftOrt" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Plz -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftPlz">Postleitzahl:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftPlz" name="rechnungsanschriftPlz" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Strasse -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftStrasse">Strasse:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="text" id="rechnungsanschriftStrasse" name="rechnungsanschriftStrasse" class="inputElement"/>
+                </div>
+            </div>
+
+            <!-- Tel -->
+            <div style="" class="fullFormElementDiv">
+                <div style="" class="labelFormElementDiv">
+                    <label for="rechnungsanschriftTel">Tel:</label>
+                </div>
+                <div style="" class="inputFormElementDiv">
+                    <input type="tel" id="rechnungsanschriftTel" name="rechnungsanschriftTel" class="inputElement"/>
+                </div>
+            </div>
+        </div>
+        <!-- END Rechnungsanschrift -->
 
     </div> <!-- END Adress Reiter Container -->
 
