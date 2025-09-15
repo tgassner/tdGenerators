@@ -16,7 +16,7 @@
 
     <script>
 
-        var addButton = "<svg width=\"28\" height=\"28\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+        var addButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\n" +
             "                <defs>\n" +
             "                    <linearGradient id=\"addGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
             "                        <stop offset=\"0\" stop-color=\"#00aac8\"/>\n" +
@@ -30,7 +30,7 @@
             "                </g>\n" +
             "            </svg>";
 
-        var deleteButton = "<svg width=\"28\" height=\"28\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
+        var deleteButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\"s" +
             "    <defs>\n" +
             "      <!-- Farbverlauf Rot -->\n" +
             "      <linearGradient id=\"deleteGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
@@ -51,6 +51,12 @@
 
         function deletePosition(posId) {
             document.getElementById(posId).remove();
+            let posElements = document.getElementsByName("positionHiddenPos");
+            if (posElements.length <= 0) {
+                Array.from(document.getElementsByClassName("posHeader")).forEach(element => {
+                    element.classList.add("hideAtStartup");
+                })
+            }
         }
 
         function createDivWithClassname(classname) {
@@ -59,17 +65,22 @@
             return divElement;
         }
 
-        function createInputWithTypeAndId(type, id, name = "", value = "") {
-            let InputElement = document.createElement('input');
-            InputElement.type = type;
-            InputElement.id = id;
+        function createInputWithTypeAndId(type, id, name = "", value = "", cssClass = "") {
+            let inputElement = document.createElement('input');
+            inputElement.type = type;
+            inputElement.id = id;
             if (name) {
-                InputElement.name = name;
+                inputElement.name = name;
             }
             if (value) {
-                InputElement.value = value;
+                inputElement.value = value;
             }
-            return InputElement;
+
+            if (cssClass) {
+                inputElement.classList.add(cssClass);
+            }
+
+            return inputElement;
         }
 
         function createSelectOptionAndAddToList(value, text, selectElement, selected = false) {
@@ -132,11 +143,19 @@
         }
 
         function addPosition() {
-            let posContainer = document.getElementById("positionenContainer");
+            // Show Healine of Pos Table if not already
+            let posHeadlineElementsAreNowHidden = document.getElementsByClassName("hideAtStartup");
+            if (posHeadlineElementsAreNowHidden) {
+                Array.from(posHeadlineElementsAreNowHidden).forEach(element => {
+                    element.classList.remove("hideAtStartup");
+                })
+            }
+
+            let posContainer = document.getElementById("positionenContainerGridDiv");
             let newPosNumber = calculateNewPosNr();
 
             let singlePositionContainerDiv = createDivWithClassname('singlePositionContainerDivClass');
-            singlePositionContainerDiv.id = "positionenContainerDiv" + newPosNumber;
+            singlePositionContainerDiv.id = "singlePositionenContainerDiv" + newPosNumber;
             posContainer.appendChild(singlePositionContainerDiv);
 
             let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
@@ -155,6 +174,7 @@
             let positionBausteinDiv = createDivWithClassname('positionBausteinDivClass');
             let positionBausteinSelect = document.createElement('select');
             positionBausteinSelect.id = "positionBausteinSelect" + newPosNumber;
+            positionBausteinSelect.classList.add("positionBausteinSelectClass");
             createSelectOptionAndAddToList("D", "D", positionBausteinSelect);
             createSelectOptionAndAddToList("F", "F", positionBausteinSelect);
             createSelectOptionAndAddToList("T", "T", positionBausteinSelect);
@@ -164,37 +184,37 @@
 
             // Artikel Nr
             let positionArtikelNrDiv = createDivWithClassname("positionArtikelNrDivClass");
-            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + newPosNumber);
+            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + newPosNumber, null, null, "positionArtikelNrInputClass");
             positionArtikelNrDiv.appendChild(positionArtikelNrInput);
             singlePositionContainerDiv.appendChild(positionArtikelNrDiv);
 
             // Bezeichnung
             let positionBezeichnungDiv = createDivWithClassname('positionBezeichnungDivClass');
-            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + newPosNumber);
+            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + newPosNumber, null, null, "positionBezeichnungInputClass");
             positionBezeichnungDiv.appendChild(positionBezeichnungInput);
             singlePositionContainerDiv.appendChild(positionBezeichnungDiv);
 
             // Länge
             let positionLengthDiv = createDivWithClassname('positionLengthDivClass');
-            let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + newPosNumber);
+            let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + newPosNumber, null, null, "positionLengthInputClass");
             positionLengthDiv.appendChild(positionLengthInput);
             singlePositionContainerDiv.appendChild(positionLengthDiv);
 
             // Breite
             let positionWidthDiv = createDivWithClassname('positionWidthDivClass');
-            let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + newPosNumber);
+            let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + newPosNumber, null, null, "positionWidthInputClass");
             positionWidthDiv.appendChild(positionWidthInput);
             singlePositionContainerDiv.appendChild(positionWidthDiv);
 
             // Anzahl
             let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
-            let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber);
+            let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber, null, null, "positionAnzahlInputClass");
             positionAnzahlDiv.appendChild(positionAnzahlInput);
             singlePositionContainerDiv.appendChild(positionAnzahlDiv);
 
             // Menge
             let positionMengeDiv = createDivWithClassname('positionMengeDivClass');
-            let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + newPosNumber);
+            let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + newPosNumber, null, null, "positionMengeInputClass");
             positionMengeInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
             positionMengeDiv.appendChild(positionMengeInput);
             singlePositionContainerDiv.appendChild(positionMengeDiv);
@@ -203,6 +223,7 @@
             let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
             let positionEinheitList = document.createElement('select');
             positionEinheitList.id = "positionEinheitSelect" + newPosNumber;
+            positionEinheitList.classList.add("positionEinheitListSelectClass");
             createSelectOptionAndAddToList("", "", positionEinheitList);
             createSelectOptionAndAddToList("Stück", "Stück", positionEinheitList);
             createSelectOptionAndAddToList("m²", "m²", positionEinheitList);
@@ -220,20 +241,20 @@
 
             // Preis
             let positionPreisDiv = createDivWithClassname('positionPreisDivClass');
-            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + newPosNumber);
+            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + newPosNumber, null, null, "positionPreisInputClass");
             positionPreisInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
             positionPreisDiv.appendChild(positionPreisInput);
             singlePositionContainerDiv.appendChild(positionPreisDiv);
 
             // Rabatt
             let positionRabattDiv = createDivWithClassname('positionRabattDivClass');
-            let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + newPosNumber);
+            let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + newPosNumber, null, null, "positionRabattInputClass");
             positionRabattDiv.appendChild(positionRabattInput);
             singlePositionContainerDiv.appendChild(positionRabattDiv);
 
             // Gesamtpreis  = Preis * Menge
             let positionGesamtpreisDiv = createDivWithClassname('positionGesamtpreisDivClass');
-            let positionGesamtpreisInput = createInputWithTypeAndId("number", "positionGesamtpreisInput" + newPosNumber);
+            let positionGesamtpreisInput = createInputWithTypeAndId("number", "positionGesamtpreisInput" + newPosNumber, null, null, "positionGesamtpreisInputClass");
             positionGesamtpreisDiv.appendChild(positionGesamtpreisInput);
             singlePositionContainerDiv.appendChild(positionGesamtpreisDiv);
     }
@@ -486,7 +507,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;12.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1.3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;15.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -525,12 +546,13 @@
     .adressContainerDiv {
         display: flex;
         flex-direction: column;
-        margin: 5px;
-        padding-top: 0px;
+        margin: 5px 5px 5px 5px;
+        padding-top: 10px;
         padding-left: 0px;
         padding-right: 10px;
-        padding-bottom: 10px;
-        border : solid 1px #565656;
+        padding-bottom: 5px;
+        border-top: #cdcdcd 1px solid;
+        /* border : solid 1px #565656; */
     }
 
     .adressReiterDiv {
@@ -543,29 +565,42 @@
         flex-direction: row;
     }
     .reiterElementDiv {
+        color: #454545;
         width: 150px;
+        white-space: nowrap;
         display: flex;
+        /*
         margin-top: 0px;
         margin-left: 0px;
         margin-right: 0px;
         margin-bottom: 10px;
+        */
         cursor: pointer;
+         /*
+        border: 0;
+        /*
         border-top: solid 1px #565656;
         border-left: solid 1px #565656;
         border-bottom: solid 2px #565656;
-        border-right: solid 2px #565656;
+        border-right: solid 2px #565656;*/
         background: #ffffff;
         padding-top: 10px;
         padding-bottom: 10px;
         justify-content: center;
     }
 
+    .reiterElementDiv:hover {
+        background: #efefef;
+    }
+
     .reiterSelectedElementDiv {
-        border-top-width: 2px;
-        border-left-width: 2px;
-        border-bottom-width: 1px;
-        border-right-width: 1px;
-        background: #cdcdcd;
+        color: #000000;
+        border-bottom: #565656 solid 2px;
+        background: #dedede;
+    }
+
+    .reiterSelectedElementDiv:hover {
+        background: #dedede;
     }
 
     .positionenTextHeadlineDiv {
@@ -573,83 +608,207 @@
     }
 
     .positionenHeadlineContainerDiv {
-        display: flex;
+        display: contents;
         align-items: center;
+        font-size: 80%;
+    }
+
+    .hideAtStartup {
+        display: none;
+    }
+
+    .addPositionenButtonDiv,
+    .positionenTextHeadlinePosDiv,
+    .positionenTextHeadlineBDiv,
+    .positionenTextHeadlineArtikelNrDiv,
+    .positionenTextHeadlineBezeichnungDiv,
+    .positionenTextHeadlineLängeDiv,
+    .positionenTextHeadlineBreiteDiv,
+    .positionenTextHeadlineAnzahlDiv,
+    .positionenTextHeadlineMengeDiv,
+    .positionenTextHeadlineEinheitDiv,
+    .positionenTextHeadlinePreisDiv,
+    .positionenTextHeadlineRabattDiv,
+    .positionenTextHeadlineGesamtpreisDiv {
+        align-content: center;
     }
 
     .addPositionenButtonDiv {
-        display: flex;
         cursor: pointer;
-        width:28px;
-        height: 28px
+        width:14px;
+        height: 14px
     }
 
-    .positionenContainerDiv {
-        display: flex;
-        flex-direction: column;
+    .positionenContainerGridDiv {
+        display: grid;
+        column-gap: 4px;
+        row-gap: 4px;
+        grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+        padding-top: 10px;
+        border-top: #cdcdcd 1px solid;
     }
 
     .singlePositionContainerDivClass {
-        display: flex;
-        flex-direction: row;
+        display: contents;
+    }
+
+    .positionBausteinSelectClass,
+    .positionEinheitListSelectClass {
+        height: 100%;
+    }
+
+    .addPositionenButtonDiv,
+    .positionenHeadlineContainerDiv,
+    .positionenTextHeadlinePosDiv,
+    .positionenTextHeadlineBDiv,
+    .positionenTextHeadlineArtikelNrDiv,
+    .positionenTextHeadlineBezeichnungDiv,
+    .positionenTextHeadlineLängeDiv,
+    .positionenTextHeadlineBreiteDiv,
+    .positionenTextHeadlineAnzahlDiv,
+    .positionenTextHeadlineMengeDiv,
+    .positionenTextHeadlineEinheitDiv,
+    .positionenTextHeadlinePreisDiv,
+    .positionenTextHeadlineRabattDiv,
+    .positionenTextHeadlineGesamtpreisDiv,
+    .positionDeleteButtonDivClass,
+    .positionPosDivClass,
+    .positionBausteinDivClass,
+    .positionArtikelNrDivClass,
+    .positionBezeichnungDivClass,
+    .positionLengthDivClass,
+    .positionWidthDivClass,
+    .positionAnzahlDivClass,
+    .positionMengeDivClass,
+    .positionEinheitDivClass,
+    .positionPreisDivClass,
+    .positionRabattDivClass,
+    .positionGesamtpreisDivClass {
+
+    }
+
+
+
+    .positionDeleteButtonDivClass,
+    .positionPosDivClass,
+    .positionBausteinDivClass,
+    .positionArtikelNrDivClass,
+    .positionBezeichnungDivClass,
+    .positionLengthDivClass,
+    .positionWidthDivClass,
+    .positionAnzahlDivClass,
+    .positionMengeDivClass,
+    .positionEinheitDivClass,
+    .positionPreisDivClass ,
+    .positionRabattDivClass,
+    .positionGesamtpreisDivClass {
+        align-content: center;
     }
 
     .positionDeleteButtonDivClass {
-        display: flex;
         cursor: pointer;
-        width:28px;
-        height: 28px
+        width:14px;
+        height: 100%;
     }
 
     .positionPosDivClass {
-        display: flex;
         margin-top: auto;
         margin-bottom: auto;
     }
 
     .positionBausteinDivClass {
-        display: flex;
+
     }
 
     .positionArtikelNrDivClass {
-        display: flex;
     }
 
     .positionBezeichnungDivClass {
-        display: flex;
     }
 
     .positionLengthDivClass {
-        display: flex;
     }
 
     .positionWidthDivClass {
-        display: flex;
     }
 
     .positionAnzahlDivClass {
-        display: flex;
     }
 
     .positionMengeDivClass {
-        display: flex;
     }
 
     .positionEinheitDivClass {
-        display: flex;
     }
 
     .positionPreisDivClass {
-        display: flex;
     }
 
     .positionRabattDivClass {
-        display: flex;
     }
 
     .positionGesamtpreisDivClass {
-        display: flex;
     }
+
+    .positionBausteinSelectClass,
+    .positionArtikelNrInputClass,
+    .positionBezeichnungInputClass,
+    .positionLengthInputClass,
+    .positionWidthInputClass,
+    .positionAnzahlInputClass,
+    .positionMengeInputClass,
+    .positionEinheitListSelectClass,
+    .positionPreisInputClass,
+    .positionRabattInputClass,
+    .positionGesamtpreisInputClass {
+        font-size: 80%;
+    }
+
+    .positionBausteinSelectClass {
+
+    }
+
+    .positionArtikelNrInputClass {
+        width: 60px;
+    }
+
+    .positionBezeichnungInputClass {
+        width: 120px;
+    }
+
+    .positionLengthInputClass {
+        width: 45px;
+    }
+
+    .positionWidthInputClass {
+        width: 45px;
+    }
+
+    .positionAnzahlInputClass {
+        width: 40px;
+    }
+
+    .positionMengeInputClass {
+        width: 40px;
+    }
+
+    .positionEinheitListSelectClass {
+        width: 55px;
+    }
+
+    .positionPreisInputClass {
+        width: 60px;
+    }
+
+    .positionRabattInputClass {
+        width: 60px;
+    }
+
+    .positionGesamtpreisInputClass {
+        width: 60px;
+    }
+
+
 </style>
 
 <div style="" class="formAtAllDiv">
@@ -928,44 +1087,43 @@
 
     </div> <!-- END Adress Reiter Container -->
 
-    <div class="positionenHeadlineContainerDiv">
-        <div class="addPositionenButtonDiv" onclick="addPosition()">
-            <svg width="28" height="28" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                <defs>
-                    <linearGradient id="addGradient" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#00aac8"/>
-                        <stop offset="1" stop-color="#0096be"/>
-                    </linearGradient>
-                </defs>
-                <rect x="0.5" y="0.5" width="55" height="55" rx="12" fill="url(#addGradient)" filter="url(#shadow)"/>
-                <g stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M28 17.5 L28 38.5" />
-                    <path d="M17.5 28 L38.5 28" />
-                </g>
-            </svg>
-        </div>
-        <div class="positionenTextHeadlineDiv">Pos</div>
-        <div class="positionenTextHeadlineDiv">B</div>
-        <div class="positionenTextHeadlineDiv">ArtikelNr</div>
-        <div class="positionenTextHeadlineDiv">Bezeichnung</div>
-        <div class="positionenTextHeadlineDiv">Länge</div>
-        <div class="positionenTextHeadlineDiv">Breite</div>
-        <div class="positionenTextHeadlineDiv">Anzahl</div>
-        <div class="positionenTextHeadlineDiv">Menge</div>
-        <div class="positionenTextHeadlineDiv">Einheit</div>
-        <div class="positionenTextHeadlineDiv">Preis</div>
-        <div class="positionenTextHeadlineDiv">Rabatt</div>
-        <div class="positionenTextHeadlineDiv">Gesamtpreis</div>
-    </div>
     <!-- BEGIN POSITIONEN DIV -->
-    <div id="positionenContainer" class="positionenContainerDiv">
-
+    <div id="positionenContainerGridDiv" class="positionenContainerGridDiv">
+        <div class="positionenHeadlineContainerDiv">
+            <div class="addPositionenButtonDiv" onclick="addPosition()">
+                <svg width="14" height="14" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="display: block;">
+                    <defs>
+                        <linearGradient id="addGradient" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#00aac8"/>
+                            <stop offset="1" stop-color="#0096be"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="0.5" y="0.5" width="55" height="55" rx="12" fill="url(#addGradient)" filter="url(#shadow)"/>
+                    <g stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M28 17.5 L28 38.5" />
+                        <path d="M17.5 28 L38.5 28" />
+                    </g>
+                </svg>
+            </div>
+            <div class="positionenTextHeadlinePosDiv hideAtStartup posHeader">Pos</div>
+            <div class="positionenTextHeadlineBDiv hideAtStartup posHeader">B</div>
+            <div class="positionenTextHeadlineArtikelNrDiv hideAtStartup posHeader">ArtikelNr</div>
+            <div class="positionenTextHeadlineBezeichnungDiv hideAtStartup posHeader">Bezeichnung</div>
+            <div class="positionenTextHeadlineLängeDiv hideAtStartup posHeader">Länge</div>
+            <div class="positionenTextHeadlineBreiteDiv hideAtStartup posHeader">Breite</div>
+            <div class="positionenTextHeadlineAnzahlDiv hideAtStartup posHeader">Anzahl</div>
+            <div class="positionenTextHeadlineMengeDiv hideAtStartup posHeader">Menge</div>
+            <div class="positionenTextHeadlineEinheitDiv hideAtStartup posHeader">Einheit</div>
+            <div class="positionenTextHeadlinePreisDiv hideAtStartup posHeader">Preis</div>
+            <div class="positionenTextHeadlineRabattDiv hideAtStartup posHeader">Rabatt</div>
+            <div class="positionenTextHeadlineGesamtpreisDiv hideAtStartup posHeader">Gesamtpreis</div>
+        </div>
     </div>
 
 </div>
-
-<button onclick="doCreateOffer()">Erstelle Angebotsdatei</button>
 <br>
+<button onclick="doCreateOffer()">Erstelle Angebotsdatei</button>
+<br><br>
 <textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
 
 </body>
