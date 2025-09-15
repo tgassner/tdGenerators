@@ -30,20 +30,9 @@
             "                </g>\n" +
             "            </svg>";
 
-        var deleteButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\"s" +
-            "    <defs>\n" +
-            "      <!-- Farbverlauf Rot -->\n" +
-            "      <linearGradient id=\"deleteGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
-            "        <stop offset=\"0\" stop-color=\"#e35b5b\"/>\n" +
-            "        <stop offset=\"1\" stop-color=\"#c94040\"/>\n" +
-            "      </linearGradient>\n" +
-            //"      <filter id=\"shadow-del\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n" +
-            //"        <feDropShadow dx=\"0\" dy=\"4\" stdDeviation=\"6\" flood-opacity=\"0.18\"/>\n" +
-            //"      </filter>\n" +
-            "    </defs>\n" +
-            "\n" +
-            "    <!-- Hintergrund -->\n" +
-            "    <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"url(#deleteGradient)\" filter=\"url(#shadow-del)\"/>\n" +
+        var deleteButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\"\n" +
+            "    <!-- -->\n" +
+            "    <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"#e35b5b\" filter=\"url(#shadow-del)\"/>\n" +
             "\n" +
             "    <!-- Weißes Minus -->\n" +
             "    <line x1=\"17.5\" y1=\"28\" x2=\"38.5\" y2=\"28\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n" +
@@ -51,15 +40,8 @@
 
         var expandButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
             "    <defs>\n" +
-            "      <linearGradient id=\"expandGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
-            "        <stop offset=\"0\" stop-color=\"#d0d0d0\"/>\n" +
-            "        <stop offset=\"1\" stop-color=\"#a0a0a0\"/>\n" +
-            "      </linearGradient>\n" +
-            //"      <filter id=\"shadow-gray\" x=\"-50%\" y=\"-50%\" width=\"200%\" height=\"200%\">\n" +
-            //"        <feDropShadow dx=\"0\" dy=\"4\" stdDeviation=\"6\" flood-opacity=\"0.15\"/>\n" +
-            //"      </filter>\n" +
             "    </defs>\n" +
-            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"url(#expandGradient)\" filter=\"url(#shadow-gray)\"/>\n" +
+            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"#d0d0d0\" filter=\"url(#shadow-gray)\"/>\n" +
             "    \n" +
             "    <!-- Pfeil nach unten -->\n" +
             "    <polyline points=\"18,24 28,34 38,24\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
@@ -67,12 +49,8 @@
 
         var collapseButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
             "    <defs>\n" +
-            "      <linearGradient id=\"collapseGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
-            "        <stop offset=\"0\" stop-color=\"#d0d0d0\"/>\n" +
-            "        <stop offset=\"1\" stop-color=\"#a0a0a0\"/>\n" +
-            "      </linearGradient>\n" +
             "    </defs>\n" +
-            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"url(#collapseGradient)\" filter=\"url(#shadow-gray)\"/>\n" +
+            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"#d0d0d0\" filter=\"url(#shadow-gray)\"/>\n" +
             "    \n" +
             "    <!-- Pfeil nach oben -->\n" +
             "    <polyline points=\"18,32 28,22 38,32\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
@@ -90,13 +68,15 @@
         }
 
         function expandLangtextPosition(posNumber) {
-            document.getElementById("posLangTextDiv" + posNumber).classList.remove("hiddenClass");
-            document.getElementById("positionCollapseLangTextButtonDiv" + posNumber).classList.remove("hiddenClass");
-            document.getElementById("positionExpandLangTextButtonDiv" + posNumber).classList.add("hiddenClass");
+            document.getElementById("posLangTextTextArea" + posNumber).classList.remove("hiddenClass");
+            let collapseDiv = document.getElementById("positionCollapseLangTextButtonDiv" + posNumber);
+            collapseDiv.classList.remove("hiddenClass")
+            let expandDiv = document.getElementById("positionExpandLangTextButtonDiv" + posNumber);
+            expandDiv.classList.add("hiddenClass");
         }
 
         function collapseLangtextPosition(posNumber) {
-            document.getElementById("posLangTextDiv" + posNumber).classList.add("hiddenClass");
+            document.getElementById("posLangTextTextArea" + posNumber).classList.add("hiddenClass");
             document.getElementById("positionCollapseLangTextButtonDiv" + posNumber).classList.add("hiddenClass");
             document.getElementById("positionExpandLangTextButtonDiv" + posNumber).classList.remove("hiddenClass");
         }
@@ -320,9 +300,9 @@
 
             // LangText
             let posLangTextDiv = createDivWithClassname('posLangTextDivClass');
-            posLangTextDiv.classList.add("hiddenClass");
             posLangTextDiv.id = "posLangTextDiv" + newPosNumber;
             let posLangTextTextArea = document.createElement('textarea');
+            posLangTextTextArea.classList.add("hiddenClass");
             posLangTextTextArea.id = "posLangTextTextArea" + newPosNumber;
             posLangTextTextArea.classList.add("posLangTextTextAreaClass");
             posLangTextDiv.appendChild(posLangTextTextArea);
@@ -848,6 +828,14 @@
     }
 
     .positionGesamtpreisDivClass {
+    }
+
+    .positionExpandLangTextButtonDivClass {
+        cursor: pointer;
+    }
+
+    .positionCollapseLangTextButtonDivClass {
+        cursor: pointer;
     }
 
     .positionBausteinSelectClass,
