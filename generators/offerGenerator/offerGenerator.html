@@ -309,7 +309,7 @@
             posContainer.appendChild(posLangTextDiv);
     }
 
-    function createXmlElement(document, parentElement, name, innerHtml = "", id, tag) {
+    function createXmlElement(document, parentElement, name, textContent = "", id, tag) {
         let element = document.createElement(tag);
 
         if (name) {
@@ -320,8 +320,8 @@
             element.setAttribute("id", id);
         }
 
-        if (innerHtml) {
-            element.innerHTML = innerHtml;
+        if (textContent) {
+            element.textContent = textContent;
         }
 
         parentElement.appendChild(element);
@@ -329,12 +329,44 @@
         return element;
     }
 
-    function createXmlField(document, parentElement, name, innerHtml = "") {
-        return createXmlElement(document, parentElement, name, innerHtml, "", "field");
+    function createXmlField(document, parentElement, name, textContent = "") {
+        return createXmlElement(document, parentElement, name, textContent, "", "field");
     }
 
-    function createXmlObject(document, parentElement, name, innerHtml = "", id) {
-        return createXmlElement(document, parentElement, name, innerHtml, id, "object");
+    function createXmlObject(document, parentElement, name, textContent = "", id) {
+        return createXmlElement(document, parentElement, name, textContent, id, "object");
+    }
+
+    function processLangtextHtml(planeLangtext) {
+        //planeLangtext = planeLangtext.replaceAll("\n", "&#13;");
+        //planeLangtext = planeLangtext.replace(/(?:\r\n|\r|\n)/g, "&#13;");
+
+        const einzelneZeilen = planeLangtext.split('\n');
+
+        let retZeilen = "";
+        for (let i = 0; i < einzelneZeilen.length; i++) {
+            retZeilen += "<p>" + einzelneZeilen[i] + "</p>";
+        }
+
+        return retZeilen;
+    }
+
+    function determineFilename() {
+        return "TODO_" + Date.now() + ".xml";
+    }
+
+    function download(data) {
+        let file = new Blob([data], {type: "application/xml"});
+        let a = document.createElement("a"),
+        url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = determineFilename();
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }, 0);
     }
 
     function doCreateOffer() {
@@ -371,7 +403,7 @@
 
             //let fieldNr1 = xmlOffDoc.createElement("field");
             //fieldNr1.setAttribute("name", "Nr");
-            //fieldNr1.innerHTML = "K259397";
+            //fieldNr1.textContent = "K259397";
             //objOfferElem.appendChild(fieldNr1);
 
             // Versandart
@@ -514,10 +546,9 @@
                     // Gesamtpreis
                     createXmlField(xmlOffDoc, posElement, "Gesamtpreis", document.getElementById("positionGesamtpreisInput" + posNumber).value);
 
-                    // Langtext
-                    createXmlField(xmlOffDoc, posElement, "Langtext", document.getElementById("posLangTextTextArea" + posNumber).value);
                     // LangtextHtml
-                    createXmlField(xmlOffDoc, posElement, "LangtextHtml", document.getElementById("posLangTextTextArea" + posNumber).value);
+                    let langtext = document.getElementById("posLangTextTextArea" + posNumber).value;
+                    createXmlField(xmlOffDoc, posElement, "LangtextHtml", processLangtextHtml(langtext));
 
                     // MwStNr
                     createXmlField(xmlOffDoc, posElement, "MwStNr", "20");
@@ -536,7 +567,16 @@
 
             xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + formatXml(xmlOfferDocString, "  ");
 
-            document.getElementById("offerXml").innerHTML = xmlOfferDocString;
+            return xmlOfferDocString;
+        }
+
+        function doDownloadFile() {
+            let xml = doCreateOffer();
+            download(xml);
+        }
+
+        function doShowFile() {
+            document.getElementById("offerXml").innerHTML = doCreateOffer();
         }
 
         /**
@@ -593,7 +633,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;16.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2.3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;16.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1436,7 +1476,8 @@
 
 </div>
 <br>
-<button onclick="doCreateOffer()">Erstelle Angebotsdatei</button>
+<button onclick="doDownloadFile()">Download XML-File</button>
+<button onclick="doShowFile()">Anzeigen XML-File</button>
 <br><br>
 <textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
 
