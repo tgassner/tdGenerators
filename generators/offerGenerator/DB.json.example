@@ -1,0 +1,6 @@
+{
+  "dbhost": "10.11.12.13\\trallala",
+  "dbuser": "myUser",
+  "dbpass": "topSecretPasswort",
+  "dbname": "nameOfTheDB"
+}

@@ -579,6 +579,46 @@
             document.getElementById("offerXml").innerHTML = doCreateOffer();
         }
 
+        function determineAuftragsnummerFromServer() {
+
+            document.getElementById("animationWaitStribeAuftragsNummer").style.display = "block";
+            document.getElementById("AuftragsNummer").style.display = "none";
+            let button = document.getElementById("AuftragsHolenNummerButton");
+            if (button) {
+                button.disabled = true;
+            }
+
+            fetch("AuftragsNummerErmittler.php") // Call the fetch function passing the url of the API as a parameter
+                .then(res => res.json())
+                .then(function (res) {
+                    let ok = res.ok;
+                    let value = res.value;
+                    let msg = res.msg;
+
+                    if (!ok) {
+                        alert(msg);
+                        return;
+                    }
+                    document.getElementById("AuftragsNummer").value = value;
+                    let button = document.getElementById("AuftragsHolenNummerButton");
+                    if (button) {
+                        button.remove();
+                    }
+                })
+                .catch(function(e) {
+                    alert("Sorry, something went wrong.\n" + e);
+                    document.getElementById("AuftragsHolenNummerButton").enabled = false;
+                }).finally(function () {
+                document.getElementById("AuftragsNummer").style.display = "block";
+                document.getElementById("animationWaitStribeAuftragsNummer").style.display = "none";
+                let button = document.getElementById("AuftragsHolenNummerButton");
+                if (button) {
+                    button.disabled = false;
+                }
+            });
+
+        }
+
         /**
          * thx to arcturus on Stackoverflow
          * https://stackoverflow.com/questions/376373/pretty-printing-xml-with-javascript
@@ -948,6 +988,20 @@
 </style>
 
 <div style="" class="formAtAllDiv">
+
+    <!-- Auftragsnummer -->
+    <div style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="AuftragsNummer">AuftragsNummer:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <div class="inputElement">
+                <img id="animationWaitStribeAuftragsNummer" style="display: none" src="img/animationWaitStribe.png" alt="Waiting Animation">
+                <input type="text" id="AuftragsNummer" name="AuftragsNummer" disabled="disabled"/>
+                <button id="AuftragsHolenNummerButton" onclick="determineAuftragsnummerFromServer()" style="margin-left: 5px">AuftragsNummer holen</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MitarbeiterNr -->
     <div style="" class="fullFormElementDiv">
@@ -1478,6 +1532,7 @@
 <br>
 <button onclick="doDownloadFile()">Download XML-File</button>
 <button onclick="doShowFile()">Anzeigen XML-File</button>
+
 <br><br>
 <textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
 
