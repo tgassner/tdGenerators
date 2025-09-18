@@ -16,45 +16,12 @@
 
     <script>
 
-        var addButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\n" +
-            "                <defs>\n" +
-            "                    <linearGradient id=\"addGradient\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n" +
-            "                        <stop offset=\"0\" stop-color=\"#00aac8\"/>\n" +
-            "                        <stop offset=\"1\" stop-color=\"#0096be\"/>\n" +
-            "                    </linearGradient>\n" +
-            "                </defs>\n" +
-            "                <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"url(#addGradient)\" filter=\"url(#shadow)\"/>\n" +
-            "                <g stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\">\n" +
-            "                    <path d=\"M28 17.5 L28 38.5\" />\n" +
-            "                    <path d=\"M17.5 28 L38.5 28\" />\n" +
-            "                </g>\n" +
-            "            </svg>";
-
-        var deleteButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\" style=\"display: block;>\"\n" +
-            "    <!-- -->\n" +
-            "    <rect x=\"0.5\" y=\"0.5\" width=\"55\" height=\"55\" rx=\"12\" fill=\"#e35b5b\" filter=\"url(#shadow-del)\"/>\n" +
-            "\n" +
-            "    <!-- Weißes Minus -->\n" +
-            "    <line x1=\"17.5\" y1=\"28\" x2=\"38.5\" y2=\"28\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\"/>\n" +
-            "  </svg>";
-
-        var expandButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
-            "    <defs>\n" +
-            "    </defs>\n" +
-            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"#d0d0d0\" filter=\"url(#shadow-gray)\"/>\n" +
-            "    \n" +
-            "    <!-- Pfeil nach unten -->\n" +
-            "    <polyline points=\"18,24 28,34 38,24\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
-            "  </svg>";
-
-        var collapseButton = "<svg width=\"14\" height=\"14\" viewBox=\"0 0 56 56\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\" focusable=\"false\">\n" +
-            "    <defs>\n" +
-            "    </defs>\n" +
-            "    <circle cx=\"28\" cy=\"28\" r=\"27\" fill=\"#d0d0d0\" filter=\"url(#shadow-gray)\"/>\n" +
-            "    \n" +
-            "    <!-- Pfeil nach oben -->\n" +
-            "    <polyline points=\"18,32 28,22 38,32\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n" +
-            "  </svg>";
+        window.addEventListener("beforeunload", function (event) {
+            //if (formNochNichtGespeichert()) {
+                event.preventDefault(); // notwendig in modernen Browsern
+                //event.returnValue = ""; // Chrome, Edge, Firefox
+            //}
+        });
 
         function deletePosition(posNumber) {
             document.getElementById("singlePositionenContainerDiv" + posNumber).remove();
@@ -181,7 +148,10 @@
             posContainer.appendChild(singlePositionContainerDiv);
 
             let positionDeleteButtonDiv = createDivWithClassname('positionDeleteButtonDivClass');
-            positionDeleteButtonDiv.innerHTML = deleteButton;
+            let deleteImgElem = document.createElement("img");
+            deleteImgElem.src = "img/delete.svg";
+            deleteImgElem.alt = "Delete Button";
+            positionDeleteButtonDiv.appendChild(deleteImgElem);
             positionDeleteButtonDiv.addEventListener('click', () => deletePosition(newPosNumber));
             singlePositionContainerDiv.appendChild(positionDeleteButtonDiv);
 
@@ -286,14 +256,20 @@
             // expand Langtext
             let positionExpandLangTextButtonDiv = createDivWithClassname('positionExpandLangTextButtonDivClass');
             positionExpandLangTextButtonDiv.id = "positionExpandLangTextButtonDiv" + newPosNumber;
-            positionExpandLangTextButtonDiv.innerHTML = expandButton;
+            let expandImgElem = document.createElement("img");
+            expandImgElem.src = "img/expand.svg";
+            expandImgElem.alt = "Aufklappen Button";
+            positionExpandLangTextButtonDiv.appendChild(expandImgElem);
             positionExpandLangTextButtonDiv.addEventListener('click', () => expandLangtextPosition(newPosNumber));
             positionExpandAndCollapseLangTextButtonDiv.appendChild(positionExpandLangTextButtonDiv);
 
             // collapse Langtext
             let positionCollapseLangTextButtonDiv = createDivWithClassname('positionCollapseLangTextButtonDivClass');
             positionCollapseLangTextButtonDiv.id = "positionCollapseLangTextButtonDiv" + newPosNumber;
-            positionCollapseLangTextButtonDiv.innerHTML = collapseButton;
+            let collapseImgElem = document.createElement("img");
+            collapseImgElem.src = "img/collapse.svg";
+            collapseImgElem.alt = "Einklappen Button";
+            positionCollapseLangTextButtonDiv.appendChild(collapseImgElem);
             positionCollapseLangTextButtonDiv.addEventListener('click', () => collapseLangtextPosition(newPosNumber));
             positionCollapseLangTextButtonDiv.classList.add("hiddenClass");
             positionExpandAndCollapseLangTextButtonDiv.appendChild(positionCollapseLangTextButtonDiv);
@@ -590,13 +566,18 @@
         }
 
         function doShowFile(syncronCall = true) {
+            document.getElementById("preViewDiv").style.display = "flex";
             if (isOfferNumberAvailable()) {
-                document.getElementById("offerXml").innerHTML = formatXml(doCreateOfferWithExistingAuftragsNummer(), "  ");
+                document.getElementById("offerXmlPreView").innerHTML = formatXml(doCreateOfferWithExistingAuftragsNummer(), "  ");
             } else {
                 if (!syncronCall) {
                     determineAuftragsnummerFromServer(doShowFile);
                 }
             }
+        }
+
+        function doReset() {
+            alert("ToDo");
         }
 
         function determineAuftragsnummerFromServer(callBack) {
@@ -713,7 +694,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.7.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;18.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.7.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;18.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1023,6 +1004,21 @@
         width: 750px;
         resize: none;
         height: 50px;
+    }
+
+    .buttonsDivClass {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .preViewDivClass {
+        display: flex;
+        margin-top: 20px;
+    }
+
+    .previewTextAreaClass {
+        width: 100%;
+        height: 800px;
     }
 
 </style>
@@ -1539,19 +1535,7 @@
     <div id="positionenContainerGridDiv" class="positionenContainerGridDiv">
         <div class="positionenHeadlineContainerDiv">
             <div class="addPositionenButtonDiv" onclick="addPosition()">
-                <svg width="14" height="14" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="display: block;">
-                    <defs>
-                        <linearGradient id="addGradient" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0" stop-color="#00aac8"/>
-                            <stop offset="1" stop-color="#0096be"/>
-                        </linearGradient>
-                    </defs>
-                    <rect x="0.5" y="0.5" width="55" height="55" rx="12" fill="url(#addGradient)" filter="url(#shadow)"/>
-                    <g stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M28 17.5 L28 38.5" />
-                        <path d="M17.5 28 L38.5 28" />
-                    </g>
-                </svg>
+                <img src="img/add.svg" alt="Button Add Position">
             </div>
             <div class="positionenTextHeadlinePosDiv hideAtStartup posHeader">Pos</div>
             <div class="positionenTextHeadlineBDiv hideAtStartup posHeader">B</div>
@@ -1568,13 +1552,16 @@
         </div>
     </div>
 
+    <div style="" class="buttonsDivClass">
+        <button id="downloadButton" onclick="doDownloadFile(false)">Download XML-File</button>
+        <button id="viewButton" onclick="doShowFile(false)">Anzeigen XML-File</button>
+        <button id="resetButton" onclick="doReset()">Reset</button>
+    </div>
+    <div id="preViewDiv" style="display: none" class="preViewDivClass">
+        <textarea id="offerXmlPreView" style="" class="previewTextAreaClass"></textarea>
+    </div>
 </div>
-<br>
-<button id="downloadButton" onclick="doDownloadFile(false)">Download XML-File</button>
-<button id="viewButton" onclick="doShowFile(false)">Anzeigen XML-File</button>
-
 <br><br>
-<textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
 
 </body>
 </html>

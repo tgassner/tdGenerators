@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="14" height="14" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="addGradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#00aac8"/>
+        <stop offset="1" stop-color="#0096be"/>
+      </linearGradient>
+      <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.18"/>
+      </filter>
+    </defs>
+
+    <!-- abgerundetes Rechteck als Hintergrund -->
+    <rect x="0.5" y="0.5" width="55" height="55" rx="12" fill="url(#addGradient)" filter="url(#shadow)"/>
+
+    <!-- weißes Plus -->
+    <g stroke="#ffffff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 17.5 L28 38.5" />
+      <path d="M17.5 28 L38.5 28" />
+    </g>
+  </svg>
