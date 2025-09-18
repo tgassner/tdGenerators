@@ -1,7 +1,8 @@
 <?php
 
-function openConnection()
-{
+header('Content-Type: application/json; charset=utf-8');
+
+function openConnection() {
     $DB_LOGIN = json_decode(file_get_contents("DB.json", true));
 
     $dbhost = $DB_LOGIN->dbhost;
@@ -26,13 +27,14 @@ function getYearYY() {
 
 function readData()
 {
-    $sql = " select *                 \n" .
-           " from BKey                \n" .
-           " where 1 = 1              \n" .
-           " and KeyName = :KeyName   \n" .
-           " and Org_Nr = :OrgNr      \n" .
-           " and BereichID = :Bereich \n" .
-           " and Maske = :Maske       \n";
+    $sql =  " update BKey              \n" .
+            " set lfdNr = lfdNr + 1    \n" .
+            " output inserted.lfdNr    \n" .
+            " where 1 = 1              \n" .
+            " and KeyName = :KeyName   \n" .
+            " and Org_Nr = :OrgNr      \n" .
+            " and BereichID = :Bereich \n" .
+            " and Maske = :Maske       \n";
 
     $conn = OpenConnection();
     $ret = [];
@@ -68,10 +70,9 @@ function readData()
         $ret["msg"] = $e->getMessage();
         $conn->rollBack();
         $conn = null;
-        return $ret;
+        return json_encode($ret, JSON_UNESCAPED_UNICODE);
     }
 }
-
 
 $ret = readData();
 $json = json_encode($ret, JSON_UNESCAPED_UNICODE);
