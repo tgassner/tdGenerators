@@ -369,13 +369,22 @@
         }, 0);
     }
 
-    function doCreateOffer() {
+    function isOfferNumberAvailable() {
+        let auftragsNummerElement = document.getElementById("AuftragsNummer");
+        return auftragsNummerElement && auftragsNummerElement.value && auftragsNummerElement.value.trim().length > 0;
+    }
+
+
+    function doCreateOfferWithExistingAuftragsNummer() {
             let xmlOffDoc = document.implementation.createDocument("", "", null);
 
             let businessobjectsRootElement = createXmlElement(xmlOffDoc, xmlOffDoc, "", "", "", "businessobjects");
 
             // Offer / Angebot Object
             let objOfferElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Angebot", "", "32");
+
+            // Nr   - AngebotNummer
+            createXmlField(xmlOffDoc, objOfferElem, "Nr", document.getElementById("AuftragsNummer").value);
 
             // AngebotArt
             createXmlField(xmlOffDoc, objOfferElem, "AngebotArt", "0");
@@ -565,27 +574,47 @@
             let serializer = new XMLSerializer();
             let xmlOfferDocString = serializer.serializeToString(xmlOffDoc);
 
-            xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + formatXml(xmlOfferDocString, "  ");
+            xmlOfferDocString = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + xmlOfferDocString;
 
             return xmlOfferDocString;
         }
 
-        function doDownloadFile() {
-            let xml = doCreateOffer();
-            download(xml);
+        function doDownloadFile(syncronCall = true) {
+            if (isOfferNumberAvailable()) {
+                download(doCreateOfferWithExistingAuftragsNummer());
+            } else {
+                if (!syncronCall) {
+                    determineAuftragsnummerFromServer(doDownloadFile);
+                }
+            }
         }
 
-        function doShowFile() {
-            document.getElementById("offerXml").innerHTML = doCreateOffer();
+        function doShowFile(syncronCall = true) {
+            if (isOfferNumberAvailable()) {
+                document.getElementById("offerXml").innerHTML = formatXml(doCreateOfferWithExistingAuftragsNummer(), "  ");
+            } else {
+                if (!syncronCall) {
+                    determineAuftragsnummerFromServer(doShowFile);
+                }
+            }
         }
 
-        function determineAuftragsnummerFromServer() {
-
+        function determineAuftragsnummerFromServer(callBack) {
             document.getElementById("animationWaitStribeAuftragsNummer").style.display = "block";
             document.getElementById("AuftragsNummer").style.display = "none";
-            let button = document.getElementById("AuftragsHolenNummerButton");
-            if (button) {
-                button.disabled = true;
+            let buttonAuftragHolen = document.getElementById("AuftragsHolenNummerButton");
+            if (buttonAuftragHolen) {
+                buttonAuftragHolen.disabled = true;
+            }
+
+            let buttonDownload = document.getElementById("downloadButton");
+            if (buttonDownload) {
+                buttonDownload.disabled = true;
+            }
+
+            let buttonView = document.getElementById("viewButton");
+            if (buttonView) {
+                buttonView.disabled = true;
             }
 
             fetch("AuftragsNummerWeiterleiter.php") // Call the fetch function passing the url of the API as a parameter
@@ -609,12 +638,23 @@
                     alert("Sorry, something went wrong.\n" + e);
                     document.getElementById("AuftragsHolenNummerButton").enabled = false;
                 }).finally(function () {
-                document.getElementById("AuftragsNummer").style.display = "block";
-                document.getElementById("animationWaitStribeAuftragsNummer").style.display = "none";
-                let button = document.getElementById("AuftragsHolenNummerButton");
-                if (button) {
-                    button.disabled = false;
-                }
+                    document.getElementById("AuftragsNummer").style.display = "block";
+                    document.getElementById("animationWaitStribeAuftragsNummer").style.display = "none";
+                    let button = document.getElementById("AuftragsHolenNummerButton");
+                    if (button) {
+                        button.disabled = false;
+                    }
+
+                    let buttonDownload = document.getElementById("downloadButton");
+                    if (buttonDownload) {
+                        buttonDownload.disabled = false;
+                    }
+
+                    let buttonView = document.getElementById("viewButton");
+                    if (buttonView) {
+                        buttonView.disabled = false;
+                    }
+                    callBack();
             });
 
         }
@@ -673,7 +713,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2.3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;16.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.7.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;18.09.2025</div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1530,8 +1570,8 @@
 
 </div>
 <br>
-<button onclick="doDownloadFile()">Download XML-File</button>
-<button onclick="doShowFile()">Anzeigen XML-File</button>
+<button id="downloadButton" onclick="doDownloadFile(false)">Download XML-File</button>
+<button id="viewButton" onclick="doShowFile(false)">Anzeigen XML-File</button>
 
 <br><br>
 <textarea id="offerXml" style="width: 600px; height: 800px"></textarea>
