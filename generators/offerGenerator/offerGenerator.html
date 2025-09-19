@@ -577,7 +577,37 @@
         }
 
         function doReset() {
-            alert("ToDo");
+            Array.from(document.getElementsByClassName("singlePositionContainerDivClass")).forEach(element => {
+                element.remove();
+            })
+
+            Array.from(document.getElementsByClassName("posLangTextDivClass")).forEach(element => {
+                element.remove();
+            })
+
+            Array.from(document.getElementsByTagName("input")).forEach(element => {
+                element.value = "";
+            })
+
+            Array.from(document.getElementsByTagName("select")).forEach(element => {
+                element.selectedIndex = 0;
+            })
+
+
+            document.getElementById("animationWaitStribeAuftragsNummer").style.display = "none";
+
+            document.getElementById("AuftragsNummer").style.display = "inline-flex";
+            document.getElementById("AuftragsNummer").value = "";
+
+            document.getElementById("AuftragsHolenNummerButton").disabled = false;
+            document.getElementById("AuftragsHolenNummerButton").style.display = "inline-flex";
+            document.getElementById("downloadButton").disabled = false;
+            document.getElementById("viewButton").disabled = false;
+            document.getElementById("resetButton").disabled = false;
+
+            document.getElementById("preViewDiv").style.display = "none";
+
+            onClickAdresseReiter();
         }
 
         function determineAuftragsnummerFromServer(callBack) {
@@ -612,7 +642,7 @@
                     document.getElementById("AuftragsNummer").value = value;
                     let button = document.getElementById("AuftragsHolenNummerButton");
                     if (button) {
-                        button.remove();
+                        button.style.display = "none";
                     }
                 })
                 .catch(function(e) {
@@ -730,7 +760,7 @@
         width: 100%;
     }
 
-    .adressContainerDiv {
+    .adressContainerDivClass {
         display: flex;
         flex-direction: column;
         margin: 5px 0px 5px 5px;
@@ -739,6 +769,7 @@
         padding-right: 0px;
         padding-bottom: 5px;
         border-top: #cdcdcd 1px solid;
+        align-items: stretch;
     }
 
     .adressReiterDiv {
@@ -749,10 +780,11 @@
     .reiterButtonContainerDiv {
         display: flex;
         flex-direction: row;
+        flex-basis: 33.33%;
     }
+
     .reiterElementDiv {
-        color: #454545;
-        width: 150px;
+        width: 33.33%;
         white-space: nowrap;
         display: flex;
         cursor: pointer;
@@ -760,20 +792,31 @@
         padding-top: 10px;
         padding-bottom: 10px;
         justify-content: center;
+
+        font-family: Roboto, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02857em;
+        border-bottom: #565656 solid 1px;
+
+        user-select: none;
     }
 
     .reiterElementDiv:hover {
-        background: #efefef;
+        background: #0096be;
+        color: #ffffff;
     }
 
     .reiterSelectedElementDiv {
-        color: #000000;
+        color: #ffffff;
         border-bottom: #565656 solid 2px;
-        background: #dedede;
+        background: #00aac8;
     }
 
     .reiterSelectedElementDiv:hover {
-        background: #dedede;
+        background: #0096be;
+        color: #ffffff;
     }
 
     .positionenTextHeadlineDiv {
@@ -1009,6 +1052,7 @@
     .buttonsDivClass {
         display: flex;
         margin-top: 20px;
+        gap:10px;
     }
 
     .preViewDivClass {
@@ -1019,6 +1063,65 @@
     .previewTextAreaClass {
         width: 100%;
         height: 800px;
+    }
+
+     .defaultButtonClass:disabled {
+        background-color: rgba(0,0,0,0.12);
+        color: rgba(0,0,0,0.38);
+        box-shadow: none;
+        cursor: default;
+    }
+
+    .defaultButtonClass:active {
+        background-color: #0096be;
+        transform: translateY(1px); /* leicht reindrücken */
+        box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+                    0px 4px 5px 0px rgba(0,0,0,0.14),
+                    0px 1px 10px 0px rgba(0,0,0,0.12);
+    }
+
+    .defaultButtonClass:hover {
+        background-color: #0096be;
+        box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+                    0px 4px 5px 0px rgba(0,0,0,0.14),
+                    0px 1px 10px 0px rgba(0,0,0,0.12);
+    }
+
+    .defaultButtonClass {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 16px;
+        min-width: 64px;
+        height: 36px;
+
+
+        font-family: Roboto, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.02857em;
+
+        background-color: #00aac8;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+
+        box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+                    0px 2px 2px 0px rgba(0,0,0,0.14),
+                    0px 1px 5px 0px rgba(0,0,0,0.12);
+
+        transition: background-color 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+
+        user-select: none;
+
+        flex-basis: 33.33%;
+    }
+
+    .inlineButtonClass {
+        flex-basis: auto;
+        height: 21px;
     }
 
 </style>
@@ -1034,7 +1137,7 @@
             <div class="inputElement">
                 <img id="animationWaitStribeAuftragsNummer" style="display: none" src="img/animationWaitStribe.png" alt="Waiting Animation">
                 <input type="text" id="AuftragsNummer" name="AuftragsNummer" disabled="disabled"/>
-                <button id="AuftragsHolenNummerButton" onclick="determineAuftragsnummerFromServer()" style="margin-left: 5px">AuftragsNummer holen</button>
+                <button id="AuftragsHolenNummerButton" onclick="determineAuftragsnummerFromServer()" style="margin-left: 5px" class="inlineButtonClass defaultButtonClass">AuftragsNummer holen</button>
             </div>
         </div>
     </div>
@@ -1178,7 +1281,7 @@
 
 
     <!-- BEGIN Adress Reiter Container -->
-    <div style="" class="adressContainerDiv">
+    <div style="" class="adressContainerDivClass">
         <div style="" class="reiterButtonContainerDiv">
             <div id="reiterAdresse" style="" class="reiterElementDiv reiterSelectedElementDiv" onclick="onClickAdresseReiter()">
                 Adresse
@@ -1553,9 +1656,9 @@
     </div>
 
     <div style="" class="buttonsDivClass">
-        <button id="downloadButton" onclick="doDownloadFile(false)">Download XML-File</button>
-        <button id="viewButton" onclick="doShowFile(false)">Anzeigen XML-File</button>
-        <button id="resetButton" onclick="doReset()">Reset</button>
+        <button id="downloadButton" onclick="doDownloadFile(false)" class="defaultButtonClass">Download XML-File</button>
+        <button id="viewButton" onclick="doShowFile(false)" class="defaultButtonClass">Anzeigen XML-File</button>
+        <button id="resetButton" onclick="doReset()" class="defaultButtonClass">Reset</button>
     </div>
     <div id="preViewDiv" style="display: none" class="preViewDivClass">
         <textarea id="offerXmlPreView" style="" class="previewTextAreaClass"></textarea>
