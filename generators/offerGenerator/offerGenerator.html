@@ -12,6 +12,9 @@
     <link rel="apple-touch-icon" href="img/favicon114.png" />
     <meta name="msapplication-TileImage" content="img/favicon114.png" />
 
+    <script src="js/autoComplete.min.js"></script>
+    <link rel="stylesheet" href="css/autoComplete.min.css">
+
     <title>Transparentdesign Offer Generator</title>
 
     <script>
@@ -165,8 +168,10 @@
             // Baustein
             let positionBausteinDiv = createDivWithClassname('positionBausteinDivClass');
             let positionBausteinSelect = document.createElement('select');
-            positionBausteinSelect.id = "positionBausteinSelect" + newPosNumber;
+            let positionBausteinSelectElementId = "positionBausteinSelect" + newPosNumber;
+            positionBausteinSelect.id = positionBausteinSelectElementId;
             positionBausteinSelect.classList.add("positionBausteinSelectClass");
+            createSelectOptionAndAddToList("", "", positionBausteinSelect);
             createSelectOptionAndAddToList("D", "D", positionBausteinSelect);
             createSelectOptionAndAddToList("F", "F", positionBausteinSelect);
             createSelectOptionAndAddToList("T", "T", positionBausteinSelect);
@@ -176,13 +181,19 @@
 
             // Artikel Nr
             let positionArtikelNrDiv = createDivWithClassname("positionArtikelNrDivClass");
-            let positionArtikelNrInput = createInputWithTypeAndId("text", "positionArtikelNrInput" + newPosNumber, null, null, "positionArtikelNrInputClass");
+            let artikelNrInputElementId = "positionArtikelNrInput" + newPosNumber;
+            let positionArtikelNrInput = createInputWithTypeAndId("text", artikelNrInputElementId, null, null, "positionArtikelNrInputClass");
+            positionArtikelNrInput.spellcheck = false;
+            positionArtikelNrInput.autocomplete = "off";
+            positionArtikelNrInput.autocorrect = "off";
+            positionArtikelNrInput.autocapitalize = "off";
             positionArtikelNrDiv.appendChild(positionArtikelNrInput);
             singlePositionContainerDiv.appendChild(positionArtikelNrDiv);
 
             // Bezeichnung
             let positionBezeichnungDiv = createDivWithClassname('positionBezeichnungDivClass');
-            let positionBezeichnungInput = createInputWithTypeAndId("text", "positionBezeichnungInput" + newPosNumber, null, null, "positionBezeichnungInputClass");
+            let artikelBezeichnungInputElementId = "positionBezeichnungInput" + newPosNumber;
+            let positionBezeichnungInput = createInputWithTypeAndId("text", artikelBezeichnungInputElementId, null, null, "positionBezeichnungInputClass");
             positionBezeichnungDiv.appendChild(positionBezeichnungInput);
             singlePositionContainerDiv.appendChild(positionBezeichnungDiv);
 
@@ -214,7 +225,8 @@
             // Einheit
             let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
             let positionEinheitList = document.createElement('select');
-            positionEinheitList.id = "positionEinheitSelect" + newPosNumber;
+            let positionEinheitSelectElementId = "positionEinheitSelect" + newPosNumber;
+            positionEinheitList.id = positionEinheitSelectElementId;
             positionEinheitList.classList.add("positionEinheitListSelectClass");
             createSelectOptionAndAddToList("", "", positionEinheitList);
             createSelectOptionAndAddToList("Stück", "Stück", positionEinheitList);
@@ -233,7 +245,8 @@
 
             // Preis
             let positionPreisDiv = createDivWithClassname('positionPreisDivClass');
-            let positionPreisInput = createInputWithTypeAndId("number", "positionPreisInput" + newPosNumber, null, null, "positionPreisInputClass");
+            let positionPreisInputElementId = "positionPreisInput" + newPosNumber;
+            let positionPreisInput = createInputWithTypeAndId("number", positionPreisInputElementId, null, null, "positionPreisInputClass");
             positionPreisInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
             positionPreisDiv.appendChild(positionPreisInput);
             singlePositionContainerDiv.appendChild(positionPreisDiv);
@@ -283,6 +296,11 @@
             posLangTextTextArea.classList.add("posLangTextTextAreaClass");
             posLangTextDiv.appendChild(posLangTextTextArea);
             posContainer.appendChild(posLangTextDiv);
+
+            // ADDING autocompletion
+            if (allArticleData) {
+                initAutoComplete(artikelNrInputElementId, artikelBezeichnungInputElementId, positionPreisInputElementId, positionEinheitSelectElementId, positionBausteinSelectElementId);
+            }
     }
 
     function createXmlElement(document, parentElement, name, textContent = "", id, tag) {
@@ -712,10 +730,141 @@
             switchReiterAdresse("reiterRechnungsanschrift", "reiterContentRechnungsanschrift");
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        function createStatusElement(status, text) {
+            let okElement = document.createElement('span');
+            switch (status) {
+                case "ok":
+                    okElement.style.color = "#AFC80A";
+                    break;
+                case "nok":
+                    okElement.style.color = "#FF0000";
+                    break;
+                default:
+                    okElement.style.color = "#000000";
+                    break;
+            }
+            okElement.title = text;
+            okElement.innerHTML = "&#xFFED;"
+            return okElement;
+        }
 
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("ArtikelService.php?action=findAllProducts") // Call the fetch function passing the url of the API as a parameter
+                .then(res => res.json())
+                .then(function (res) {
+                    let ok = res.ok;
+                    let value = res.value;
+                    let msg = res.msg;
+
+                    if (!ok) {
+                        document.getElementById("statusSpan").appendChild(createStatusElement("nok", msg));
+                        return;
+                    }
+
+                    allArticleData = value;
+
+                    document.getElementById("statusSpan").appendChild(createStatusElement("ok", "Article Data loaded Successfully!"));
+                })
+                .catch(function(e) {
+                    document.getElementById("statusSpan").appendChild(createStatusElement("nok", "Sorry, something went wrong.\n" + e));
+                }).finally(function () {
+            });
         })
 
+        function initAutoComplete(artikelNrInputElementId, artikelBezeichnungInputElementId, positionPreisInputElementId, positionEinheitSelectElementId, positionBausteinSelectElementId) {
+            const autoCompleteJS = new autoComplete({
+                selector: "#" + artikelNrInputElementId,
+                data: { src: allArticleData, keys: ["Nr", "Bezeichnung"] },
+                resultItem: {
+                    highlight: true,
+                    //selected: "autoComplete_selected"
+                },
+                resultsList: {
+                    tabSelect : true,
+                }
+            });
+
+            document.querySelector("#" + artikelNrInputElementId).addEventListener("selection", function (event) {
+                if (event && event.detail && event.detail.selection && event.detail.selection.value) {
+                    fillArticleWithAutocompletion(
+                        positionBausteinSelectElementId,
+                        artikelNrInputElementId,
+                        artikelBezeichnungInputElementId,
+                        positionPreisInputElementId,
+                        positionEinheitSelectElementId,
+                        event.detail.selection.value.Nr,
+                        event.detail.selection.value.Bezeichnung,
+                        event.detail.selection.value.KalkPreis,
+                        event.detail.selection.value.Einheit);
+                }
+            });
+
+            document.getElementById(artikelNrInputElementId).addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    const val = e.target.value.trim();
+                    // 1. In den aktuell geladenen Daten suchen
+                    let artikel = allArticleData.find(a => a.Nr.toLowerCase() === val.toLowerCase());
+                    if (artikel) {
+                        e.preventDefault(); // verhindert, dass das Formular direkt abgeschickt wird
+
+                        fillArticleWithAutocompletion(
+                            positionBausteinSelectElementId,
+                            artikelNrInputElementId,
+                            artikelBezeichnungInputElementId,
+                            positionPreisInputElementId,
+                            positionEinheitSelectElementId,
+                            artikel.Nr,
+                            artikel.Bezeichnung,
+                            artikel.KalkPreis,
+                            artikel.Einheit);
+                        autoCompleteJS.close();
+                    }
+                }
+            });
+        }
+
+        function fillArticleWithAutocompletion(
+            positionBausteinSelectElementId,
+            artikelNrInputElementId,
+            artikelBezeichnungInputElementId,
+            positionPreisInputElementId,
+            positionEinheitSelectElementId,
+            artikelNrValue,
+            artikelBezeichnungValue,
+            artikelKalkpreisValue,
+            artikelEinheitValue) {
+
+            let positionBaustrinElement = document.getElementById(positionBausteinSelectElementId);
+            if (positionBaustrinElement) {
+                positionBaustrinElement.value = "D";
+            }
+
+            let artikelNummerElement = document.getElementById(artikelNrInputElementId);
+            if (artikelNummerElement) {
+                artikelNummerElement.value = artikelNrValue;
+            }
+
+            let artikelBezeichnungElement = document.getElementById(artikelBezeichnungInputElementId);
+            if (artikelBezeichnungElement) {
+                artikelBezeichnungElement.value = artikelBezeichnungValue;
+            }
+
+            let preisElement = document.getElementById(positionPreisInputElementId);
+            if (preisElement) {
+
+                let preis = parseFloat(artikelKalkpreisValue);
+                if (preis !== Number.NaN) {
+                    preisElement.value = preis.toFixed(2);
+                }
+            }
+
+            let bausteinElement = document.getElementById(positionEinheitSelectElementId);
+            if (bausteinElement) {
+                bausteinElement.value = artikelEinheitValue;
+            }
+        }
+
+        var allArticleData = null;
     </script>
 
 </head>
@@ -724,7 +873,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.8.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;19.09.2025</div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.8.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;19.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1004,7 +1153,7 @@
     }
 
     .positionArtikelNrInputClass {
-        width: 60px;
+        width: 60px !important;
     }
 
     .positionBezeichnungInputClass {
@@ -1123,6 +1272,61 @@
         flex-basis: auto;
         height: 21px;
     }
+
+    .autoComplete_wrapper {
+        height: 100%;
+        display: block;
+    }
+
+    .autoComplete_wrapper > input {
+        all: unset;          /* entfernt ALLE Styles */
+        padding-block: 1px;
+        padding-inline: 2px;
+        display: inline-block;     /* oder was du willst */
+        font: inherit;       /* übernimmt Schrift vom Eltern-Element */
+        color: inherit;
+        background: none;
+        /* height: 80%; *%
+        /* border: 1px solid #ccc; */ /* falls du einen Rahmen willst */
+        border-color: #ffffff;
+        border-width: 1px;
+        border-radius: 2px;
+        border-style: solid;
+        /* padding: 1px 2px 1px 2px; */
+        font-size: 80%;
+
+        outline-style: solid;
+        outline-width: 1px;
+        outline-color: #767676;
+    }
+
+    .autoComplete_wrapper > input:focus {
+        color: inherit;
+        border-color: #101010;
+        outline-style: solid;
+        outline-width: 1px;
+        outline-color: #101010;
+    }
+
+    .autoComplete_wrapper > input:hover {
+        color: inherit;
+        outline-color: #4F4F4F;
+        border-style: solid;
+        transition: none;
+    }
+
+    .autoComplete_wrapper > input:hover:focus {
+        color: inherit;
+        border-color: #101010;
+        outline-style: solid;
+        outline-width: 1px;
+        outline-color: #101010;
+    }
+
+    .autoComplete_wrapper>ul {
+        width: 300px;
+    }
+
 
 </style>
 

@@ -2,24 +2,7 @@
 
 header('Content-Type: application/json; charset=utf-8');
 
-function openConnection() {
-    $DB_LOGIN = json_decode(file_get_contents("DB.json", true));
-
-    $dbhost = $DB_LOGIN->dbhost;
-    $dbuser = $DB_LOGIN->dbuser;
-    $dbpass = $DB_LOGIN->dbpass;
-    $dbname = $DB_LOGIN->dbname;
-
-    $dbh = new PDO(
-        "sqlsrv:Server=$dbhost;Database=$dbname",
-        $dbuser,
-        $dbpass ,
-        array(//PDO::ATTR_PERSISTENT => true, // Verbindung bleibt bis scriptende gecached !
-            //PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-
-    return $dbh;
-}
+include_once "include/DB.php";
 
 function getYearYY() {
     return date("y");
@@ -36,7 +19,9 @@ function readData()
             " and BereichID = :Bereich \n" .
             " and Maske = :Maske       \n";
 
-    $conn = OpenConnection();
+    $dbTool = new DBTool();
+
+    $conn = $dbTool->OpenConnection();
     $ret = [];
     $ret["ok"] = false;
     $ret["value"] = -1;
@@ -63,7 +48,7 @@ function readData()
         }
         $conn->commit();
         $conn = null;
-        return $ret;
+        return json_encode($ret, JSON_UNESCAPED_UNICODE);
     }
     catch (PDOException $e)
     {
@@ -74,8 +59,7 @@ function readData()
     }
 }
 
-$ret = readData();
-$json = json_encode($ret, JSON_UNESCAPED_UNICODE);
+$json = readData();
 //sleep(3); // TODO remove
 echo $json;
 
