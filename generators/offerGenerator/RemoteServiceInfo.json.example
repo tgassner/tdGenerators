@@ -1,0 +1,7 @@
+{
+  "serviceHost": "http://myhost.example/trallala/trullele",
+  "services": {
+    "AngebotsNummerRemoteService": "doenerRemoteService.php",
+    "ArtikelRemoteService": "kebabRemoteService.php"
+  }
+}

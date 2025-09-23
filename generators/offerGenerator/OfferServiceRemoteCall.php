@@ -1,6 +1,13 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
-$DBServerErmittlerUrl = file_get_contents("DBServerErmittlerUrl.txt");
+
+include_once "include/VariaTools.php";
+
+$remoteServiceConfig = json_decode(file_get_contents("RemoteServiceInfo.json"));
+$serviceEntpoint = $remoteServiceConfig->services->OfferRemoteService;
+
+$action =  (new VariaTools())->readFromRequestGetPost("action", "");
+$serviceEntpoint .= "?action={$action}";
 
 $opts = [
     "http" => [
@@ -24,7 +31,7 @@ set_error_handler(
     }
 );
 
-$auftragsNummerInfoJson = file_get_contents($DBServerErmittlerUrl, false, $context);
+$auftragsNummerInfoJson = file_get_contents($serviceEntpoint, false, $context);
 
 restore_error_handler();
 

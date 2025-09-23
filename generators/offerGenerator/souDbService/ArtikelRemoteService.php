@@ -11,14 +11,20 @@ $action =  $variaTools->readFromRequestGetPost("action", "");
 
 switch ($action) {
     case "findAllProducts" :
-        echo((new ArtikelService())->findAllArtikel());
+        $json = (new ArtikelRemoteService())->findAllArtikelJsonResponse();
+        //sleep(3); // TODO remove (throttling for testing purpose)
+        echo($json);
         break;
     default:
         break;
 }
 
 
-class ArtikelService {
+class ArtikelRemoteService {
+
+    public function findAllArtikelJsonResponse() {
+        return json_encode($this->findAllArtikel(), JSON_UNESCAPED_UNICODE);
+    }
 
     public function findAllArtikel()
     {
@@ -42,7 +48,6 @@ class ArtikelService {
             while ($myrow = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 if ($count <= 0) {
                     $ret["ok"] = true;
-
                 }
                 $article = [];
                 $article["Nr"] = $myrow["Nr"];
@@ -53,13 +58,13 @@ class ArtikelService {
                 $count++;
             }
             $conn = null;
-            return json_encode($ret, JSON_UNESCAPED_UNICODE);
+            return $ret;
         }
         catch (PDOException $e)
         {
             $ret["msg"] = $e->getMessage();
             $conn = null;
-            return json_encode($ret, JSON_UNESCAPED_UNICODE);
+            return $ret;
         }
     }
 }
