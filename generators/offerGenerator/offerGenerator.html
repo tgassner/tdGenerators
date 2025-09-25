@@ -346,7 +346,11 @@
     }
 
     function determineFilename() {
-        return "TODO_" + Date.now() + ".xml";
+        let mitarbeiter = document.getElementById("MitarbeiterNr").value.trim();
+        let currentDate = new Date();
+        let dateTime = currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate() + " " + currentDate.getHours() + "." + currentDate.getMinutes() + "." + currentDate.getSeconds();
+        let auftragsnummer = document.getElementById("AuftragsNummer").value;
+        return  ((mitarbeiter === "") ? "" : (mitarbeiter + " ")) + dateTime  + " " + auftragsnummer + ".xml";
     }
 
     function download(data) {
@@ -875,7 +879,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Offer Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.0&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;25.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
