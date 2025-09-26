@@ -19,4 +19,26 @@ class DBTool {
 
         return $dbh;
     }
+
+    public function runQueryList(string $sql, callable $rowHandler, array $params = []) {
+        $ret["ok"] = false;
+        $ret["value"] = -1;
+        $ret["msg"] = "";
+        try {
+            $conn = $this->OpenConnection();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $ret = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $rowHandler($row, $ret);
+            }
+
+            $conn = null;
+            return $ret;
+        } catch (PDOException $e) {
+            $conn = null;
+            $ret["msg"] = $e->getMessage();
+            return $ret;
+        }
+    }
 }

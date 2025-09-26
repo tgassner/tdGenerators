@@ -11,7 +11,7 @@ $action =  $variaTools->readFromRequestGetPost("action", "");
 
 switch ($action) {
     case "getOpenOrderByEmployee" :
-        $json = (new OrderRemoteService())->getOpenOrderByEmployee($variaTools);
+        $json = (new OrderRemoteService($variaTools))->getOpenOrderByEmployeeJsonResponse();
         echo $json;
         break;
     default:
@@ -20,8 +20,20 @@ switch ($action) {
 
 class OrderRemoteService {
 
-    public function getOpenOrderByEmployee($variaTools)
-    {
+    private VariaTools $variaTools;
+    function __construct($variaTools = null) {
+        if ($variaTools == null) {
+            $this->variaTools = new VariaTools();
+        } else {
+            $this->variaTools = $variaTools;
+        }
+    }
+
+    public function getOpenOrderByEmployeeJsonResponse() {
+        return json_encode($this->getOpenOrderByEmployee(), JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getOpenOrderByEmployee() {
         $sql =
             " select                                                                                                                                                              \n" .
             " a.Nr, a.Gpartner_Nr, a.BestellNr, a.BestellDatum, Versandart, a.Liefertermin, a.Versandtermin, a.Nettobetrag, a.Bruttobetrag, a.LiefBedText,                        \n" .
@@ -43,44 +55,13 @@ class OrderRemoteService {
             " order by a.Liefertermin, a.Versandtermin, a.Nr                                                                                                                      \n";
 
         $dbTool = new DBTool();
+        $mitarbeiterId = $this->variaTools->readFromRequestGetPost("MitarbeiterNr", "");;
 
-        $conn = $dbTool->OpenConnection();
-        $ret["ok"] = false;
-        $ret["value"] = -1;
-        $ret["msg"] = "";
+        $ret = $dbTool->runQueryList($sql, function($row) {
+            return print_r($row);
+            // TODO;
+        }, array('MitarbeiterNr' => $mitarbeiterId));
 
-        $mitarbeiterId = $variaTools->readFromRequestGetPost("MitarbeiterNr", "");;
-
-        try {
-            $conn->beginTransaction();
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue("MitarbeiterNr", $mitarbeiterId, PDO::PARAM_STR);
-            $stmt->execute();
-
-            //$count = 0;
-
-            while ($myrow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                print_r($myrow);
-                /*
-                if ($count <= 0) {
-                    $ret["ok"] = true;
-                }
-                $article = [];
-                $article["Nr"] = $myrow["Nr"];
-                $article["Bezeichnung"] = $myrow["Bezeichnung"];
-                $article["KalkPreis"] = $myrow["KalkPreis"];
-                $article["Einheit"] = $myrow["Einheit"];
-                $ret["value"][] = $article;
-                */
-            }
-            $conn = null;
-            return $ret;
-        }
-        catch (PDOException $e)
-        {
-            $ret["msg"] = $e->getMessage();
-            $conn = null;
-            return $ret;
-        }
+        return $ret;
     }
 }
