@@ -4,33 +4,12 @@ header('Content-Type: application/json; charset=utf-8');
 
 include_once "include/DB.php";
 include_once "include/VariaTools.php";
+require_once "AbstractBusinessObjectRemoteService.php";
 
-$variaTools = new VariaTools();
+class OrderRemoteService extends AbstractBusinessObjectRemoteService {
 
-$action =  $variaTools->readFromRequestGetPost("action", "");
-
-switch ($action) {
-    case "getOpenOrderByEmployee" :
-        $json = (new OrderRemoteService($variaTools))->getOpenOrderByEmployeeJsonResponse();
-        echo $json;
-        break;
-    default:
-        break;
-}
-
-class OrderRemoteService {
-
-    private VariaTools $variaTools;
-    function __construct($variaTools = null) {
-        if ($variaTools == null) {
-            $this->variaTools = new VariaTools();
-        } else {
-            $this->variaTools = $variaTools;
-        }
-    }
-
-    public function getOpenOrderByEmployeeJsonResponse() {
-        return json_encode($this->getOpenOrderByEmployee(), JSON_UNESCAPED_UNICODE);
+    public function generateNewOrderNumber() {
+        return $this->generateNewBusinessObjectNumber("K", "AUFTRAG");
     }
 
     public function getOpenOrderByEmployee() {
@@ -52,16 +31,35 @@ class OrderRemoteService {
             " where 1 = 1                                                                                                                                                         \n" .
             " and MitarbeiterNr = :MitarbeiterNr                                                                                                                                  \n" .
             " and AbschlFertigung = 0                                                                                                                                             \n" .
-            " order by a.Liefertermin, a.Versandtermin, a.Nr                                                                                                                      \n";
+            " order by a.Liefertermin, a.Versandtermin, a.Nr, ap.PosNr                                                                                                            \n";
 
         $dbTool = new DBTool();
-        $mitarbeiterId = $this->variaTools->readFromRequestGetPost("MitarbeiterNr", "");;
+        $mitarbeiterId = $this->variaTools->readFromRequestGetPost("MitarbeiterNr", "");
 
-        $ret = $dbTool->runQueryList($sql, function($row) {
+        $ret = $dbTool->runQueryList($sql, function($row, $resultSet) {
             return print_r($row);
             // TODO;
         }, array('MitarbeiterNr' => $mitarbeiterId));
 
         return $ret;
     }
+}
+
+$variaTools = new VariaTools();
+$orderRemoteService = new OrderRemoteService($variaTools);
+
+$action =  $variaTools->readFromRequestGetPost("action", "");
+
+switch ($action) {
+    case "getOpenOrderByEmployee" :
+        $json = $orderRemoteService-> $orderRemoteService->getOpenOrderByEmployeeJsonResponse();
+        echo $json;
+        break;
+    case "generateNewOrderNumber" :
+        $json = $orderRemoteService->convertJson($orderRemoteService->generateNewOrderNumber());
+        //sleep(3); // TODO remove (throttling for testing purpose)
+        echo $json;
+        break;
+    default:
+        break;
 }

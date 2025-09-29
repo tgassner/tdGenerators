@@ -654,7 +654,7 @@
                 buttonView.disabled = true;
             }
 
-            fetch("OfferServiceRemoteCall.php?action=generateNewArticleNumber") // Call the fetch function passing the url of the API as a parameter
+            fetch("OfferServiceRemoteCall.php?action=generateNewOfferNumber") // Call the fetch function passing the url of the API as a parameter
                 .then(res => res.json())
                 .then(function (res) {
                     let ok = res.ok;

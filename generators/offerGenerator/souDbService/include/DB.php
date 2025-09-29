@@ -22,17 +22,40 @@ class DBTool {
 
     public function runQueryList(string $sql, callable $rowHandler, array $params = []) {
         $ret["ok"] = false;
-        $ret["value"] = -1;
+        $ret["value"] = [];
         $ret["msg"] = "";
         try {
             $conn = $this->OpenConnection();
             $stmt = $conn->prepare($sql);
             $stmt->execute($params);
-            $ret = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $rowHandler($row, $ret);
+                $ret["value"][] = $rowHandler($row);
             }
+            $ret["ok"] = true;
+            $conn = null;
+            return $ret;
+        } catch (PDOException $e) {
+            $conn = null;
+            $ret["msg"] = $e->getMessage();
+            return $ret;
+        }
+    }
 
+    public function runQueryOneResult(string $sql, callable $rowHandler, array $params = []) {
+        $ret["ok"] = false;
+        $ret["value"] = null;
+        $ret["msg"] = "";
+        try {
+            $conn = $this->OpenConnection();
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $ret["value"] = $rowHandler($row);
+                $ret["ok"] = true;
+            } else {
+                $ret["msg"] = "No result from DB";
+            }
             $conn = null;
             return $ret;
         } catch (PDOException $e) {
