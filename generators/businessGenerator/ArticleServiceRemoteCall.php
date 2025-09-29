@@ -14,7 +14,7 @@ $opts = [
         "method" => "GET",
         "header" => "Accept-language: de-AT, de;q=0.9, en;q=0.7, *;q=0.2\r\n" .
             "Content-Type: application/json\r\n" .
-            "User-Agent: Offer Generator\r\n"
+            "User-Agent: Business Generator\r\n"
     ]
 ];
 
