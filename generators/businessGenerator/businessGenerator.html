@@ -24,6 +24,18 @@
             ORDER:  Symbol("ORDER")
         });
 
+        function businessTypeFromString(businessTypeString) {
+            switch (businessTypeString) {
+                case Object(BusinessTypes.OFFER).description:
+                    return BusinessTypes.OFFER;
+                case Object(BusinessTypes.ORDER).description:
+                    return BusinessTypes.ORDER;
+                    default:
+                        return null;
+            }
+        }
+
+
         window.addEventListener("beforeunload", function (event) {
                 event.preventDefault();
         });
@@ -357,6 +369,7 @@
         let currentDate = new Date();
         let dateTime = currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate() + " " + currentDate.getHours() + "." + currentDate.getMinutes() + "." + currentDate.getSeconds();
         let businessNummer = document.getElementById("BusinessNummer").value;
+        // TODO BusinessTypes into Filename...
         return  ((mitarbeiter === "") ? "" : (mitarbeiter + " ")) + dateTime  + " " + businessNummer + ".xml";
     }
 
@@ -374,10 +387,6 @@
         }, 0);
     }
 
-    function isOfferNumberAvailable() {
-        let businessNummerElement = document.getElementById("BusinessNummer");
-        return businessNummerElement && businessNummerElement.value && businessNummerElement.value.trim().length > 0;
-    }
 
     function doCreateBusinessObjectWithExistingBusinessNummer(businessType) {
             let xmlOffDoc = document.implementation.createDocument("", "", null);
@@ -616,13 +625,15 @@
             determineBusinessnummerFromServer("OrderServiceRemoteCall.php?action=generateNewOrderNumber", BusinessTypes.ORDER);
         }
 
-        function doDownloadFile(syncronCall = true) {
-            download(doCreateBusinessObjectWithExistingBusinessNummer(businessKind));
+        function doDownloadFile() {
+            let businessType = businessTypeFromString(document.getElementById("BusinessType").value);
+            download(doCreateBusinessObjectWithExistingBusinessNummer(businessType));
         }
 
-        function doShowFile(syncronCall = true) {
+        function doShowFile() {
+            let businessType = businessTypeFromString(document.getElementById("BusinessType").value);
             document.getElementById("preViewDiv").style.display = "flex";
-            document.getElementById("offerXmlPreView").innerHTML = formatXml(doCreateBusinessObjectWithExistingBusinessNummer(), "  ");
+            document.getElementById("offerXmlPreView").innerHTML = formatXml(doCreateBusinessObjectWithExistingBusinessNummer(businessType));
         }
 
         function doReset() {
@@ -647,6 +658,9 @@
 
             document.getElementById("BusinessNummer").style.display = "inline-flex";
             document.getElementById("BusinessNummer").value = "";
+
+            document.getElementById("BusinessType").style.display = "none";
+            document.getElementById("BusinessType").value = "";
 
             document.getElementById("preViewDiv").style.display = "none";
 
@@ -674,6 +688,8 @@
                         return;
                     }
                     document.getElementById("BusinessNummer").value = value;
+                    document.getElementById("BusinessType").style.display = "block";
+                    document.getElementById("BusinessType").value = Object(businessType).description;
                     switch (businessType) {
                         case BusinessTypes.OFFER:
                             console.log("OFFER");
@@ -882,7 +898,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Business Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.4&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;30.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.5&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;30.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1382,6 +1398,7 @@
             <div class="inputElement">
                 <img id="animationWaitStribeBusinessNummer" style="display: none" src="img/animationWaitStribe.png" alt="Waiting Animation">
                 <input type="text" id="BusinessNummer" name="BusinessNummer" disabled="disabled"/>
+                <input style="display: none; margin-left: 10px" type="text" id="BusinessType" name="BusinessType" disabled="disabled"/>
             </div>
         </div>
     </div>
@@ -1891,8 +1908,8 @@
     </div>
 
     <div  id="ButtonsDownloadOrShowDiv" style="display: none" class="buttonsDivClass">
-        <button id="downloadButton" onclick="doDownloadFile(false)" class="defaultButtonClass">Download XML-File</button>
-        <button id="viewButton" onclick="doShowFile(false)" class="defaultButtonClass">Anzeigen XML-File</button>
+        <button id="downloadButton" onclick="doDownloadFile()" class="defaultButtonClass">Download XML-File</button>
+        <button id="viewButton" onclick="doShowFile()" class="defaultButtonClass">Anzeigen XML-File</button>
         <button id="resetButton2" onclick="doReset()" class="defaultButtonClass">Reset</button>
     </div>
     <div id="preViewDiv" style="display: none" class="preViewDivClass">
