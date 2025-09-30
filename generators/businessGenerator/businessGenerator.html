@@ -15,15 +15,17 @@
     <script src="js/autoComplete.min.js"></script>
     <link rel="stylesheet" href="css/autoComplete.min.css">
 
-    <title>Transparentdesign Offer Generator</title>
+    <title>TD Business Generator</title>
 
     <script>
 
+        const BusinessTypes = Object.freeze({
+            OFFER:  Symbol("OFFER"),
+            ORDER:  Symbol("ORDER")
+        });
+
         window.addEventListener("beforeunload", function (event) {
-            //if (formNochNichtGespeichert()) {
-                event.preventDefault(); // notwendig in modernen Browsern
-                //event.returnValue = ""; // Chrome, Edge, Firefox
-            //}
+                event.preventDefault();
         });
 
         function deletePosition(posNumber) {
@@ -169,6 +171,27 @@
             positionPosDiv.appendChild(positionHiddenPosIdInput);
             singlePositionContainerDiv.appendChild(positionPosDiv);
 
+            // expand Langtext
+            let positionExpandLangTextButtonDiv = createDivWithClassname('positionExpandLangTextButtonDivClass');
+            positionExpandLangTextButtonDiv.id = "positionExpandLangTextButtonDiv" + newPosNumber;
+            let expandImgElem = document.createElement("img");
+            expandImgElem.src = "img/expand.svg";
+            expandImgElem.alt = "Aufklappen Button";
+            positionExpandLangTextButtonDiv.appendChild(expandImgElem);
+            positionExpandLangTextButtonDiv.addEventListener('click', () => expandLangtextPosition(newPosNumber));
+            singlePositionContainerDiv.appendChild(positionExpandLangTextButtonDiv);
+
+            // collapse Langtext
+            let positionCollapseLangTextButtonDiv = createDivWithClassname('positionCollapseLangTextButtonDivClass');
+            positionCollapseLangTextButtonDiv.id = "positionCollapseLangTextButtonDiv" + newPosNumber;
+            let collapseImgElem = document.createElement("img");
+            collapseImgElem.src = "img/collapse.svg";
+            collapseImgElem.alt = "Einklappen Button";
+            positionCollapseLangTextButtonDiv.appendChild(collapseImgElem);
+            positionCollapseLangTextButtonDiv.addEventListener('click', () => collapseLangtextPosition(newPosNumber));
+            positionCollapseLangTextButtonDiv.classList.add("hiddenClass");
+            singlePositionContainerDiv.appendChild(positionCollapseLangTextButtonDiv);
+
             // Baustein
             let positionBausteinDiv = createDivWithClassname('positionBausteinDivClass');
             let positionBausteinSelect = document.createElement('select');
@@ -270,27 +293,6 @@
             let positionExpandAndCollapseLangTextButtonDiv = createDivWithClassname('positionExpandAndCollapseLangTextButtonDivClass');
             singlePositionContainerDiv.appendChild(positionExpandAndCollapseLangTextButtonDiv);
 
-            // expand Langtext
-            let positionExpandLangTextButtonDiv = createDivWithClassname('positionExpandLangTextButtonDivClass');
-            positionExpandLangTextButtonDiv.id = "positionExpandLangTextButtonDiv" + newPosNumber;
-            let expandImgElem = document.createElement("img");
-            expandImgElem.src = "img/expand.svg";
-            expandImgElem.alt = "Aufklappen Button";
-            positionExpandLangTextButtonDiv.appendChild(expandImgElem);
-            positionExpandLangTextButtonDiv.addEventListener('click', () => expandLangtextPosition(newPosNumber));
-            positionExpandAndCollapseLangTextButtonDiv.appendChild(positionExpandLangTextButtonDiv);
-
-            // collapse Langtext
-            let positionCollapseLangTextButtonDiv = createDivWithClassname('positionCollapseLangTextButtonDivClass');
-            positionCollapseLangTextButtonDiv.id = "positionCollapseLangTextButtonDiv" + newPosNumber;
-            let collapseImgElem = document.createElement("img");
-            collapseImgElem.src = "img/collapse.svg";
-            collapseImgElem.alt = "Einklappen Button";
-            positionCollapseLangTextButtonDiv.appendChild(collapseImgElem);
-            positionCollapseLangTextButtonDiv.addEventListener('click', () => collapseLangtextPosition(newPosNumber));
-            positionCollapseLangTextButtonDiv.classList.add("hiddenClass");
-            positionExpandAndCollapseLangTextButtonDiv.appendChild(positionCollapseLangTextButtonDiv);
-
             // LangText
             let posLangTextDiv = createDivWithClassname('posLangTextDivClass');
             posLangTextDiv.id = "posLangTextDiv" + newPosNumber;
@@ -298,6 +300,7 @@
             posLangTextTextArea.classList.add("hiddenClass");
             posLangTextTextArea.id = "posLangTextTextArea" + newPosNumber;
             posLangTextTextArea.classList.add("posLangTextTextAreaClass");
+            posLangTextTextArea.placeholder = "Langtext";
             posLangTextDiv.appendChild(posLangTextTextArea);
             posContainer.appendChild(posLangTextDiv);
 
@@ -376,64 +379,84 @@
         return businessNummerElement && businessNummerElement.value && businessNummerElement.value.trim().length > 0;
     }
 
-
-    function doCreateOfferWithExistingBusinessNummer() {
+    function doCreateBusinessObjectWithExistingBusinessNummer(businessType) {
             let xmlOffDoc = document.implementation.createDocument("", "", null);
 
             let businessobjectsRootElement = createXmlElement(xmlOffDoc, xmlOffDoc, "", "", "", "businessobjects");
 
-            // Offer / Angebot Object
-            let objOfferElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Angebot", "", "32");
+            let businessObjectElem;
 
-            // Nr   - AngebotNummer
-            createXmlField(xmlOffDoc, objOfferElem, "Nr", document.getElementById("BusinessNummer").value);
+            switch (businessType) {
+                case BusinessTypes.OFFER:
+                    businessObjectElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Angebot", "", "32");
+                    // AngebotArt
+                    createXmlField(xmlOffDoc, businessObjectElem, "AngebotArt", "0");
 
-            // AngebotArt
-            createXmlField(xmlOffDoc, objOfferElem, "AngebotArt", "0");
+                    // AngebotTyp
+                    createXmlField(xmlOffDoc, businessObjectElem, "AngebotTyp", "");
+                    break;
+                case BusinessTypes.ORDER:
+                    businessObjectElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Auftrag", "", "33");
 
-            // AngebotTyp
-            createXmlField(xmlOffDoc, objOfferElem, "AngebotTyp", "");
+                    // AuftragTyp   - BusiGen
+                    createXmlField(xmlOffDoc, businessObjectElem, "AuftragTyp", "AB");
+
+                    createXmlField(xmlOffDoc, businessObjectElem, "GpartnerNr", document.getElementById("GpartnerNr").value);
+
+                    break;
+                default:
+                    alert("do hot greber wos!!");
+                    return;
+            }
+            // Business Object / Angebot / Auftrag Object
+
+
+            // Nr  BusinessObject Nr - Angebot / Auftrags Nummer
+            createXmlField(xmlOffDoc, businessObjectElem, "Nr", document.getElementById("BusinessNummer").value);
 
             // MitarbeiterNr
-            createXmlField(xmlOffDoc, objOfferElem, "MitarbeiterNr", document.getElementById("MitarbeiterNr").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "MitarbeiterNr", document.getElementById("MitarbeiterNr").value);
+
+            // ErstelltVon
+            createXmlField(xmlOffDoc, businessObjectElem, "ErstelltVon", document.getElementById("MitarbeiterNr").value);
 
             // IhreZeichen
-            createXmlField(xmlOffDoc, objOfferElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
 
             // Lieferzeit
-            createXmlField(xmlOffDoc, objOfferElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
 
             // SachkontoNr
-            createXmlField(xmlOffDoc, objOfferElem, "SachkontoNr", "4022");
+            createXmlField(xmlOffDoc, businessObjectElem, "SachkontoNr", "4022");
 
             // MwStNr
-            createXmlField(xmlOffDoc, objOfferElem, "MwStNr", "20");
+            createXmlField(xmlOffDoc, businessObjectElem, "MwStNr", "20");
 
             // LiefBedText
-            createXmlField(xmlOffDoc, objOfferElem, "LiefBedText", document.getElementById("LiefBedText").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "LiefBedText", document.getElementById("LiefBedText").value);
 
             //let fieldNr1 = xmlOffDoc.createElement("field");
             //fieldNr1.setAttribute("name", "Nr");
             //fieldNr1.textContent = "K259397";
-            //objOfferElem.appendChild(fieldNr1);
+            //businessObjectElem.appendChild(fieldNr1);
 
             // Versandart
-            createXmlField(xmlOffDoc, objOfferElem, "Versandart", document.getElementById("Versandart").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "Versandart", document.getElementById("Versandart").value);
     
             // Versandvermerk
-            createXmlField(xmlOffDoc, objOfferElem, "Versandvermerk", document.getElementById("Versandvermerk").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "Versandvermerk", document.getElementById("Versandvermerk").value);
 
             // ZahlBedText
-            createXmlField(xmlOffDoc, objOfferElem, "ZahlBedText", document.getElementById("ZahlBedText").value);
+            createXmlField(xmlOffDoc, businessObjectElem, "ZahlBedText", document.getElementById("ZahlBedText").value);
 
             // ZahlTage
             let zahlBedTextSelectElement = document.getElementById("ZahlBedText")
             let option = zahlBedTextSelectElement.options[zahlBedTextSelectElement.selectedIndex];
             let fieldZahlTage1 = xmlOffDoc.createElement("field");
-            createXmlField(xmlOffDoc, objOfferElem, "ZahlTage", option.getAttribute("zahlTage"));
+            createXmlField(xmlOffDoc, businessObjectElem, "ZahlTage", option.getAttribute("zahlTage"));
 
             // Adresse BEGIN
-            let adresseElement = createXmlObject(xmlOffDoc, objOfferElem, "Adresse", "", "")
+            let adresseElement = createXmlObject(xmlOffDoc, businessObjectElem, "Adresse", "", "")
             // ApartnerName
             createXmlField(xmlOffDoc, adresseElement, "ApartnerName", document.getElementById("adresseApartnerName").value);
             // Email
@@ -455,7 +478,7 @@
             // Adresse END
 
             // Lieferanschrift BEGIN
-            let lieferAnschriftElement = createXmlObject(xmlOffDoc, objOfferElem, "Lieferanschrift", "", "")
+            let lieferAnschriftElement = createXmlObject(xmlOffDoc, businessObjectElem, "Lieferanschrift", "", "")
             // ApartnerName
             createXmlField(xmlOffDoc, lieferAnschriftElement, "ApartnerName", document.getElementById("lieferanschriftApartnerName").value);
             // Email
@@ -477,7 +500,7 @@
             // Lieferanschrift END
 
             // Rechnungsanschrift BEGIN
-            let rechnungsAnschriftElement = createXmlObject(xmlOffDoc, objOfferElem, "Rechnungsanschrift", "", "")
+            let rechnungsAnschriftElement = createXmlObject(xmlOffDoc, businessObjectElem, "Rechnungsanschrift", "", "")
             // ApartnerName
             createXmlField(xmlOffDoc, rechnungsAnschriftElement, "ApartnerName", document.getElementById("rechnungsanschriftApartnerName").value);
             // Email
@@ -506,7 +529,7 @@
                     let posNumber = pos.value;
 
                     // object position
-                    let posElement = createXmlObject(xmlOffDoc, objOfferElem, "Position", "", "");
+                    let posElement = createXmlObject(xmlOffDoc, businessObjectElem, "Position", "", "");
 
                     // PosNr
                     createXmlField(xmlOffDoc, posElement, "PosNr", posNumber);
@@ -581,25 +604,25 @@
             return xmlOfferDocString;
         }
 
+        function doPrepareOffer() {
+            document.getElementById("ButtonsDownloadOrShowDiv").style.display = "";
+            document.getElementById("ButtonsOfferOrOrderDiv").style.display = "none";
+            determineBusinessnummerFromServer("OfferServiceRemoteCall.php?action=generateNewOfferNumber", BusinessTypes.OFFER);
+        }
+
+        function doPrepareOrder() {
+            document.getElementById("ButtonsDownloadOrShowDiv").style.display = "";
+            document.getElementById("ButtonsOfferOrOrderDiv").style.display = "none";
+            determineBusinessnummerFromServer("OrderServiceRemoteCall.php?action=generateNewOrderNumber", BusinessTypes.ORDER);
+        }
+
         function doDownloadFile(syncronCall = true) {
-            if (isOfferNumberAvailable()) {
-                download(doCreateOfferWithExistingBusinessNummer());
-            } else {
-                if (!syncronCall) {
-                    determineBusinessnummerFromServer(doDownloadFile);
-                }
-            }
+            download(doCreateBusinessObjectWithExistingBusinessNummer(businessKind));
         }
 
         function doShowFile(syncronCall = true) {
             document.getElementById("preViewDiv").style.display = "flex";
-            if (isOfferNumberAvailable()) {
-                document.getElementById("offerXmlPreView").innerHTML = formatXml(doCreateOfferWithExistingBusinessNummer(), "  ");
-            } else {
-                if (!syncronCall) {
-                    determineBusinessnummerFromServer(doShowFile);
-                }
-            }
+            document.getElementById("offerXmlPreView").innerHTML = formatXml(doCreateBusinessObjectWithExistingBusinessNummer(), "  ");
         }
 
         function doReset() {
@@ -625,36 +648,21 @@
             document.getElementById("BusinessNummer").style.display = "inline-flex";
             document.getElementById("BusinessNummer").value = "";
 
-            document.getElementById("BusinessHolenNummerButton").disabled = false;
-            document.getElementById("BusinessHolenNummerButton").style.display = "inline-flex";
-            document.getElementById("downloadButton").disabled = false;
-            document.getElementById("viewButton").disabled = false;
-            document.getElementById("resetButton").disabled = false;
-
             document.getElementById("preViewDiv").style.display = "none";
+
+            document.getElementById("GpartnerNr").value = "20";
+
+            document.getElementById("ButtonsDownloadOrShowDiv").style.display = "none";
+            document.getElementById("ButtonsOfferOrOrderDiv").style.display = "";
 
             onClickAdresseReiter();
         }
 
-        function determineBusinessnummerFromServer(callBack) {
+        function determineBusinessnummerFromServer(url, businessType) {
             document.getElementById("animationWaitStribeBusinessNummer").style.display = "block";
             document.getElementById("BusinessNummer").style.display = "none";
-            let buttonAuftragHolen = document.getElementById("BusinessHolenNummerButton");
-            if (buttonAuftragHolen) {
-                buttonAuftragHolen.disabled = true;
-            }
 
-            let buttonDownload = document.getElementById("downloadButton");
-            if (buttonDownload) {
-                buttonDownload.disabled = true;
-            }
-
-            let buttonView = document.getElementById("viewButton");
-            if (buttonView) {
-                buttonView.disabled = true;
-            }
-
-            fetch("OfferServiceRemoteCall.php?action=generateNewOfferNumber") // Call the fetch function passing the url of the API as a parameter
+            fetch(url) // Call the fetch function passing the url of the API as a parameter
                 .then(res => res.json())
                 .then(function (res) {
                     let ok = res.ok;
@@ -666,32 +674,23 @@
                         return;
                     }
                     document.getElementById("BusinessNummer").value = value;
-                    let button = document.getElementById("BusinessHolenNummerButton");
-                    if (button) {
-                        button.style.display = "none";
+                    switch (businessType) {
+                        case BusinessTypes.OFFER:
+                            console.log("OFFER");
+                            break;
+                        case BusinessTypes.ORDER:
+                            console.log("ORDER");
+                            break;
+                        default:
+                            alert("UI .. do hots greber wos...");
+                            return;
                     }
                 })
                 .catch(function(e) {
                     alert("Sorry, something went wrong.\n" + e);
-                    document.getElementById("BusinessHolenNummerButton").enabled = false;
                 }).finally(function () {
                     document.getElementById("BusinessNummer").style.display = "block";
                     document.getElementById("animationWaitStribeBusinessNummer").style.display = "none";
-                    let button = document.getElementById("BusinessHolenNummerButton");
-                    if (button) {
-                        button.disabled = false;
-                    }
-
-                    let buttonDownload = document.getElementById("downloadButton");
-                    if (buttonDownload) {
-                        buttonDownload.disabled = false;
-                    }
-
-                    let buttonView = document.getElementById("viewButton");
-                    if (buttonView) {
-                        buttonView.disabled = false;
-                    }
-                    callBack();
             });
 
         }
@@ -883,7 +882,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Business Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.3&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;29.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.4&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;30.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1001,7 +1000,7 @@
     .positionenHeadlineContainerDiv {
         display: contents;
         align-items: center;
-        font-size: 80%;
+        /* font-size: 80%; */
     }
 
 
@@ -1012,6 +1011,7 @@
 
     .addPositionenButtonDiv,
     .positionenTextHeadlinePosDiv,
+    .positionenEmptyExpandEndCollapseButtonHeadlineDiv,
     .positionenTextHeadlineBDiv,
     .positionenTextHeadlineArtikelNrDiv,
     .positionenTextHeadlineBezeichnungDiv,
@@ -1028,15 +1028,15 @@
 
     .addPositionenButtonDiv {
         cursor: pointer;
-        width:14px;
-        height: 14px
+        width:28px;
+        height: 28px
     }
 
     .positionenContainerGridDiv {
         display: grid;
         column-gap: 4px;
         row-gap: 4px;
-        grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+        grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
         padding-top: 10px;
         border-top: #cdcdcd 1px solid;
     }
@@ -1050,17 +1050,13 @@
     }
 
     .posLangTextDivClass {
-        grid-column: 3 / 14;
-    }
-
-    .positionBausteinSelectClass,
-    .positionEinheitListSelectClass {
-        height: 100%;
+        grid-column: 3 / 15;
     }
 
     .addPositionenButtonDiv,
     .positionenHeadlineContainerDiv,
     .positionenTextHeadlinePosDiv,
+    .positionenEmptyExpandEndCollapseButtonHeadlineDiv,
     .positionenTextHeadlineBDiv,
     .positionenTextHeadlineArtikelNrDiv,
     .positionenTextHeadlineBezeichnungDiv,
@@ -1104,12 +1100,12 @@
     .positionRabattDivClass,
     .positionGesamtpreisDivClass {
         align-content: center;
+        height: 28px;
     }
 
     .positionDeleteButtonDivClass {
         cursor: pointer;
-        width:14px;
-        height: 100%;
+        width: 28px;
     }
 
     .positionPosDivClass {
@@ -1306,6 +1302,7 @@
 
     .autoComplete_wrapper > input {
         all: unset;          /* entfernt ALLE Styles */
+        margin-top: 1px !important;
         padding-block: 1px;
         padding-inline: 2px;
         display: inline-block;     /* oder was du willst */
@@ -1354,6 +1351,24 @@
     }
 
 
+    .positionBezeichnungInputClass,
+    .positionArtikelNrInputClass,
+    .positionLengthInputClass,
+    .positionWidthInputClass,
+    .positionAnzahlInputClass,
+    .positionMengeInputClass,
+    .positionPreisInputClass,
+    .positionRabattInputClass,
+    .positionGesamtpreisInputClass,
+    .positionArtikelNrInputClass {
+        height: 22px !important;
+    }
+
+    .positionBausteinSelectClass,
+    .positionEinheitListSelectClass {
+        height: 28px;
+    }
+
 </style>
 
 <div style="" class="formAtAllDiv">
@@ -1367,7 +1382,6 @@
             <div class="inputElement">
                 <img id="animationWaitStribeBusinessNummer" style="display: none" src="img/animationWaitStribe.png" alt="Waiting Animation">
                 <input type="text" id="BusinessNummer" name="BusinessNummer" disabled="disabled"/>
-                <button id="BusinessHolenNummerButton" onclick="determineBusinessnummerFromServer()" style="margin-left: 5px" class="inlineButtonClass defaultButtonClass">ToDo Nummer holen</button>
             </div>
         </div>
     </div>
@@ -1518,6 +1532,15 @@
         </div>
     </div>
 
+    <!-- GpartnerNr -->
+    <div style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="GpartnerNr">Gesch. Partner Nr:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <input type="text" id="GpartnerNr" name="GpartnerNr" value="20" class="inputElement" autocomplete="off" spellcheck="false" autocapitalize="sentences"/>
+        </div>
+    </div>
 
     <!-- BEGIN Adress Reiter Container -->
     <div style="" class="adressContainerDivClass">
@@ -1846,6 +1869,7 @@
                 <img src="img/add.svg" alt="Button Add Position">
             </div>
             <div class="positionenTextHeadlinePosDiv hideAtStartup posHeader">Pos</div>
+            <div class="positionenEmptyExpandEndCollapseButtonHeadlineDiv hideAtStartup posHeader"></div>
             <div class="positionenTextHeadlineBDiv hideAtStartup posHeader">B</div>
             <div class="positionenTextHeadlineArtikelNrDiv hideAtStartup posHeader">ArtikelNr</div>
             <div class="positionenTextHeadlineBezeichnungDiv hideAtStartup posHeader">Bezeichnung</div>
@@ -1856,14 +1880,20 @@
             <div class="positionenTextHeadlineEinheitDiv hideAtStartup posHeader">Einheit</div>
             <div class="positionenTextHeadlinePreisDiv hideAtStartup posHeader">Preis</div>
             <div class="positionenTextHeadlineRabattDiv hideAtStartup posHeader">Rabatt</div>
-            <div class="positionenTextHeadlineGesamtpreisDiv hideAtStartup posHeader">Gesamtpreis</div>
+            <div class="positionenTextHeadlineGesamtpreisDiv hideAtStartup posHeader">Ges.Preis</div>
         </div>
     </div>
 
-    <div style="" class="buttonsDivClass">
+    <div id="ButtonsOfferOrOrderDiv" style="" class="buttonsDivClass">
+        <button id="prepareOfferButton" onclick="doPrepareOffer()" class="defaultButtonClass">Angebot</button>
+        <button id="prepareOrderButton" onclick="doPrepareOrder()" class="defaultButtonClass">Auftrag</button>
+        <button id="resetButton1" onclick="doReset()" class="defaultButtonClass">Reset</button>
+    </div>
+
+    <div  id="ButtonsDownloadOrShowDiv" style="display: none" class="buttonsDivClass">
         <button id="downloadButton" onclick="doDownloadFile(false)" class="defaultButtonClass">Download XML-File</button>
         <button id="viewButton" onclick="doShowFile(false)" class="defaultButtonClass">Anzeigen XML-File</button>
-        <button id="resetButton" onclick="doReset()" class="defaultButtonClass">Reset</button>
+        <button id="resetButton2" onclick="doReset()" class="defaultButtonClass">Reset</button>
     </div>
     <div id="preViewDiv" style="display: none" class="preViewDivClass">
         <textarea id="offerXmlPreView" style="" class="previewTextAreaClass"></textarea>
