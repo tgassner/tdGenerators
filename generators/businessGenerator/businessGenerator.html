@@ -403,6 +403,10 @@
 
                     // AngebotTyp
                     createXmlField(xmlOffDoc, businessObjectElem, "AngebotTyp", "");
+
+                    // Lieferzeit
+                    createXmlField(xmlOffDoc, businessObjectElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
+
                     break;
                 case BusinessTypes.ORDER:
                     businessObjectElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Auftrag", "", "33");
@@ -410,7 +414,11 @@
                     // AuftragTyp   - BusiGen
                     createXmlField(xmlOffDoc, businessObjectElem, "AuftragTyp", "AB");
 
+                    // GpartnerNr -
                     createXmlField(xmlOffDoc, businessObjectElem, "GpartnerNr", document.getElementById("GpartnerNr").value);
+
+                    // Liefertermin
+                    createXmlField(xmlOffDoc, businessObjectElem, "Liefertermin", document.getElementById("Liefertermin").value);
 
                     break;
                 default:
@@ -431,9 +439,6 @@
 
             // IhreZeichen
             createXmlField(xmlOffDoc, businessObjectElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
-
-            // Lieferzeit
-            createXmlField(xmlOffDoc, businessObjectElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
 
             // SachkontoNr
             createXmlField(xmlOffDoc, businessObjectElem, "SachkontoNr", "4022");
@@ -668,6 +673,8 @@
 
             document.getElementById("ButtonsDownloadOrShowDiv").style.display = "none";
             document.getElementById("ButtonsOfferOrOrderDiv").style.display = "";
+            document.getElementById("lieferTerminFormElementDiv").style.display = "";
+            document.getElementById("lieferZeitFormElementDiv").style.display = "";
 
             onClickAdresseReiter();
         }
@@ -693,9 +700,11 @@
                     switch (businessType) {
                         case BusinessTypes.OFFER:
                             console.log("OFFER");
+                            document.getElementById("lieferTerminFormElementDiv").style.display = "none";
                             break;
                         case BusinessTypes.ORDER:
                             console.log("ORDER");
+                            document.getElementById("lieferZeitFormElementDiv").style.display = "none";
                             break;
                         default:
                             alert("UI .. do hots greber wos...");
@@ -898,7 +907,7 @@
 <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
     <div style="display: flex; flex-flow: column;">
         <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Business Generator</h1>
-        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.5&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;30.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+        <div style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.9.6&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;30.09.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
     </div>
     <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
 </div>
@@ -1501,7 +1510,7 @@
     </div>
 
     <!-- Lieferzeit -->
-    <div style="" class="fullFormElementDiv">
+    <div id="lieferZeitFormElementDiv" style="" class="fullFormElementDiv">
         <div style="" class="labelFormElementDiv">
             <label for="Lieferzeit">Lieferzeit:</label>
         </div>
@@ -1516,6 +1525,16 @@
                 <option>2-3 Wochen</option>
                 <option>3 Wochen</option>
             </datalist>
+        </div>
+    </div>
+
+    <!-- Liefertermin -->
+    <div id="lieferTerminFormElementDiv" style="" class="fullFormElementDiv">
+        <div style="" class="labelFormElementDiv">
+            <label for="Liefertermin">Liefertermin:</label>
+        </div>
+        <div style="" class="inputFormElementDiv">
+            <input type="date" id="Liefertermin" name="Liefertermin" class="inputElement" autocomplete="off" spellcheck="false" autocapitalize="sentences"/>
         </div>
     </div>
 
