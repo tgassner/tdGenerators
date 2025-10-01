@@ -1,0 +1,480 @@
+.fullFormElementDiv {
+    display: flex;
+    flex-direction: row;
+    margin: 5px;
+}
+
+.labelFormElementDiv {
+    display: flex;
+    width: 150px;
+}
+
+.lkzPlzOrtDivClass {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.inputFormElementDiv {
+    display: flex;
+    width: 100%;
+}
+
+.LkzAllAddressElementDiv {
+    display: flex;
+    width: 20%;
+}
+
+.PlzAllAddressElementDiv {
+    display: flex;
+    width: 20%;
+}
+
+.formAtAllDiv {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 800px;
+}
+
+.inputElement {
+    display: flex;
+    width: 100%;
+}
+
+.adressContainerDivClass {
+    display: flex;
+    flex-direction: column;
+    margin: 5px 0px 5px 5px;
+    padding-top: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 5px;
+    border-top: #cdcdcd 1px solid;
+    align-items: stretch;
+}
+
+.adressReiterDiv {
+    display: flex;
+    flex-direction: column;
+}
+
+.reiterButtonContainerDiv {
+    display: flex;
+    flex-direction: row;
+    flex-basis: 33.33%;
+}
+
+.reiterElementDiv {
+    width: 33.33%;
+    white-space: nowrap;
+    display: flex;
+    cursor: pointer;
+    background: #ffffff;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    justify-content: center;
+
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+    border-bottom: #565656 solid 1px;
+
+    user-select: none;
+}
+
+.reiterElementDiv:hover {
+    background: #0096be;
+    color: #ffffff;
+}
+
+.reiterSelectedElementDiv {
+    color: #ffffff;
+    border-bottom: #565656 solid 2px;
+    background: #00aac8;
+}
+
+.reiterSelectedElementDiv:hover {
+    background: #0096be;
+    color: #ffffff;
+}
+
+.positionenTextHeadlineDiv {
+    display: flex;
+}
+
+.positionenHeadlineContainerDiv {
+    display: contents;
+    align-items: center;
+    /* font-size: 80%; */
+}
+
+
+.hiddenClass,
+.hideAtStartup {
+    display: none;
+}
+
+.addPositionenButtonDiv,
+.positionenTextHeadlinePosDiv,
+.positionenEmptyExpandEndCollapseButtonHeadlineDiv,
+.positionenTextHeadlineBDiv,
+.positionenTextHeadlineArtikelNrDiv,
+.positionenTextHeadlineBezeichnungDiv,
+.positionenTextHeadlineLängeDiv,
+.positionenTextHeadlineBreiteDiv,
+.positionenTextHeadlineAnzahlDiv,
+.positionenTextHeadlineMengeDiv,
+.positionenTextHeadlineEinheitDiv,
+.positionenTextHeadlinePreisDiv,
+.positionenTextHeadlineRabattDiv,
+.positionenTextHeadlineGesamtpreisDiv {
+    align-content: center;
+}
+
+.addPositionenButtonDiv {
+    cursor: pointer;
+    width:28px;
+    height: 28px
+}
+
+.positionenContainerGridDiv {
+    display: grid;
+    column-gap: 4px;
+    row-gap: 4px;
+    grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto auto;
+    padding-top: 10px;
+    border-top: #cdcdcd 1px solid;
+}
+
+.singlePositionContainerDivClass {
+    display: contents;
+}
+
+.positionExpandAndCollapseLangTextButtonDivClass {
+    grid-column: 2 ;
+}
+
+.posLangTextDivClass {
+    grid-column: 3 / 15;
+}
+
+.addPositionenButtonDiv,
+.positionenHeadlineContainerDiv,
+.positionenTextHeadlinePosDiv,
+.positionenEmptyExpandEndCollapseButtonHeadlineDiv,
+.positionenTextHeadlineBDiv,
+.positionenTextHeadlineArtikelNrDiv,
+.positionenTextHeadlineBezeichnungDiv,
+.positionenTextHeadlineLängeDiv,
+.positionenTextHeadlineBreiteDiv,
+.positionenTextHeadlineAnzahlDiv,
+.positionenTextHeadlineMengeDiv,
+.positionenTextHeadlineEinheitDiv,
+.positionenTextHeadlinePreisDiv,
+.positionenTextHeadlineRabattDiv,
+.positionenTextHeadlineGesamtpreisDiv,
+.positionDeleteButtonDivClass,
+.positionPosDivClass,
+.positionBausteinDivClass,
+.positionArtikelNrDivClass,
+.positionBezeichnungDivClass,
+.positionLengthDivClass,
+.positionWidthDivClass,
+.positionAnzahlDivClass,
+.positionMengeDivClass,
+.positionEinheitDivClass,
+.positionPreisDivClass,
+.positionRabattDivClass,
+.positionGesamtpreisDivClass {
+
+}
+
+
+
+.positionDeleteButtonDivClass,
+.positionPosDivClass,
+.positionBausteinDivClass,
+.positionArtikelNrDivClass,
+.positionBezeichnungDivClass,
+.positionLengthDivClass,
+.positionWidthDivClass,
+.positionAnzahlDivClass,
+.positionMengeDivClass,
+.positionEinheitDivClass,
+.positionPreisDivClass ,
+.positionRabattDivClass,
+.positionGesamtpreisDivClass {
+    align-content: center;
+    height: 28px;
+}
+
+.positionDeleteButtonDivClass {
+    cursor: pointer;
+    width: 28px;
+}
+
+.positionPosDivClass {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+.positionBausteinDivClass {
+
+}
+
+.positionArtikelNrDivClass {
+}
+
+.positionBezeichnungDivClass {
+}
+
+.positionLengthDivClass {
+}
+
+.positionWidthDivClass {
+}
+
+.positionAnzahlDivClass {
+}
+
+.positionMengeDivClass {
+}
+
+.positionEinheitDivClass {
+}
+
+.positionPreisDivClass {
+}
+
+.positionRabattDivClass {
+}
+
+.positionGesamtpreisDivClass {
+}
+
+.positionExpandLangTextButtonDivClass {
+    cursor: pointer;
+}
+
+.positionCollapseLangTextButtonDivClass {
+    cursor: pointer;
+}
+
+.positionBausteinSelectClass,
+.positionArtikelNrInputClass,
+.positionBezeichnungInputClass,
+.positionLengthInputClass,
+.positionWidthInputClass,
+.positionAnzahlInputClass,
+.positionMengeInputClass,
+.positionEinheitListSelectClass,
+.positionPreisInputClass,
+.positionRabattInputClass,
+.positionGesamtpreisInputClass,
+.posLangTextTextAreaClass {
+    font-size: 80%;
+}
+
+.positionBausteinSelectClass {
+
+}
+
+.positionArtikelNrInputClass {
+    width: 60px !important;
+}
+
+.positionBezeichnungInputClass {
+    width: 120px;
+}
+
+.positionLengthInputClass {
+    width: 45px;
+}
+
+.positionWidthInputClass {
+    width: 45px;
+}
+
+.positionAnzahlInputClass {
+    width: 40px;
+}
+
+.positionMengeInputClass {
+    width: 40px;
+}
+
+.positionEinheitListSelectClass {
+    width: 55px;
+}
+
+.positionPreisInputClass {
+    width: 60px;
+}
+
+.positionRabattInputClass {
+    width: 60px;
+}
+
+.positionGesamtpreisInputClass {
+    width: 60px;
+}
+
+.posLangTextTextAreaClass {
+    width: 750px;
+    resize: none;
+    height: 50px;
+}
+
+.buttonsDivClass {
+    display: flex;
+    margin-top: 20px;
+    gap:10px;
+}
+
+.preViewDivClass {
+    display: flex;
+    margin-top: 20px;
+}
+
+.previewTextAreaClass {
+    width: 100%;
+    height: 800px;
+}
+
+.defaultButtonClass:disabled {
+    background-color: rgba(0,0,0,0.12);
+    color: rgba(0,0,0,0.38);
+    box-shadow: none;
+    cursor: default;
+}
+
+.defaultButtonClass:active {
+    background-color: #0096be;
+    transform: translateY(1px); /* leicht reindrücken */
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+    0px 4px 5px 0px rgba(0,0,0,0.14),
+    0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.defaultButtonClass:hover {
+    background-color: #0096be;
+    box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+    0px 4px 5px 0px rgba(0,0,0,0.14),
+    0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.defaultButtonClass {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    min-width: 64px;
+    height: 36px;
+
+
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.02857em;
+
+    background-color: #00aac8;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+
+    box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+    0px 2px 2px 0px rgba(0,0,0,0.14),
+    0px 1px 5px 0px rgba(0,0,0,0.12);
+
+    transition: background-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+
+    user-select: none;
+
+    flex-basis: 33.33%;
+}
+
+.inlineButtonClass {
+    flex-basis: auto;
+    height: 21px;
+}
+
+.autoComplete_wrapper {
+    height: 100%;
+    display: block;
+}
+
+.autoComplete_wrapper > input {
+    all: unset;          /* entfernt ALLE Styles */
+    margin-top: 1px !important;
+    padding-block: 1px;
+    padding-inline: 2px;
+    display: inline-block;     /* oder was du willst */
+    font: inherit;       /* übernimmt Schrift vom Eltern-Element */
+    color: inherit;
+    background: none;
+    /* height: 80%; *%
+    /* border: 1px solid #ccc; */ /* falls du einen Rahmen willst */
+    border-color: #ffffff;
+    border-width: 1px;
+    border-radius: 2px;
+    border-style: solid;
+    /* padding: 1px 2px 1px 2px; */
+    font-size: 80%;
+
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: #767676;
+}
+
+.autoComplete_wrapper > input:focus {
+    color: inherit;
+    border-color: #101010;
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: #101010;
+}
+
+.autoComplete_wrapper > input:hover {
+    color: inherit;
+    outline-color: #4F4F4F;
+    border-style: solid;
+    transition: none;
+}
+
+.autoComplete_wrapper > input:hover:focus {
+    color: inherit;
+    border-color: #101010;
+    outline-style: solid;
+    outline-width: 1px;
+    outline-color: #101010;
+}
+
+.autoComplete_wrapper>ul {
+    width: 300px;
+}
+
+
+.positionBezeichnungInputClass,
+.positionArtikelNrInputClass,
+.positionLengthInputClass,
+.positionWidthInputClass,
+.positionAnzahlInputClass,
+.positionMengeInputClass,
+.positionPreisInputClass,
+.positionRabattInputClass,
+.positionGesamtpreisInputClass,
+.positionArtikelNrInputClass {
+    height: 22px !important;
+}
+
+.positionBausteinSelectClass,
+.positionEinheitListSelectClass {
+    height: 28px;
+}
