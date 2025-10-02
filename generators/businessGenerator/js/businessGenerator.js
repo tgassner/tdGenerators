@@ -385,6 +385,9 @@ function doCreateBusinessObjectWithExistingBusinessNummer(businessType) {
             // Lieferzeit
             createXmlField(xmlOffDoc, businessObjectElem, "Lieferzeit", document.getElementById("Lieferzeit").value);
 
+            // IhreZeichen
+            createXmlField(xmlOffDoc, businessObjectElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
+
             break;
         case BusinessTypes.ORDER:
             businessObjectElem = createXmlObject(xmlOffDoc, businessobjectsRootElement, "Auftrag", "", "33");
@@ -414,9 +417,6 @@ function doCreateBusinessObjectWithExistingBusinessNummer(businessType) {
 
     // ErstelltVon
     createXmlField(xmlOffDoc, businessObjectElem, "ErstelltVon", document.getElementById("MitarbeiterNr").value);
-
-    // IhreZeichen
-    createXmlField(xmlOffDoc, businessObjectElem, "IhreZeichen", document.getElementById("IhreZeichen").value);
 
     // SachkontoNr
     createXmlField(xmlOffDoc, businessObjectElem, "SachkontoNr", "4022");
@@ -653,6 +653,7 @@ function doReset() {
     document.getElementById("ButtonsOfferOrOrderDiv").style.display = "";
     document.getElementById("lieferTerminFormElementDiv").style.display = "";
     document.getElementById("lieferZeitFormElementDiv").style.display = "";
+    document.getElementById("ihreZeichenFormElementDiv").style.display = "";
 
     onClickAdresseReiter();
 }
@@ -683,6 +684,7 @@ function determineBusinessnummerFromServer(url, businessType) {
                 case BusinessTypes.ORDER:
                     console.log("ORDER");
                     document.getElementById("lieferZeitFormElementDiv").style.display = "none";
+                    document.getElementById("ihreZeichenFormElementDiv").style.display = "none";
                     break;
                 default:
                     alert("UI .. do hots greber wos...");
