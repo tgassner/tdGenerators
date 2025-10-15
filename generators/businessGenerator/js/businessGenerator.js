@@ -100,32 +100,90 @@ function isNumeric(str) {
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
 
+
+function calcMenge(posNumber) {
+    console.log("calcMenge(" + posNumber + ")");
+
+    let laengeElement = document.getElementById('positionLengthInput' + posNumber);
+    let breiteElement = document.getElementById('positionWidthInput' + posNumber);
+    let einheitElement = document.getElementById('positionEinheitSelect' + posNumber);
+
+    if (!laengeElement || !breiteElement || !einheitElement) {
+        console.log("Länge oder breite oder Einheit Elemente! sind leer -> return    " + laengeElement + " " + breiteElement + " " + einheitElement);
+        return;
+    }
+
+    let laenge = laengeElement.value;
+    let breite = breiteElement.value;
+    let einheit = einheitElement.value;
+
+    console.log("laenge=" + laenge);
+    console.log("breite=" + breite);
+    console.log("einheit=" + einheit);
+
+    if (!laenge || !breite || !einheit) {
+        console.log("Länge oder breite oder Einheit sind leer -> return    " + laenge + " " + breite + " " + einheit);
+        return;
+    }
+
+    let mengeElement = document.getElementById('positionMengeInput' + posNumber);
+    if (!mengeElement) {
+        return;
+    }
+
+    switch (einheit) {
+        case "m²":
+            console.log("Jawohl.. Quadratmeter muhahha");
+            flaecheMM2 = laenge * breite;
+            console.log("flaecheMM2=" + flaecheMM2);
+            flaecheM2 = flaecheMM2 / (1000 * 1000);
+            console.log("flaecheM2=" + flaecheM2);
+            mengeElement.value = flaecheM2;
+            console.log(document.getElementById('positionMengeInput' + posNumber).value);
+            break;
+            // TODO andere Einheiten
+        default:
+            break;
+    }
+
+}
 function calcGesamtPreis(posNumber) {
-    console.log("PosNumber= " + posNumber);
+    console.log("calcGesamtPreis PosNumber= " + posNumber);
+    console.log("------------------------");
+    console.log((new Error()).stack?.split("\n")[2]?.trim().split(" ")[1])
+    console.log((new Error()).stack?.split("\n")[1]?.trim().split(" ")[1])
+    console.log("------------------------");
+    console.log((new Error()).stack);
+
     let mengeElement = document.getElementById('positionMengeInput' + posNumber);
     let preisElement = document.getElementById('positionPreisInput' + posNumber);
+    let anzahlElement = document.getElementById('positionAnzahlInput' + posNumber);
 
 
-    if (!mengeElement || ! preisElement) {
+    if (!mengeElement || ! preisElement || !anzahlElement) {
         document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
         return;
     }
 
     let mengeValueString = mengeElement.value;
     let preisValueString = preisElement.value;
+    let anzahlValueString = anzahlElement.value;
+
     console.log("mengeValueString= " + mengeValueString);
     console.log("preisValueString= " + preisValueString);
+    console.log("anzahlValueString= " + anzahlValueString);
     console.log("-------------------------");
 
-    if (!isNumeric(mengeValueString) || !isNumeric(preisValueString)) {
-        document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
+    if (!isNumeric(mengeValueString) || !isNumeric(preisValueString) || !isNumeric(anzahlValueString)) {
+        //document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
         return;
     }
 
     mengeValueNumber = parseFloat(mengeValueString);
     preisValueNumber = parseFloat(preisValueString);
+    anzahlValueNumber = parseFloat(anzahlValueString);
 
-    let gesamtPreisNumber = mengeValueNumber * preisValueNumber;
+    let gesamtPreisNumber = mengeValueNumber * preisValueNumber * anzahlValueNumber;
 
     document.getElementById("positionGesamtpreisInput" + posNumber).value = gesamtPreisNumber;
 }
@@ -217,18 +275,21 @@ function addPosition() {
     // Länge
     let positionLengthDiv = createDivWithClassname('positionLengthDivClass');
     let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + newPosNumber, null, null, "positionLengthInputClass");
+    positionLengthInput.addEventListener('change', () => calcMenge(newPosNumber));
     positionLengthDiv.appendChild(positionLengthInput);
     singlePositionContainerDiv.appendChild(positionLengthDiv);
 
     // Breite
     let positionWidthDiv = createDivWithClassname('positionWidthDivClass');
     let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + newPosNumber, null, null, "positionWidthInputClass");
+    positionWidthInput.addEventListener('change', () => calcMenge(newPosNumber));
     positionWidthDiv.appendChild(positionWidthInput);
     singlePositionContainerDiv.appendChild(positionWidthDiv);
 
     // Anzahl
     let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
     let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber, null, null, "positionAnzahlInputClass");
+    positionAnzahlInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
     positionAnzahlDiv.appendChild(positionAnzahlInput);
     singlePositionContainerDiv.appendChild(positionAnzahlDiv);
 
@@ -236,12 +297,14 @@ function addPosition() {
     let positionMengeDiv = createDivWithClassname('positionMengeDivClass');
     let positionMengeInput = createInputWithTypeAndId("number", "positionMengeInput" + newPosNumber, null, null, "positionMengeInputClass");
     positionMengeInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
+    positionMengeInput.step = "0.0001";
     positionMengeDiv.appendChild(positionMengeInput);
     singlePositionContainerDiv.appendChild(positionMengeDiv);
 
     // Einheit
     let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
     let positionEinheitList = document.createElement('select');
+    positionEinheitList.addEventListener('change', () => calcMenge(newPosNumber));
     let positionEinheitSelectElementId = "positionEinheitSelect" + newPosNumber;
     positionEinheitList.id = positionEinheitSelectElementId;
     positionEinheitList.classList.add("positionEinheitListSelectClass");
