@@ -102,14 +102,11 @@ function isNumeric(str) {
 
 
 function calcMenge(posNumber) {
-    console.log("calcMenge(" + posNumber + ")");
-
     let laengeElement = document.getElementById('positionLengthInput' + posNumber);
     let breiteElement = document.getElementById('positionWidthInput' + posNumber);
     let einheitElement = document.getElementById('positionEinheitSelect' + posNumber);
 
     if (!laengeElement || !breiteElement || !einheitElement) {
-        console.log("Länge oder breite oder Einheit Elemente! sind leer -> return    " + laengeElement + " " + breiteElement + " " + einheitElement);
         return;
     }
 
@@ -117,12 +114,7 @@ function calcMenge(posNumber) {
     let breite = breiteElement.value;
     let einheit = einheitElement.value;
 
-    console.log("laenge=" + laenge);
-    console.log("breite=" + breite);
-    console.log("einheit=" + einheit);
-
     if (!laenge || !breite || !einheit) {
-        console.log("Länge oder breite oder Einheit sind leer -> return    " + laenge + " " + breite + " " + einheit);
         return;
     }
 
@@ -133,13 +125,8 @@ function calcMenge(posNumber) {
 
     switch (einheit) {
         case "m²":
-            console.log("Jawohl.. Quadratmeter muhahha");
-            flaecheMM2 = laenge * breite;
-            console.log("flaecheMM2=" + flaecheMM2);
-            flaecheM2 = flaecheMM2 / (1000 * 1000);
-            console.log("flaecheM2=" + flaecheM2);
+            let flaecheM2 = (laenge * breite) / (1000 * 1000);
             mengeElement.value = flaecheM2;
-            console.log(document.getElementById('positionMengeInput' + posNumber).value);
             break;
             // TODO andere Einheiten
         default:
@@ -148,17 +135,10 @@ function calcMenge(posNumber) {
 
 }
 function calcGesamtPreis(posNumber) {
-    console.log("calcGesamtPreis PosNumber= " + posNumber);
-    console.log("------------------------");
-    console.log((new Error()).stack?.split("\n")[2]?.trim().split(" ")[1])
-    console.log((new Error()).stack?.split("\n")[1]?.trim().split(" ")[1])
-    console.log("------------------------");
-    console.log((new Error()).stack);
-
     let mengeElement = document.getElementById('positionMengeInput' + posNumber);
     let preisElement = document.getElementById('positionPreisInput' + posNumber);
     let anzahlElement = document.getElementById('positionAnzahlInput' + posNumber);
-
+    let rabattElement = document.getElementById('positionRabattInput' + posNumber);
 
     if (!mengeElement || ! preisElement || !anzahlElement) {
         document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
@@ -168,22 +148,20 @@ function calcGesamtPreis(posNumber) {
     let mengeValueString = mengeElement.value;
     let preisValueString = preisElement.value;
     let anzahlValueString = anzahlElement.value;
+    let rabattValueString = (!rabattElement || !rabattElement.value) ? "0" : rabattElement.value;
 
-    console.log("mengeValueString= " + mengeValueString);
-    console.log("preisValueString= " + preisValueString);
-    console.log("anzahlValueString= " + anzahlValueString);
-    console.log("-------------------------");
-
-    if (!isNumeric(mengeValueString) || !isNumeric(preisValueString) || !isNumeric(anzahlValueString)) {
-        //document.getElementById("positionGesamtpreisInput" + posNumber).value = "";
+    if (!isNumeric(mengeValueString) || !isNumeric(preisValueString) || !isNumeric(anzahlValueString) || !isNumeric(rabattValueString)) {
         return;
     }
 
-    mengeValueNumber = parseFloat(mengeValueString);
-    preisValueNumber = parseFloat(preisValueString);
-    anzahlValueNumber = parseFloat(anzahlValueString);
+    let mengeValueNumber = parseFloat(mengeValueString);
+    let preisValueNumber = parseFloat(preisValueString);
+    let anzahlValueNumber = parseFloat(anzahlValueString);
+    let rabattValueNumber = parseFloat(rabattValueString);
 
-    let gesamtPreisNumber = mengeValueNumber * preisValueNumber * anzahlValueNumber;
+    let rabattMultiplier = 1 - (rabattValueNumber / 100);
+
+    let gesamtPreisNumber = (mengeValueNumber * preisValueNumber * anzahlValueNumber) * rabattMultiplier;
 
     document.getElementById("positionGesamtpreisInput" + posNumber).value = gesamtPreisNumber;
 }
@@ -289,6 +267,7 @@ function addPosition() {
     // Anzahl
     let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
     let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber, null, null, "positionAnzahlInputClass");
+    positionAnzahlInput.step = "1";
     positionAnzahlInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
     positionAnzahlDiv.appendChild(positionAnzahlInput);
     singlePositionContainerDiv.appendChild(positionAnzahlDiv);
@@ -334,6 +313,11 @@ function addPosition() {
     // Rabatt
     let positionRabattDiv = createDivWithClassname('positionRabattDivClass');
     let positionRabattInput = createInputWithTypeAndId("number", "positionRabattInput" + newPosNumber, null, null, "positionRabattInputClass");
+    positionRabattInput.min = 0;
+    positionRabattInput.max = 100;
+    positionRabattInput.step = "1";
+    positionRabattInput.value = "0";
+    positionRabattInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
     positionRabattDiv.appendChild(positionRabattInput);
     singlePositionContainerDiv.appendChild(positionRabattDiv);
 
