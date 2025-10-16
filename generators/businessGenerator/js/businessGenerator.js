@@ -14,6 +14,31 @@ function businessTypeFromString(businessTypeString) {
     }
 }
 
+const Einheiten = Object.freeze({
+    STUECK:  Symbol("Stück"),
+    QUADRATMETER:  Symbol("m²"),
+    METER: Symbol("m"),
+    SET: Symbol("Set"),
+    PAUSCHALE:  Symbol("Pau"),
+});
+
+function einheitFromString(einheitString) {
+    switch (einheitString) {
+        case Object(Einheiten.STUECK).description:
+            return Einheiten.STUECK;
+        case Object(Einheiten.QUADRATMETER).description:
+            return Einheiten.QUADRATMETER;
+        case Object(Einheiten.METER).description:
+            return Einheiten.METER;
+        case Object(Einheiten.SET).description:
+            return Einheiten.SET;
+        case Object(Einheiten.PAUSCHALE).description:
+            return Einheiten.PAUSCHALE;
+        default:
+            return null;
+    }
+}
+
 window.addEventListener("beforeunload", function (event) {
     event.preventDefault();
 });
@@ -100,39 +125,90 @@ function isNumeric(str) {
         !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
 
-
-function calcMenge(posNumber) {
+function einheitChanged(posNumber) {
     let laengeElement = document.getElementById('positionLengthInput' + posNumber);
     let breiteElement = document.getElementById('positionWidthInput' + posNumber);
     let einheitElement = document.getElementById('positionEinheitSelect' + posNumber);
 
-    if (!laengeElement || !breiteElement || !einheitElement) {
+    if (!einheitElement) {
+        enableInput(laengeElement, false);
+        enableInput(breiteElement, false);
         return;
     }
 
-    let laenge = laengeElement.value;
-    let breite = breiteElement.value;
-    let einheit = einheitElement.value;
-
-    if (!laenge || !breite || !einheit) {
-        return;
-    }
-
-    let mengeElement = document.getElementById('positionMengeInput' + posNumber);
-    if (!mengeElement) {
-        return;
-    }
-
-    switch (einheit) {
-        case "m²":
-            let flaecheM2 = (laenge * breite) / (1000 * 1000);
-            mengeElement.value = flaecheM2;
+    switch (einheitFromString(einheitElement.value)) {
+        case Einheiten.STUECK:
+            enableInput(laengeElement, false);
+            enableInput(breiteElement, false);
             break;
-            // TODO andere Einheiten
+        case Einheiten.QUADRATMETER:
+            enableInput(laengeElement, true);
+            enableInput(breiteElement, true);
+            break;
+        case Einheiten.METER:
+            enableInput(laengeElement, true);
+            enableInput(breiteElement, false);
+            break;
+        case Einheiten.SET:
+            enableInput(laengeElement, false);
+            enableInput(breiteElement, false);
+            break;
+        case Einheiten.PAUSCHALE:
+            enableInput(laengeElement, false);
+            enableInput(breiteElement, false);
+            break;
+        default:
+            console.log("Default");
+            enableInput(laengeElement, false);
+            enableInput(breiteElement, false);
+            break;
+    }
+}
+
+function enableInput(htmlElement, enabled = true) {
+    if (htmlElement) {
+        if (!enabled) {
+            htmlElement.value = "";
+        }
+        htmlElement.disabled = !enabled;
+    }
+}
+
+function calcMenge(posNumber) {
+    let laengeElement = document.getElementById('positionLengthInput' + posNumber);
+    let breiteElement = document.getElementById('positionWidthInput' + posNumber);
+    let anzahlElement = document.getElementById('positionAnzahlInput' + posNumber);
+    let einheitElement = document.getElementById('positionEinheitSelect' + posNumber);
+    let mengeElement = document.getElementById('positionMengeInput' + posNumber);
+
+    if (!einheitElement || !mengeElement) {
+        return;
+    }
+
+    let laenge = (laengeElement && laengeElement.value && isNumeric(laengeElement.value)) ? parseFloat(laengeElement.value) : 0;
+    let breite = (breiteElement && breiteElement.value && isNumeric(breiteElement.value)) ? parseFloat(breiteElement.value) : 0;
+    let anzahl= (anzahlElement && anzahlElement.value && isNumeric(anzahlElement.value)) ? parseFloat(anzahlElement.value) : 0;
+    let einheit = (einheitElement.value) ? einheitElement.value : "";
+
+    switch (einheitFromString(einheit)) {
+        case Einheiten.QUADRATMETER:
+            if (laenge <= 0 && breite <= 0 && anzahl <= 0) {
+                break;
+            }
+            let flaecheM2 = (laenge * breite * anzahl) / (1000 * 1000);
+            mengeElement.value = flaecheM2;
+            mengeElement.dispatchEvent(new Event('change'));
+            break;
+        case Einheiten.METER:
+            if (laenge <= 0 && breite <= 0) {
+                break;
+            }
+            mengeElement.value = laenge * anzahl / 1000;
+            mengeElement.dispatchEvent(new Event('change'));
+            break;
         default:
             break;
     }
-
 }
 function calcGesamtPreis(posNumber) {
     let mengeElement = document.getElementById('positionMengeInput' + posNumber);
@@ -254,6 +330,7 @@ function addPosition() {
     let positionLengthDiv = createDivWithClassname('positionLengthDivClass');
     let positionLengthInput = createInputWithTypeAndId("number", "positionLengthInput" + newPosNumber, null, null, "positionLengthInputClass");
     positionLengthInput.addEventListener('change', () => calcMenge(newPosNumber));
+    positionLengthInput.disabled = true;
     positionLengthDiv.appendChild(positionLengthInput);
     singlePositionContainerDiv.appendChild(positionLengthDiv);
 
@@ -261,12 +338,14 @@ function addPosition() {
     let positionWidthDiv = createDivWithClassname('positionWidthDivClass');
     let positionWidthInput = createInputWithTypeAndId("number", "positionWidthInput" + newPosNumber, null, null, "positionWidthInputClass");
     positionWidthInput.addEventListener('change', () => calcMenge(newPosNumber));
+    positionWidthInput.disabled = true;
     positionWidthDiv.appendChild(positionWidthInput);
     singlePositionContainerDiv.appendChild(positionWidthDiv);
 
     // Anzahl
     let positionAnzahlDiv = createDivWithClassname('positionAnzahlDivClass');
     let positionAnzahlInput = createInputWithTypeAndId("number", "positionAnzahlInput" + newPosNumber, null, null, "positionAnzahlInputClass");
+    positionAnzahlInput.addEventListener('change', () => calcMenge(newPosNumber));
     positionAnzahlInput.step = "1";
     positionAnzahlInput.addEventListener('change', () => calcGesamtPreis(newPosNumber));
     positionAnzahlDiv.appendChild(positionAnzahlInput);
@@ -284,6 +363,7 @@ function addPosition() {
     let positionEinheitDiv = createDivWithClassname('positionEinheitDivClass');
     let positionEinheitList = document.createElement('select');
     positionEinheitList.addEventListener('change', () => calcMenge(newPosNumber));
+    positionEinheitList.addEventListener('change', () => einheitChanged(newPosNumber));
     let positionEinheitSelectElementId = "positionEinheitSelect" + newPosNumber;
     positionEinheitList.id = positionEinheitSelectElementId;
     positionEinheitList.classList.add("positionEinheitListSelectClass");
@@ -293,12 +373,6 @@ function addPosition() {
     createSelectOptionAndAddToList("m", "m", positionEinheitList);
     createSelectOptionAndAddToList("Set", "Set", positionEinheitList);
     createSelectOptionAndAddToList("Pau", "Pau", positionEinheitList);
-    createSelectOptionAndAddToList("Stk", "Stk", positionEinheitList);
-    createSelectOptionAndAddToList("Std", "Std", positionEinheitList);
-    createSelectOptionAndAddToList("lfm", "lfm", positionEinheitList);
-    createSelectOptionAndAddToList("Paar", "Paar", positionEinheitList);
-    createSelectOptionAndAddToList("min", "min", positionEinheitList);
-    createSelectOptionAndAddToList("km", "km", positionEinheitList);
     positionEinheitDiv.appendChild(positionEinheitList);
     singlePositionContainerDiv.appendChild(positionEinheitDiv);
 
@@ -907,9 +981,9 @@ function fillArticleWithAutocompletion(
     artikelKalkpreisValue,
     artikelEinheitValue) {
 
-    let positionBaustrinElement = document.getElementById(positionBausteinSelectElementId);
-    if (positionBaustrinElement) {
-        positionBaustrinElement.value = "D";
+    let positionBausteinElement = document.getElementById(positionBausteinSelectElementId);
+    if (positionBausteinElement) {
+        positionBausteinElement.value = "D";
     }
 
     let artikelNummerElement = document.getElementById(artikelNrInputElementId);
@@ -931,9 +1005,14 @@ function fillArticleWithAutocompletion(
         }
     }
 
-    let bausteinElement = document.getElementById(positionEinheitSelectElementId);
-    if (bausteinElement) {
-        bausteinElement.value = artikelEinheitValue;
+    let einheitElement = document.getElementById(positionEinheitSelectElementId);
+    if (einheitElement) {
+        let oldEinheitValue = einheitElement.value;
+        let newEinheitValue = artikelEinheitValue;
+        einheitElement.value = artikelEinheitValue;
+        if (oldEinheitValue !== newEinheitValue) {
+            einheitElement.dispatchEvent(new Event('change'));
+        }
     }
 }
 
