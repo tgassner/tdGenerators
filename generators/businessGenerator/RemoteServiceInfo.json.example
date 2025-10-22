@@ -2,6 +2,7 @@
   "services": {
     "OfferRemoteService": "bla/bla/OfferRemoteService.php",
     "ArtikelRemoteService": "bla/bla/ArtikelRemoteService.php",
-    "OrderRemoteService": "bla/bla/OrderRemoteService.php"
+    "OrderRemoteService": "bla/bla/OrderRemoteService.php",
+    "UserRemoteService" : "bla/bla/UserRemoteService.php"
   }
 }

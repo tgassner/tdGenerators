@@ -12,7 +12,7 @@ class OrderRemoteService extends AbstractBusinessObjectRemoteService {
         return $this->generateNewBusinessObjectNumber("K", "AUFTRAG");
     }
 
-    public function getOpenOrderByEmployee() {
+    public function getOpenOrderByEmployeeJsonResponse() {
         $sql =
             " select                                                                                                                                                              \n" .
             " a.Nr, a.Gpartner_Nr, a.BestellNr, a.BestellDatum, Versandart, a.Liefertermin, a.Versandtermin, a.Nettobetrag, a.Bruttobetrag, a.LiefBedText,                        \n" .
@@ -33,13 +33,150 @@ class OrderRemoteService extends AbstractBusinessObjectRemoteService {
             " and AbschlFertigung = 0                                                                                                                                             \n" .
             " order by a.Liefertermin, a.Versandtermin, a.Nr, ap.PosNr                                                                                                            \n";
 
-        $dbTool = new DBTool();
         $mitarbeiterId = $this->variaTools->readFromRequestGetPost("MitarbeiterNr", "");
 
-        $ret = $dbTool->runQueryList($sql, function($row, $resultSet) {
-            return print_r($row);
-            // TODO;
+        $ret = $this->dbTool->runQueryList($sql, function($row) {
+            $order = [];
+            $order["Nr"] = $row["Nr"];
+            $order["Gpartner_Nr"] = $row["Gpartner_Nr"];
+            $order["BestellNr"] = $row["BestellNr"];
+            $order["BestellDatum"] = $row["BestellDatum"];
+            $order["Versandart"] = $row["Versandart"];
+            $order["Liefertermin"] = $row["Liefertermin"];
+            $order["Versandtermin"] = $row["Versandtermin"];
+            $order["Nettobetrag"] = $row["Nettobetrag"];
+            $order["Bruttobetrag"] = $row["Bruttobetrag"];
+            $order["LiefBedText"] = $row["LiefBedText"];
+            $order["Firma1_aa"] = $row["Firma1_aa"];
+            $order["Firma2_aa"] = $row["Firma2_aa"];
+            $order["Firma3_aa"] = $row["Firma3_aa"];
+            $order["Strasse_aa"] = $row["Strasse_aa"];
+            $order["LKZ_aa"] = $row["LKZ_aa"];
+            $order["PLZ_aa"] = $row["PLZ_aa"];
+            $order["Ort_aa"] = $row["Ort_aa"];
+            $order["Anschrift_aa"] = $row["Anschrift_aa"];
+            $order["ApartnerName_aa"] = $row["ApartnerName_aa"];
+            $order["Email_aa"] = $row["Email_aa"];
+            $order["Telefon_aa"] = $row["Telefon_aa"];
+            $order["Firma1_ala"] = $row["Firma1_ala"];
+            $order["Firma2_ala"] = $row["Firma2_ala"];
+            $order["Firma3_ala"] = $row["Firma3_ala"];
+            $order["Strasse_ala"] = $row["Strasse_ala"];
+            $order["LKZ_ala"] = $row["LKZ_ala"];
+            $order["PLZ_ala"] = $row["PLZ_ala"];
+            $order["Ort_ala"] = $row["Ort_ala"];
+            $order["Anschrift_ala"] = $row["Anschrift_ala"];
+            $order["ApartnerName_ala"] = $row["ApartnerName_ala"];
+            $order["Email_ala"] = $row["Email_ala"];
+            $order["Telefon_ala"] = $row["Telefon_ala"];
+            $order["Firma1_ara"] = $row["Firma1_ara"];
+            $order["Firma2_ara"] = $row["Firma2_ara"];
+            $order["Firma3_ara"] = $row["Firma3_ara"];
+            $order["Strasse_ara"] = $row["Strasse_ara"];
+            $order["LKZ_ara"] = $row["LKZ_ara"];
+            $order["PLZ_ara"] = $row["PLZ_ara"];
+            $order["Ort_ara"] = $row["Ort_ara"];
+            $order["Anschrift_ara"] = $row["Anschrift_ara"];
+            $order["ApartnerName_ara"] = $row["ApartnerName_ara"];
+            $order["Email_ara"] = $row["Email_ara"];
+            $order["Telefon_ara"] = $row["Telefon_ara"];
+            $order["PosNr"] = $row["PosNr"];
+            $order["Baustein"] = $row["Baustein"];
+            $order["ArtikelNr"] = $row["ArtikelNr"];
+            $order["Bezeichnung"] = $row["Bezeichnung"];
+            $order["Menge"] = $row["Menge"];
+            $order["Einheit"] = $row["Einheit"];
+            $order["Preis"] = $row["Preis"];
+            $order["PreisEinheit"] = $row["PreisEinheit"];
+            $order["Gesamtpreis"] = $row["Gesamtpreis"];
+            $order["Langtext"] = $row["Langtext"];
+            $order["LangtextHtml"] = $row["LangtextHtml"];
+            return $order;
         }, array('MitarbeiterNr' => $mitarbeiterId));
+
+        $ordersUnfiltered = $ret["value"];
+
+        $ordersFiltered = [];
+        $lastOrderNr = "";
+        $currentOrder = null;
+
+        foreach ($ordersUnfiltered as $orderUnfiltered) {
+            if ($lastOrderNr != $orderUnfiltered["Nr"]) {
+
+                if ($currentOrder != null) { // not in the beginning
+                    $ordersFiltered[] = $currentOrder;
+                }
+
+                $lastOrderNr = $orderUnfiltered["Nr"];
+
+                $currentOrder = [];
+
+                $currentOrder["Nr"] = $orderUnfiltered["Nr"];
+                $currentOrder["Gpartner_Nr"] = $orderUnfiltered["Gpartner_Nr"];
+                $currentOrder["BestellNr"] = $orderUnfiltered["BestellNr"];
+                $currentOrder["BestellDatum"] = $orderUnfiltered["BestellDatum"];
+                $currentOrder["Versandart"] = $orderUnfiltered["Versandart"];
+                $currentOrder["Liefertermin"] = $orderUnfiltered["Liefertermin"];
+                $currentOrder["Versandtermin"] = $orderUnfiltered["Versandtermin"];
+                $currentOrder["Nettobetrag"] = $orderUnfiltered["Nettobetrag"];
+                $currentOrder["Bruttobetrag"] = $orderUnfiltered["Bruttobetrag"];
+                $currentOrder["LiefBedText"] = $orderUnfiltered["LiefBedText"];
+                $currentOrder["Firma1_aa"] = $orderUnfiltered["Firma1_aa"];
+                $currentOrder["Firma2_aa"] = $orderUnfiltered["Firma2_aa"];
+                $currentOrder["Firma3_aa"] = $orderUnfiltered["Firma3_aa"];
+                $currentOrder["Strasse_aa"] = $orderUnfiltered["Strasse_aa"];
+                $currentOrder["LKZ_aa"] = $orderUnfiltered["LKZ_aa"];
+                $currentOrder["PLZ_aa"] = $orderUnfiltered["PLZ_aa"];
+                $currentOrder["Ort_aa"] = $orderUnfiltered["Ort_aa"];
+                $currentOrder["Anschrift_aa"] = $orderUnfiltered["Anschrift_aa"];
+                $currentOrder["ApartnerName_aa"] = $orderUnfiltered["ApartnerName_aa"];
+                $currentOrder["Email_aa"] = $orderUnfiltered["Email_aa"];
+                $currentOrder["Telefon_aa"] = $orderUnfiltered["Telefon_aa"];
+                $currentOrder["Firma1_ala"] = $orderUnfiltered["Firma1_ala"];
+                $currentOrder["Firma2_ala"] = $orderUnfiltered["Firma2_ala"];
+                $currentOrder["Firma3_ala"] = $orderUnfiltered["Firma3_ala"];
+                $currentOrder["Strasse_ala"] = $orderUnfiltered["Strasse_ala"];
+                $currentOrder["LKZ_ala"] = $orderUnfiltered["LKZ_ala"];
+                $currentOrder["PLZ_ala"] = $orderUnfiltered["PLZ_ala"];
+                $currentOrder["Ort_ala"] = $orderUnfiltered["Ort_ala"];
+                $currentOrder["Anschrift_ala"] = $orderUnfiltered["Anschrift_ala"];
+                $currentOrder["ApartnerName_ala"] = $orderUnfiltered["ApartnerName_ala"];
+                $currentOrder["Email_ala"] = $orderUnfiltered["Email_ala"];
+                $currentOrder["Telefon_ala"] = $orderUnfiltered["Telefon_ala"];
+                $currentOrder["Firma1_ara"] = $orderUnfiltered["Firma1_ara"];
+                $currentOrder["Firma2_ara"] = $orderUnfiltered["Firma2_ara"];
+                $currentOrder["Firma3_ara"] = $orderUnfiltered["Firma3_ara"];
+                $currentOrder["Strasse_ara"] = $orderUnfiltered["Strasse_ara"];
+                $currentOrder["LKZ_ara"] = $orderUnfiltered["LKZ_ara"];
+                $currentOrder["PLZ_ara"] = $orderUnfiltered["PLZ_ara"];
+                $currentOrder["Ort_ara"] = $orderUnfiltered["Ort_ara"];
+                $currentOrder["Anschrift_ara"] = $orderUnfiltered["Anschrift_ara"];
+                $currentOrder["ApartnerName_ara"] = $orderUnfiltered["ApartnerName_ara"];
+                $currentOrder["Email_ara"] = $orderUnfiltered["Email_ara"];
+                $currentOrder["Telefon_ara"] = $orderUnfiltered["Telefon_ara"];
+
+                $currentOrder["pos"] = [];
+            }
+            $pos = [];
+            $pos["PosNr"] = $orderUnfiltered["PosNr"];
+            $pos["Baustein"] = $orderUnfiltered["Baustein"];
+            $pos["ArtikelNr"] = $orderUnfiltered["ArtikelNr"];
+            $pos["Bezeichnung"] = $orderUnfiltered["Bezeichnung"];
+            $pos["Menge"] = $orderUnfiltered["Menge"];
+            $pos["Einheit"] = $orderUnfiltered["Einheit"];
+            $pos["Preis"] = $orderUnfiltered["Preis"];
+            $pos["PreisEinheit"] = $orderUnfiltered["PreisEinheit"];
+            $pos["Gesamtpreis"] = $orderUnfiltered["Gesamtpreis"];
+            $pos["Langtext"] = $orderUnfiltered["Langtext"];
+            $pos["LangtextHtml"] = $orderUnfiltered["LangtextHtml"];
+
+            $currentOrder["pos"][] = $pos;
+        }
+        if ($currentOrder != null) { // the last one (if there is any)
+            $ordersFiltered[] = $currentOrder;
+        }
+
+        $ret["value"] = $ordersFiltered;
 
         return $ret;
     }
@@ -52,7 +189,7 @@ $action =  $variaTools->readFromRequestGetPost("action", "");
 
 switch ($action) {
     case "getOpenOrderByEmployee" :
-        $json = $orderRemoteService-> $orderRemoteService->getOpenOrderByEmployeeJsonResponse();
+        $json = $orderRemoteService->convertJson($orderRemoteService->getOpenOrderByEmployeeJsonResponse());
         echo $json;
         break;
     case "generateNewOrderNumber" :

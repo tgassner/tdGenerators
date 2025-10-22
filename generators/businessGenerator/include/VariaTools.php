@@ -23,6 +23,12 @@ class VariaTools
         $action = (new VariaTools())->readFromRequestGetPost("action", "");
         $serviceEntpoint .= "?action={$action}";
 
+        foreach ($_GET as $getParam => $value) {
+            if ($getParam != "action") {
+                $serviceEntpoint .= "&{$getParam}={$value}";
+            }
+        }
+
         $opts = [
             "http" => [
                 "method" => "GET",

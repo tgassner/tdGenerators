@@ -64,6 +64,7 @@
                 <option value="RRI">Richard</option>
                 <option value="SSC">Silvia</option>
                 <option value="MMU">Martina</option>
+                <option value="WPU">Wolfgang</option>
             </select>
         </div>
     </div>
