@@ -255,6 +255,9 @@ header('Cache-Control: no-cache, no-store');
                     newSearch += "MitarbeiterNr=" + mitarbeiterNr;
                 }
                 newurl += newSearch;
+                if (newurl.endsWith("$")) {
+                    newurl.substring(0, newurl.length - 1);
+                }
                 window.history.pushState({path: newurl}, '', newurl);
             }
         }
