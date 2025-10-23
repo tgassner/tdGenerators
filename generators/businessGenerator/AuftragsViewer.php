@@ -59,6 +59,16 @@ header('Cache-Control: no-cache, no-store');
             flex-direction: row;
         }
 
+        .kwBtnClass {
+            margin: 4px;
+            padding: 3px;
+            border-radius: 3px;
+            display: flex;
+            border: #4F4F4F 1px solid;
+            box-shadow: #101010 1px 1px 1px;
+            cursor: pointer;
+        }
+
     </style>
 
     <script>
@@ -94,15 +104,23 @@ header('Cache-Control: no-cache, no-store');
             }
         })
 
-        function presentOrderData(openOrdersByUser) {
+        function presentOrderData(kwParam = null) {
             let mitarbeiterAuswahlDiv = document.getElementById("mitarbeiterAuswahlDiv")
             if (mitarbeiterAuswahlDiv) {
                 mitarbeiterAuswahlDiv.remove();
             }
 
             let allOrderContainer = document.getElementById("allOrderContainer")
+            allOrderContainer.innerHTML = "";
 
-            openOrdersByUser.forEach(function (orderData) {
+            ordersByUser.forEach(function (orderData) {
+                let liefertermin = orderData["Liefertermin"]
+                let kw = getWeek(liefertermin);
+
+                if (kwParam && kw && kwParam !== kw) {
+                    return;
+                }
+
                 let orderContainer = document.createElement('div');
                 allOrderContainer.appendChild(orderContainer);
                 orderContainer.classList.add('oneFullOrderContainerClass');
@@ -120,6 +138,11 @@ header('Cache-Control: no-cache, no-store');
                 lieferterminDiv.classList.add('orderElementClass');
                 lieferterminDiv.innerHTML = orderData["Liefertermin"];
                 orderDataContainer.appendChild(lieferterminDiv);
+
+                let kalenderwocheDiv = document.createElement('div');
+                kalenderwocheDiv.classList.add('orderElementClass');
+                kalenderwocheDiv.innerHTML = "KW " + kw;
+                orderDataContainer.appendChild(kalenderwocheDiv);
 
                 let firmaDiv = document.createElement('div');
                 firmaDiv.classList.add('orderElementClass');
@@ -220,6 +243,31 @@ header('Cache-Control: no-cache, no-store');
                     })
                 }
             })
+
+            let sortedKWs = Array.from(kws).sort();
+
+            let kwArea = document.getElementById("kwArea");
+            if (kwArea) {
+                kwArea.innerHTML = "";
+
+                let kwButton = document.createElement('div');
+                kwButton.innerHTML = "ALLE"
+                kwButton.classList.add('kwBtnClass');
+                kwButton.addEventListener('click', () => filterKW(null));
+                kwArea.appendChild(kwButton);
+
+                sortedKWs.forEach((kw) => {
+                    let kwButton = document.createElement('div');
+                    kwButton.innerHTML = "KW" + kw
+                    kwButton.classList.add('kwBtnClass');
+                    kwButton.addEventListener('click', () => filterKW(kw));
+                    kwArea.appendChild(kwButton);
+                })
+            }
+        }
+
+        function filterKW(kw) {
+            presentOrderData(kw);
         }
 
         function handleSearchParamBrowserUrl(mitarbeiterNr) {
@@ -262,6 +310,9 @@ header('Cache-Control: no-cache, no-store');
             }
         }
 
+        var ordersByUser = [];
+        var kws = [];
+
         function fetchOpenAuftraegeByMitarbeiter(mitarbeiterNr) {
 
             if (!mitarbeiterNr) {
@@ -287,12 +338,80 @@ header('Cache-Control: no-cache, no-store');
                         return;
                     }
 
-                    presentOrderData(openOrdersByUser);
+                    ordersByUser = openOrdersByUser;
+
+                    kws = new Set();
+                    ordersByUser.forEach(function (orderData) {
+                        let liefertermin = orderData["Liefertermin"]
+                        let kw = getWeek(liefertermin);
+                        kws.add(kw);
+                    });
+
+                    presentOrderData();
                 })
                 .catch(function(e) {
                     alert(e);
                 }).finally(function () {
             });
+        }
+
+        /**
+         * thx to https://itbalance.de/javascript-und-die-kalenderwoche/
+         * @param d
+         * @returns {number|number|*}
+         */
+        function getWeek(d){
+
+            if (!d) {
+                return 0;
+            }
+
+            let date;
+            if (d instanceof Date) {
+                date = new Date(d.getTime());
+            } else {
+                // deliver JSON Date
+                if (d.includes(" ")) {
+                    d = d.substring(0, d.indexOf(' '));
+                }
+                const x = d.split('-');
+                date = new Date(x[0], x[1] - 1, x[2], 11); // 11 = independent of time zone date switch
+            }
+            // january, 4th is always in week 1.
+            const week1 = new Date(date.getFullYear(), 0, 4, 11, 0, 0, 0);
+            const week1Monday = new Date(week1.getTime());
+            // get the monday of the first week
+            week1Monday.setDate(week1Monday.getDate() - (week1Monday.getDay() || 7) + 1);
+
+            // check, if cal week is equal to last week of past year
+            if (week1Monday.getTime() > date.getTime()) {
+                if (week1Monday.getFullYear() === week1.getFullYear()) {
+                    return getWeek(new Date(week1Monday.getFullYear() - 1, 11, 31, 11));
+                }
+                return getWeek(new Date(week1Monday.getFullYear(), 11, 31, 11));
+            }
+
+            const firstOfYear  = new Date(date.getFullYear(), 0, 1, 11, 0, 0, 0);
+            const lastOfYear  = new Date(date.getFullYear(), 11, 31, 11, 0, 0, 0);
+
+            // check if current year is a leap year
+            const isLeap = date.getFullYear() % 4 === 0 && date.getFullYear() % 100 > 0;
+            // check if current year has 53 weeks
+            const has53 = !isLeap && (firstOfYear.getDay() === 4 && lastOfYear.getDay() === 4)  ||
+                (isLeap && (firstOfYear.getDay() === 3 && lastOfYear.getDay() === 4 || firstOfYear.getDay() === 4 && lastOfYear.getDay() === 5));
+
+            const dateMonday = new Date(date.getTime());
+            dateMonday.setDate(dateMonday.getDate() - (dateMonday.getDay() || 7) + 1);
+
+            // round is needed due to summer time / winter time difference ends up in non integer calculation
+            const weekOffset= (dateMonday.getTime() - week1Monday.getTime()) / 1000 / 60 / 60 / 24;
+
+            const result =  1 + Math.round(weekOffset / 7);
+            if(result === 53 && !has53) {
+                return 1;
+            } else {
+                return result;
+            }
         }
 
     </script>
@@ -303,7 +422,11 @@ header('Cache-Control: no-cache, no-store');
     <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
         <div style="display: flex; flex-flow: column;">
             <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Auftrags Viewer</h1>
-            <div id="headerLowerDiv" style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.1&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;22.10.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+            <div id="headerLowerDiv" style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.10.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+        </div>
+        <div style="display: flex">
+            <div id="kwArea" style="display: flex; flex-flow: row; margin-top: auto">
+            </div>
         </div>
         <img src="img/td_header.png" height="150px" style="; display: flex; justify-content: right; align-self: center;filter: drop-shadow(8px 8px 40px #FFB214);">
     </div>
