@@ -22,6 +22,19 @@ header('Cache-Control: no-cache, no-store');
 
     <style>
 
+        @media print {
+            #headerMain,
+            .longTextHtmlClass {
+                display: none !important;
+            }
+
+            #printInfo {
+                display: flex !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+            }
+        }
+
         .oneFullOrderContainerClass {
             display: flex;
             border: #4F4F4F 1px solid;
@@ -29,6 +42,12 @@ header('Cache-Control: no-cache, no-store');
             flex-direction: column;
             margin: 10px;
             padding: 5px;
+        }
+
+        .allOrderContainerClass,
+        .oneFullOrderContainerClass {
+            page-break-after: avoid !important;
+            page-break-before: avoid !important;
         }
 
         .allOrderContainerClass {
@@ -85,12 +104,15 @@ header('Cache-Control: no-cache, no-store');
                         return;
                     }
 
-                    allActiveUserData.forEach(function (userData) {
-                        let mitarbeiterSelectOption = document.createElement('option');
-                        mitarbeiterSelectOption.value = userData.Nr;
-                        mitarbeiterSelectOption.innerHTML = userData.Vorname + " " + userData.Name;
-                        document.getElementById("mitarbeiterSelect").appendChild(mitarbeiterSelectOption);
-                    })
+                    let mitarbeiterSelect = document.getElementById("mitarbeiterSelect");
+                    if (mitarbeiterSelect) {
+                        allActiveUserData.forEach(function (userData) {
+                            let mitarbeiterSelectOption = document.createElement('option');
+                            mitarbeiterSelectOption.value = userData.Nr;
+                            mitarbeiterSelectOption.innerHTML = userData.Vorname + " " + userData.Name;
+                            mitarbeiterSelect.appendChild(mitarbeiterSelectOption);
+                        })
+                    }
                 })
                 .catch(function(e) {
                     alert(e);
@@ -109,6 +131,13 @@ header('Cache-Control: no-cache, no-store');
             if (mitarbeiterAuswahlDiv) {
                 mitarbeiterAuswahlDiv.remove();
             }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            let mitarbeiterNr = urlParams.get("MitarbeiterNr");
+            let printInfo = document.getElementById("printInfo");
+            let currentDate = new Date();
+            let printDate = currentDate.getDate() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getFullYear();
+            printInfo.innerHTML = mitarbeiterNr + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + (kwParam ? ("KW-" + kwParam) : "Alle offenen Aufträge") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ausdruck am: " + printDate;
 
             let allOrderContainer = document.getElementById("allOrderContainer")
             allOrderContainer.innerHTML = "";
@@ -237,7 +266,7 @@ header('Cache-Control: no-cache, no-store');
                         orderContainer.appendChild(posContainer);
 
                         let langTextHtmlDiv = document.createElement('div');
-                        langTextHtmlDiv.classList.add('posElementClass');
+                        langTextHtmlDiv.classList.add('posElementClass', 'longTextHtmlClass');
                         langTextHtmlDiv.innerHTML = pos["LangtextHtml"];
                         orderContainer.appendChild(langTextHtmlDiv);
                     })
@@ -258,7 +287,7 @@ header('Cache-Control: no-cache, no-store');
 
                 sortedKWs.forEach((kw) => {
                     let kwButton = document.createElement('div');
-                    kwButton.innerHTML = "KW" + kw
+                    kwButton.innerHTML = "KW-" + kw
                     kwButton.classList.add('kwBtnClass');
                     kwButton.addEventListener('click', () => filterKW(kw));
                     kwArea.appendChild(kwButton);
@@ -419,10 +448,12 @@ header('Cache-Control: no-cache, no-store');
 </head>
 <body style="margin: 0px; ">
 
-    <div style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
+    <div id="printInfo" style="display: none">Döner macht schöner</div>
+
+    <div id="headerMain" style="display: flex; flex-flow: row; background-color: #ffdc14; background: linear-gradient(135deg, rgba(255,205,0,1) 0%, rgba(255,220,20,1) 35%, rgba(255,205,0,1) 100%);padding-left: 20px; justify-content: space-between;height:100px">
         <div style="display: flex; flex-flow: column;">
             <h1 style="display: flex;margin-top: 5px;margin-bottom: 2px;font-family: Khand, Helvetia, Arial, sans-serif; font-size: 34px; font-weight: 600; color:#000000;">TD Auftrags Viewer</h1>
-            <div id="headerLowerDiv" style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.10.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
+            <div id="headerLowerDiv" style="display: flex; margin-top: 0px;margin-bottom: 15px;">Version 0.2.5&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;23.10.2025 <span id="statusSpan" style="margin-left: 10px"> </span></div>
         </div>
         <div style="display: flex">
             <div id="kwArea" style="display: flex; flex-flow: row; margin-top: auto">
