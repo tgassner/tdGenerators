@@ -1,8 +1,10 @@
 <?php
 
+namespace businessGenerator\souDbService\include;
 class VariaTools
 {
-    public function readFromRequestGetPost($parName, $defaultValue = "") {
+    public function readFromRequestGetPost($parName, $defaultValue = "")
+    {
         if (isset($_POST[$parName]) && $_POST[$parName] != "") {
             $retval = $_POST[$parName];
         } else if (isset($_GET[$parName]) && $_GET[$parName] != "") {

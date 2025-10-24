@@ -1,8 +1,10 @@
 <?php
 
+namespace businessGenerator\include;
 class VariaTools
 {
-    public function readFromRequestGetPost($parName, $defaultValue = "") {
+    public function readFromRequestGetPost($parName, $defaultValue = "")
+    {
         if (isset($_POST[$parName]) && $_POST[$parName] != "") {
             $retval = $_POST[$parName];
         } else if (isset($_GET[$parName]) && $_GET[$parName] != "") {
@@ -13,7 +15,8 @@ class VariaTools
         return $retval;
     }
 
-    public function doRemoteServiceCall($service) {
+    public function doRemoteServiceCall($service)
+    {
 
         header('Content-Type: application/json; charset=utf-8');
 

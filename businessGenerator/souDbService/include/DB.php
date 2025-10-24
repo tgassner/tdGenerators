@@ -1,7 +1,10 @@
 <?php
 
-class DBTool {
-    public function openConnection() {
+namespace businessGenerator\souDbService\include;
+class DBTool
+{
+    public function openConnection()
+    {
         $DB_LOGIN = json_decode(file_get_contents("DB.json", true));
 
         $dbhost = $DB_LOGIN->dbhost;
@@ -12,7 +15,7 @@ class DBTool {
         $dbh = new PDO(
             "sqlsrv:Server=$dbhost;Database=$dbname",
             $dbuser,
-            $dbpass ,
+            $dbpass,
             array(//PDO::ATTR_PERSISTENT => true, // Verbindung bleibt bis scriptende gecached !
                 //PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -20,7 +23,8 @@ class DBTool {
         return $dbh;
     }
 
-    public function runQueryList(string $sql, callable $rowHandler, array $params = []) {
+    public function runQueryList(string $sql, callable $rowHandler, array $params = [])
+    {
         $ret["ok"] = false;
         $ret["value"] = [];
         $ret["msg"] = "";
@@ -41,7 +45,8 @@ class DBTool {
         }
     }
 
-    public function runQueryOneResult(string $sql, callable $rowHandler, array $params = []) {
+    public function runQueryOneResult(string $sql, callable $rowHandler, array $params = [])
+    {
         $ret["ok"] = false;
         $ret["value"] = null;
         $ret["msg"] = "";

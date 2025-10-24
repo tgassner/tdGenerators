@@ -1,16 +1,23 @@
 <?php
 
+namespace businessGenerator\souDbService;
+
+use businessGenerator\include\VariaTools;
+use businessGenerator\souDbService\AbstractBusinessObjectRemoteService;
+
 header('Content-Type: application/json; charset=utf-8');
 
 include_once "include/DB.php";
 include_once "include/VariaTools.php";
 require_once "AbstractBusinessObjectRemoteService.php";
 
-class ArtikelRemoteService  extends AbstractBusinessObjectRemoteService {
+class ArtikelRemoteService extends AbstractBusinessObjectRemoteService
+{
 
-      public function findAllArtikel() {
+    public function findAllArtikel()
+    {
 
-        $sql =  "select Nr, Bezeichnung, KalkPreis, Einheit from Artikel order by Nr";
+        $sql = "select Nr, Bezeichnung, KalkPreis, Einheit from Artikel order by Nr";
 
         return $this->dbTool->runQueryList($sql, function ($row) {
             $article = [];
@@ -27,7 +34,7 @@ class ArtikelRemoteService  extends AbstractBusinessObjectRemoteService {
 $variaTools = new VariaTools();
 $ArtikelRemoteService = new ArtikelRemoteService();
 
-$action =  $variaTools->readFromRequestGetPost("action", "");
+$action = $variaTools->readFromRequestGetPost("action", "");
 
 switch ($action) {
     case "findAllProducts" :

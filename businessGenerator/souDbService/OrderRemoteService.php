@@ -1,18 +1,26 @@
 <?php
 
+namespace businessGenerator\souDbService;
+
+use businessGenerator\include\VariaTools;
+use businessGenerator\souDbService\AbstractBusinessObjectRemoteService;
+
 header('Content-Type: application/json; charset=utf-8');
 
 include_once "include/DB.php";
 include_once "include/VariaTools.php";
 require_once "AbstractBusinessObjectRemoteService.php";
 
-class OrderRemoteService extends AbstractBusinessObjectRemoteService {
+class OrderRemoteService extends AbstractBusinessObjectRemoteService
+{
 
-    public function generateNewOrderNumber() {
+    public function generateNewOrderNumber()
+    {
         return $this->generateNewBusinessObjectNumber("K", "AUFTRAG");
     }
 
-    public function getOpenOrderByEmployeeJsonResponse() {
+    public function getOpenOrderByEmployeeJsonResponse()
+    {
         $sql =
             " select                                                                                                                                                              \n" .
             " a.Nr, a.Gpartner_Nr, a.BestellNr, a.BestellDatum, Versandart, a.Liefertermin, a.Versandtermin, a.Nettobetrag, a.Bruttobetrag, a.LiefBedText,                        \n" .
@@ -35,7 +43,7 @@ class OrderRemoteService extends AbstractBusinessObjectRemoteService {
 
         $mitarbeiterId = $this->variaTools->readFromRequestGetPost("MitarbeiterNr", "");
 
-        $ret = $this->dbTool->runQueryList($sql, function($row) {
+        $ret = $this->dbTool->runQueryList($sql, function ($row) {
             $order = [];
             $order["Nr"] = $row["Nr"];
             $order["Gpartner_Nr"] = $row["Gpartner_Nr"];
@@ -185,7 +193,7 @@ class OrderRemoteService extends AbstractBusinessObjectRemoteService {
 $variaTools = new VariaTools();
 $orderRemoteService = new OrderRemoteService($variaTools);
 
-$action =  $variaTools->readFromRequestGetPost("action", "");
+$action = $variaTools->readFromRequestGetPost("action", "");
 
 switch ($action) {
     case "getOpenOrderByEmployee" :
