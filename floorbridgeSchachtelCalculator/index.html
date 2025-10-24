@@ -1,0 +1,251 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="img/fb_favicon_blau-150x150.png" sizes="32x32" />
+    <link rel="icon" href="img/fb_favicon_blau.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="img/fb_favicon_blau.png" />
+    <meta name="application-TileImage" content="img/fb_favicon_blau.png" />
+    <meta http-equiv="content-type" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="refresh" content="no-cache" />
+    <script src="lib/pdf-lib.js"></script>
+    <script src="lib/download.js"></script>
+    <script src="lib/sizes.js"></script>
+<script>
+   const aMengeData = [
+		{ id:  1, name :  "X10",        artikelnummer : "FB20 WGX",          aMengeMin : 144, aMengeMax : 144 } ,
+        { id:  2, name :  "X11",        artikelnummer : "PARKHAUS",          aMengeMin : 144, aMengeMax : 144 } ,
+        { id:  3, name :  "X12",        artikelnummer : "FB 20 MIT SCHRIFT", aMengeMin : 144, aMengeMax : 144 } ,
+        { id:  4, name :  "X13",        artikelnummer : "FLOORBRIDGE FB20 ", aMengeMin : 144, aMengeMax : 144 } ,
+        { id:  5, name :  "X14",        artikelnummer : "FB30",              aMengeMin : 100, aMengeMax : 100 } ,
+        { id:  6, name :  "X16",        artikelnummer : "CPS",               aMengeMin : 128, aMengeMax : 128 } ,
+		{ id:  7, name :  "X18",        artikelnummer : "FB SL 15/05",       aMengeMin :  80, aMengeMax :  80 } ,
+        { id:  8, name :  "X19",        artikelnummer : "JOINT",             aMengeMin : 144, aMengeMax : 144 } ,
+        { id:  9, name :  "X21",        artikelnummer : "FB15OHNE",          aMengeMin : 192, aMengeMax : 192 } ,
+        { id: 10, name :  "X23",        artikelnummer : "CPS NEU",           aMengeMin : 128, aMengeMax : 128 } ,
+		{ id: 12, name :  "X30",        artikelnummer : "CPS-TD",            aMengeMin : 168, aMengeMax : 168 } ,
+        { id: 13, name :  "X31",        artikelnummer : "MC FLOOR",          aMengeMin : 144, aMengeMax : 144 } ,
+        { id: 14, name :  "X32",        artikelnummer : "SL 20/08",          aMengeMin : 144, aMengeMax : 144 } ,
+        { id: 15, name :  "X33",        artikelnummer : "WGX 15/10",         aMengeMin : 192, aMengeMax : 192 } ,
+        { id: 16, name :  "Frankreich", artikelnummer : "FB20 WGX",          aMengeMin : 130, aMengeMax : 130 } ,
+	];
+   var aLabelData = [];
+</script>
+    <title>Floorbridge Schachtel Calculator</title>
+
+</head>
+<body style="margin:0; font-family: helvetica neue, Helvetica, Arial, sans-serif">
+<div style="display: flex; width:100%">
+    <div style="width:100px; background: #ffdc14; display: flex;padding: 10px">
+        <img src="img/td_header.svg" style="height:100px" alt="Transparentdesign Logo Header">
+    </div>
+
+    <div style="flex-grow: 1; background: linear-gradient(90deg, #ffdc14 0%, #0062ad 100%);display: flex; color: #fff; justify-content: center; align-items: center">
+        <div>
+            <h1 style="font-family: khand, Helvetica, Arial, sans-serif">Floorbridge Schachtel Calculator</h1>
+        </div><div style="top:80px; right:200px; position:absolute">
+            1.3.1 by Gassi 24.10.2025
+        </div>
+    </div>
+    <div style="width:100px; background: #0062ad; display: flex;padding: 10px">
+        <img src="img/FloorBridge_Logo_05.svg" style="height:100px" alt="Floorbridge Logo Header">
+    </div>
+</div>
+<div style="display: flex; justify-content: center; margin-top: 20px; flex-direction: row">
+    <div id="aMengeInputDiv" style="border:#777777 solid 1px; display: flex; padding:20px"> </div>
+    <div id="resultDiv" style="border:#777777 solid 0px; display: flex; padding:20px; flex-direction: column">
+        <div id="" style="margin-top: 20px ;display: flex; justify-content: center;font-weight: bolder; font-size: 200%">
+            Ergebnis
+        </div>
+        <div id="totalResult" style="text-align:center ;margin-top: 50px; display: flex; justify-content: center;font-weight: bolder; font-size: 160%; width: 244px"> </div>
+        <div id="deliveryDateDiv" style="text-align:center ;margin-top: 50px; display: flex; justify-content: center;font-weight: bold; font-size: 100%; width: 244px">
+            <label for="deliveryDate" >Lieferdatum</label>&nbsp&nbsp&nbsp
+            <input type="date" id="deliveryDate" name="deliveryDate">
+        </div>
+        <div id="downLoadButtonDiv" style="background-color: #eeeeee; display: flex; margin-top: 50px; flex-direction: column; border:#777777 solid 3px; padding: 8px; border-radius: 10px; box-shadow: 10px 20px 15px silver; cursor: pointer; align-items: center" onclick="createPdf()">
+            <img src="img/file_download_pdf_icon.webp" style="width: 150px; display: flex" alt="PDF-Download Button">
+            <div style="display: flex; text-align: center; font-weight: bold; font-size: 120%">Generate and Download<br>Label PDF-File</div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    document.getElementById('deliveryDate').valueAsDate = new Date();
+
+	let html = "<table>";
+	html += "<th style='padding-bottom:20px; padding-left:20px; padding-right:20px;'>Tassen</th>"
+	html += "<th style='padding-bottom:20px; padding-left:20px; padding-right:20px'>#Tassen in Bestellung</th>"
+	html += "<th style='padding-bottom:20px; padding-left:20px; padding-right:20px'>#Tassen pro Schachtel</th>"
+    html += "<th style='padding-bottom:20px; padding-left:20px; padding-right:20px;'>#Schachteln</th>"
+	html += "</tr>";
+	for (const aMengePos of aMengeData) {
+		html += "<tr title='" + aMengePos.name + "&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;" + aMengePos.artikelnummer + "' >";
+		html += "<td style='padding-bottom:20px; text-align:center'>" + "<label for='noOfpieces" + aMengePos.id + "'>" + aMengePos.name + "</label>" + "</td>"
+		html += "<td style='padding-left:20px; padding-right:20px; padding-bottom:20px'>"
+				+ "<input type='number' id='noOfpieces" + aMengePos.id + "' name='noOfpieces" + aMengePos.id + "' value='0' min='0' max='5000' style='width=80px;vertical-align: middle;' onchange='noOfPiececChanged()'>"
+                + "<button onclick='addSchachtel(" + aMengePos.id + ")' title='Eine ganze Schachtel hinzufügen' style='height: 21px; background:transparent;vertical-align: middle;margin-left: 5px; cursor: pointer;border-color: #555555; border-style: solid; border-radius: 4px; border-width: 1px; '>"
+                + "  <img src='img/addBox.svg' width=37px height=17px alt='Schachtel hinzufügen'>"
+                + "</button>"
+			 + "</td>"
+		html += "<td style='padding-bottom:20px;padding-left:20px'>" + ((aMengePos.aMengeMin === aMengePos.aMengeMax) ? aMengePos.aMengeMin : (aMengePos.aMengeMin + " - " + aMengePos.aMengeMax)) + "</td>"
+        html += "<td id='partResult" + aMengePos.id + "' style='padding-bottom:20px; padding-left:20px; padding-right:20px; font-weight:bolder'>0</td>"
+		html += "</tr>";
+	}
+	html += "</table>";
+	document.getElementById("aMengeInputDiv").innerHTML = html;
+
+	noOfPiececChanged();
+
+	function noOfPiececChanged() {
+		let sumSchachtelnMin = 0;
+        let sumSchachtelnMax = 0;
+        aLabelData = [];
+		for (const aMengePos of aMengeData) {
+			let menge = document.getElementById("noOfpieces" + aMengePos.id).value;
+            if (menge < 0) {
+                menge = 0;
+                document.getElementById("noOfpieces" + aMengePos.id).value = 0;
+            }
+			let palettenMin = menge / aMengePos.aMengeMax;
+            let palettenMax = menge / aMengePos.aMengeMin;
+            let schachtelnMin = (Math.round((palettenMin + Number.EPSILON) * 100) / 100);
+            let schachtelnMax = (Math.round((palettenMax + Number.EPSILON) * 100) / 100);
+            if (menge > 0) {
+                let mengePos = { name : aMengePos.name, artikelnummer : aMengePos.artikelnummer, schachteln :  Math.ceil(schachtelnMin), content : aMengePos.aMengeMin}
+                aLabelData.push(mengePos);
+            }
+            sumSchachtelnMin += schachtelnMin;
+            sumSchachtelnMax += schachtelnMax;
+		    document.getElementById("partResult" + aMengePos.id).innerHTML = ((schachtelnMin === schachtelnMax) ? schachtelnMin : (schachtelnMin  + " - " + schachtelnMax));
+		}
+        sumSchachtelnMin = (Math.round((sumSchachtelnMin + Number.EPSILON) * 100) / 100)
+        sumSchachtelnMax = (Math.round((sumSchachtelnMax + Number.EPSILON) * 100) / 100)
+        document.getElementById("totalResult").innerHTML = ((sumSchachtelnMin === sumSchachtelnMax) ? sumSchachtelnMin : (sumSchachtelnMin + " - " + sumSchachtelnMax)) + "<br>Schachteln";
+        document.getElementById("downLoadButtonDiv").style.display = sumSchachtelnMax <= 0 ? "none" : "flex";
+	}
+
+    const {PDFDocument, StandardFonts, rgb} = PDFLib
+
+    function getCenterPos(page, helvetiaFont, text, fontSize) {
+        return (page.getWidth() - helvetiaFont.widthOfTextAtSize(text, fontSize)) / 2;
+    }
+
+    function addSchachtel(id) {
+        let inputObject = document.getElementById('noOfpieces' + id);
+        let noOfPieces = Math.floor(inputObject.value);
+
+        if (isNaN(noOfPieces)) {
+            noOfPieces = 0;
+        }
+
+        if (noOfPieces < 0) {
+            noOfPieces = 0;
+        }
+
+        let addPieces = aMengeData.find(o => o.id === id).aMengeMin;
+        inputObject.value = noOfPieces + addPieces;
+        noOfPiececChanged();
+    }
+
+    async function createPdf() {
+            const pdfDoc = await PDFDocument.create()
+            const helvetiaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+            const HelveticaBoldFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+            const jpgTransparentdesignUrl = 'img/transparentdesign.jpg';
+            const jpgTransparentdesignImageBytes = await fetch(jpgTransparentdesignUrl).then((res) => res.arrayBuffer())
+            const jpgTransparentdesignImage = await pdfDoc.embedJpg(jpgTransparentdesignImageBytes)
+            const jpgTransparentdesignDims = jpgTransparentdesignImage.scale(0.1)
+
+            const jpgheaderTokenUrl = 'img/headerToken.jpg';
+            const jpgheaderTokenImageBytes = await fetch(jpgheaderTokenUrl).then((res) => res.arrayBuffer())
+            const jpgheaderTokenImage = await pdfDoc.embedJpg(jpgheaderTokenImageBytes)
+            const jpgheaderTokenDims = jpgheaderTokenImage.scale(0.2)
+
+            const fontSizeName = 150
+            const fontSizeAmount = 70
+            const fontSizeArtikelnummer = 50
+            const fontSizeDeliveryDate = 150
+
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+            const deliveryDate  = document.getElementById('deliveryDate').valueAsDate;
+            const deliveryDateString = deliveryDate.toLocaleDateString("de-AT", options);
+
+            for (const labelPos of aLabelData) {
+                for (let i = 0; i < labelPos.schachteln; i++) {
+                    const page = pdfDoc.addPage([PageSizes.A4[1], PageSizes.A4[0]]);
+
+                    // Name - X-irgendwas
+                    page.drawText(labelPos.name, {
+                        x: getCenterPos(page, HelveticaBoldFont, labelPos.name, fontSizeName),
+                        y: 270,
+                        size: fontSizeName,
+                        font: HelveticaBoldFont,
+                        color: rgb(0, 0, 0),
+                    });
+
+                    // Stück
+                    page.drawText(labelPos.content + " St" + String.fromCharCode(252) + "ck", {
+                        x: getCenterPos(page, HelveticaBoldFont, labelPos.content + " St" + String.fromCharCode(252) + "ck", fontSizeAmount),
+                        y: 450,
+                        size: fontSizeAmount,
+                        font: HelveticaBoldFont,
+                        color: rgb(0, 0, 0),
+                    });
+
+                    // z.B.: FB20 WGX
+                    page.drawText(labelPos.artikelnummer, {
+                        x: getCenterPos(page, helvetiaFont, labelPos.artikelnummer, fontSizeArtikelnummer),
+                        y: 200,
+                        size: fontSizeArtikelnummer,
+                        font: helvetiaFont,
+                        color: rgb(0, 0, 0),
+                    });
+
+                    // Lieferdatum
+                    page.drawText(deliveryDateString, {
+                        x: 45,
+                        y: 40,
+                        size: fontSizeDeliveryDate,
+                        font: helvetiaFont,
+                        color: rgb(0, 0, 0),
+                    });
+
+                    page.drawImage(jpgTransparentdesignImage, {
+                        x: 50,
+                        y: page.getHeight() - jpgTransparentdesignDims.height - 30,
+                        width: jpgTransparentdesignDims.width,
+                        height: jpgTransparentdesignDims.height,
+                        opacity: 1,
+                    })
+
+                    page.drawImage(jpgheaderTokenImage, {
+                        x: page.getWidth() - jpgheaderTokenDims.width - 30,
+                        y: page.getHeight() - jpgheaderTokenDims.height - 20,
+                        width: jpgheaderTokenDims.width,
+                        height: jpgheaderTokenDims.height,
+                        opacity: 1,
+                    })
+                }
+            }
+
+            const pdfBytes = await pdfDoc.save()
+            download(pdfBytes, getDatumString() + "_Floorbridge_Labels.pdf", "application/pdf");
+        }
+
+    function getDatumString() {
+        let date = new Date(),
+            month = '' + (date.getMonth() + 1),
+            day = '' + date.getDate(),
+            year = date.getFullYear();
+
+        if (month.length < 2) {
+            month = '0' + month;
+        }
+        if (day.length < 2) {
+            day = '0' + day;
+        }
+
+        return [year, month, day].join('-');
+    }
+</script>
+</html>
